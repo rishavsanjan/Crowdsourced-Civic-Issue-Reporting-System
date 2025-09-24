@@ -8,9 +8,84 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int         @id @default(autoincrement())
   name      String
-  email     String   @unique
+  email     String      @unique
   password  String
+  createdAt DateTime    @default(now())
+  Complaint Complaint[]
+  Vote      Vote[]
+}
+
+model Complaint {
+  complaint_id  Int      @id @default(autoincrement())
+  user_id       Int
+  category      Category
+  title         String
+  description   String?
+  status        Status   @default(pending)
+  latitude      Float?
+  longitude     Float?
+  address       String?
+  bert_category String? // auto-classified category
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  user      User     @relation(fields: [user_id], references: [id])
+  media     Media[]
+  votes     Vote[]
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Media {
+  media_id     Int      @id @default(autoincrement())
+  complaint_id Int
+  file_url     String
+  file_type    FileType
+  uploaded_at  DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  complaint Complaint @relation(fields: [complaint_id], references: [complaint_id])
+}
+
+model Vote {
+  vote_id      Int      @id @default(autoincrement())
+  complaint_id Int
+  user_id      Int
+  vote_type    VoteType
+  created_at   DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  complaint Complaint @relation(fields: [complaint_id], references: [complaint_id])
+  user      User      @relation(fields: [user_id], references: [id])
+
+  @@unique([complaint_id, user_id]) // prevent duplicate votes
+}
+
+enum Category {
+  roads
+  streetlights
+  waste
+  water
+  parks
+  other
+}
+
+enum Status {
+  pending
+  in_progress
+  resolved
+}
+
+enum FileType {
+  image
+  video
+}
+
+enum VoteType {
+  like
+  dislike
 }

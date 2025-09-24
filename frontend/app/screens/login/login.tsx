@@ -35,7 +35,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         setLoading(true);
         try {
             const response = await axios({
-                url: 'http://172.20.10.2:3000/api/user/login',
+                url: 'http://10.12.20.226:3000/api/user/login',
                 method: 'POST',
                 data: {
                     email: loginForm.email,
