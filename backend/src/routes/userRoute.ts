@@ -2,7 +2,9 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
 import prisma from '../config/db.js';
-import { createUserSchema, validateUserSchema } from '../zodType.js';
+import { createUserSchema, vadlidateComplainSchema, validateUserSchema } from '../zodType.js';
+import authMid from '../middlewares/userAuth.js';
+import { success } from 'zod';
 
 const userRoute = express.Router();
 
@@ -63,7 +65,35 @@ userRoute.post('/login', async (req, res) => {
 
         return res.status(403).json({ error: "Server Problem!", success: false })
     }
-})
+});
+
+
+userRoute.post('/addcomplain', authMid, async (req, res) => {
+    const p = vadlidateComplainSchema.safeParse(req.body);
+    if (!p.success) {
+        return res.status(400).json({ "msg": "Invalid format or less info", "success": false })
+    }
+
+    try {
+        const complaint = await prisma.complaint.create({
+            data: {
+                //@ts-ignore
+                user_id: req.user.user_id,
+                category: 'other',
+                title: p.data.title,
+                description: p.data.description,
+                latitude: p.data.latitude,
+                longitude: p.data.longitude,
+                address: p.data.address,
+            }
+        })
+
+        return res.status(200).json({ success: true, complaint:complaint })
+    } catch (error) {
+
+        return res.status(403).json({ error: "Server Problem!", success: false })
+    }
+});
 
 
 export default userRoute

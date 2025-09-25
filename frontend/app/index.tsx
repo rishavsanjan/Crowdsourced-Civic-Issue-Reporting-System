@@ -23,7 +23,7 @@ function BottomTabs() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: '#fffff',
-          height: 60,
+          height: 50,
         },
         tabBarActiveTintColor: '#1173D4',
         tabBarInactiveTintColor: '#A1A1AA',

@@ -11,7 +11,7 @@ import LoginScreen from '../login/login';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
-
+//@ts-ignore
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
     const [selectedStatus, setSelectedStatus] = useState('all');
@@ -21,6 +21,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         const token = await AsyncStorage.getItem('citytoken');
         if (token) {
             setIsLogin(true);
+        } else {
+            navigation.navigate('WelcomeLoginScreen')
         }
     }
 
@@ -28,12 +30,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         getLoginStatus()
     }, [])
 
-    if (!isLogin) {
-        return (
-            //@ts-ignore
-            <LoginScreen />
-        )
-    }
+
 
 
     return (
