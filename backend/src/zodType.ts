@@ -21,3 +21,4 @@ export const vadlidateComplainSchema = z.object({
     longitude: z.number(),
     address: z.string()
 })
+

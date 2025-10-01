@@ -42,7 +42,6 @@ userRoute.post('/signup', async (req, res) => {
 
 
 userRoute.post('/login', async (req, res) => {
-
     const p = validateUserSchema.safeParse(req.body);
     if (!p.success) {
         return res.status(400).json({ "msg": "Invalid format or less info", "success": false })
@@ -62,38 +61,116 @@ userRoute.post('/login', async (req, res) => {
         const token = jwt.sign({ user_id: user.id, iat: Math.floor(Date.now() / 1000) }, process.env.JWT_SECRET!)
         return res.json({ msg: token, success: true, role: user })
     } catch (error) {
-
+        console.log(error)
         return res.status(403).json({ error: "Server Problem!", success: false })
     }
 });
 
 
-userRoute.post('/addcomplain', authMid, async (req, res) => {
-    const p = vadlidateComplainSchema.safeParse(req.body);
-    if (!p.success) {
-        return res.status(400).json({ "msg": "Invalid format or less info", "success": false })
-    }
-
+userRoute.get('/profile', authMid, async (req, res) => {
     try {
-        const complaint = await prisma.complaint.create({
-            data: {
-                //@ts-ignore
-                user_id: req.user.user_id,
-                category: 'other',
-                title: p.data.title,
-                description: p.data.description,
-                latitude: p.data.latitude,
-                longitude: p.data.longitude,
-                address: p.data.address,
+        //@ts-ignore
+        const userId = req.user.user_id;
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            },
+            select: {
+                name: true,
+                createdAt: true,
+                email: true,
+                Complaint: true
+            }
+        });
+
+        const resolvedReports = await prisma.complaint.findMany({
+            where: {
+                user_id: userId,
+                status: 'resolved'
             }
         })
 
-        return res.status(200).json({ success: true, complaint:complaint })
+        console.log(resolvedReports)
+
+        return res.status(200).json({ msg: 'success', success: true, user: user, resolvedReports: resolvedReports })
     } catch (error) {
 
         return res.status(403).json({ error: "Server Problem!", success: false })
     }
 });
+
+
+
+
+// In your complaint creation route (e.g., /api/user/addcomplain)
+userRoute.post('/addcomplain', authMid, async (req, res) => {
+    try {
+        console.log(req.body)
+        const {
+            category,
+            title,
+            description,
+            latitude,
+            longitude,
+            address,
+            media // This will be an array of media objects
+        } = req.body;
+        //@ts-ignore
+        const userId =  req.user.user_id; // From authentication middleware
+
+        // Create complaint with media in a transaction
+        const result = await prisma.$transaction(async (prisma) => {
+            // Create the complaint first
+            const complaint = await prisma.complaint.create({
+                data: {
+                    user_id: userId,
+                    category: category,
+                    title: title,
+                    description: description,
+                    latitude: latitude,
+                    longitude: longitude,
+                    address: address,
+                    status: 'pending'
+                }
+            });
+
+            // Create media entries if any media was uploaded
+            if (media && media.length > 0) {//@ts-ignore
+                const mediaData = media.map(item => ({
+                    complaint_id: complaint.complaint_id,
+                    file_url: item.url,
+                    file_type: item.type === 'photo' ? 'image' : 'video'
+                }));
+
+                await prisma.media.createMany({
+                    data: mediaData
+                });
+            }
+
+            return complaint;
+        });
+
+        res.json({
+            success: true,
+            message: 'Complaint created successfully',
+            complaint: result
+        });
+
+    } catch (error) {
+        console.error('Error creating complaint:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to create complaint',//@ts-ignore
+            error: error.message
+        });
+    }
+});
+
+
+
+
+
+
 
 
 export default userRoute

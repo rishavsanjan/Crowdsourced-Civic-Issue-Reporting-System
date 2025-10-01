@@ -1,8 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, Platform } from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    Image,
+    Platform,
+    Alert,
+    ScrollView,
+    ActivityIndicator
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
+import * as ImagePicker from 'expo-image-picker';
 
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/navigation";
@@ -12,13 +23,25 @@ import { Toast } from 'toastify-react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, "RaiseComplainScreen">;
 
+interface MediaItem {
+    id: string;
+    type: 'photo' | 'video';
+    uri: string;
+    cloudinaryUrl?: string;
+}
+
 const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
     const [isLogin, setIsLogin] = useState(false);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [location, setLocation] = useState({ latitude: 28.6139, longitude: 77.2090 }); // default Delhi
     const [address, setAddress] = useState("");
-    const [errorMsg, setErrorMsg] = useState("");
+    const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+    const [uploading, setUploading] = useState(false);
+
+    // Cloudinary configuration
+    const CLOUDINARY_CLOUD_NAME = "diwmvqto3"; // Replace with your Cloudinary cloud name
+    const CLOUDINARY_UPLOAD_PRESET = "crowd-app"; // Replace with your upload preset
 
     // Get login status
     const getLoginStatus = async () => {
@@ -30,7 +53,143 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
 
     useEffect(() => {
         getLoginStatus();
+        requestMediaPermissions();
     }, []);
+
+    // Request media permissions
+    const requestMediaPermissions = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Sorry, we need camera roll permissions to make this work!');
+        }
+    };
+
+    // Upload to Cloudinary
+    const uploadToCloudinary = async (uri: string, type: 'image' | 'video') => {
+        try {
+            const formData = new FormData();
+            formData.append('file', {
+                uri,
+                type: type === 'image' ? 'image/jpeg' : 'video/mp4',
+                name: type === 'image' ? 'photo.jpg' : 'video.mp4',
+            } as any);
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+            formData.append('resource_type', type);
+
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${type}/upload`,
+                {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            );
+
+            const data = await response.json();
+
+            if (data.secure_url) {
+                return data.secure_url;
+            } else {
+                throw new Error('Upload failed');
+            }
+        } catch (error) {
+            console.error('Cloudinary upload error:', error);
+            throw error;
+        }
+    };
+
+    // Pick image from gallery
+    const pickImage = async () => {
+        try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 0.8,
+            });
+
+            if (!result.canceled) {
+                const newMediaItem: MediaItem = {
+                    id: Date.now().toString(),
+                    type: 'photo',
+                    uri: result.assets[0].uri,
+                };
+                setMediaItems(prev => [...prev, newMediaItem]);
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to pick image');
+        }
+    };
+
+    // Pick video from gallery
+    const pickVideo = async () => {
+        try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+                allowsEditing: true,
+                quality: 0.8,
+            });
+
+            if (!result.canceled) {
+                const newMediaItem: MediaItem = {
+                    id: Date.now().toString(),
+                    type: 'video',
+                    uri: result.assets[0].uri,
+                };
+                setMediaItems(prev => [...prev, newMediaItem]);
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to pick video');
+        }
+    };
+
+    // Take photo with camera
+    const takePhoto = async () => {
+        try {
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Sorry, we need camera permissions to make this work!');
+                return;
+            }
+
+            const result = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 0.8,
+            });
+
+            if (!result.canceled) {
+                const newMediaItem: MediaItem = {
+                    id: Date.now().toString(),
+                    type: 'photo',
+                    uri: result.assets[0].uri,
+                };
+                setMediaItems(prev => [...prev, newMediaItem]);
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to take photo');
+        }
+    };
+
+    // Remove media item
+    const removeMediaItem = (id: string) => {
+        setMediaItems(prev => prev.filter(item => item.id !== id));
+    };
+
+    // Show photo options
+    const showPhotoOptions = () => {
+        Alert.alert(
+            "Add Photo",
+            "Choose an option",
+            [
+                { text: "Camera", onPress: takePhoto },
+                { text: "Gallery", onPress: pickImage },
+                { text: "Cancel", style: "cancel" }
+            ]
+        );
+    };
 
     // Fetch address from Google Maps API
     const fetchAddress = async (lat: number, lng: number) => {
@@ -55,7 +214,7 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
         try {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== "granted") {
-                setErrorMsg("Permission to access location was denied");
+                Toast.error('Permission to access location was denied');
                 return;
             }
 
@@ -66,42 +225,76 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
             setLocation(loc.coords);
             fetchAddress(loc.coords.latitude, loc.coords.longitude);
         } catch (err: any) {
-            setErrorMsg(err.message);
+            Toast.error(`${err.message}`);
         }
     };
 
     // Submit issue
     const handleSubmit = async () => {
-        const token = await AsyncStorage.getItem('citytoken')
-        const response = await axios({
-            url: 'http://172.20.10.2:3000/api/user/addcomplain',
-            method: 'POST',
-            data: {
-                category: 'other',
-                title: title,
-                description: description,
-                latitude: location.latitude,
-                longitude: location.longitude,
-                address: address,
-            },
-            headers: {
-                'Authorization': "Bearer " + token
-            }
-        });
-        Toast.success('Complain raised successfully!');
-        setTitle('');
-        setDescription('');
-        setAddress('');
+        try {
+            setUploading(true);
 
+            // Upload all media to Cloudinary first
+            const uploadedMediaUrls = [];
+            for (const mediaItem of mediaItems) {
+                try {
+                    const cloudinaryUrl = await uploadToCloudinary(
+                        mediaItem.uri,
+                        mediaItem.type === 'photo' ? 'image' : 'video'
+                    );
+                    console.log(cloudinaryUrl)
+                    uploadedMediaUrls.push({
+                        type: mediaItem.type,
+                        url: cloudinaryUrl
+                    });
+                } catch (uploadError) {
+                    console.error(`Failed to upload ${mediaItem.type}:`, uploadError);
+                    Toast.error(`Failed to upload ${mediaItem.type}`);
+                }
+            }
+
+            console.log(uploadedMediaUrls)
+            console.log('hello')
+            const token = await AsyncStorage.getItem('citytoken');
+            const response = await axios({
+                url: 'http://10.11.8.198:3000/api/user/addcomplain',
+                method: 'POST',
+                data: {
+                    category: 'other',
+                    title: title,
+                    description: description,
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    address: address,
+                    media: uploadedMediaUrls, // Send uploaded media URLs
+                },
+                headers: {
+                    'Authorization': "Bearer " + token
+                }
+            });
+            console.log(response.data)
+
+            Toast.success('Complaint raised successfully!');
+            setTitle('');
+            setDescription('');
+            setAddress('');
+            setMediaItems([]);
+
+        } catch (error) {
+            console.error(error);
+            Toast.error('Failed to submit complaint');
+        } finally {
+            setUploading(false);
+        }
     };
 
-    if (!isLogin) {
-        // @ts-ignore
-        return <LoginScreen />;
-    }
+    // if (!isLogin) {
+    //     // @ts-ignore
+    //     return <LoginScreen />;
+    // }
 
     return (
-        <View className="flex flex-col h-full bg-[#F6F7F8]">
+        <ScrollView className="flex-1 bg-[#F6F7F8]">
             {/* Header */}
             <View className="flex flex-row items-center justify-between w-full px-4 p-4 border-b border-gray-300">
                 <Image
@@ -136,6 +329,7 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                         value={description}
                         onChangeText={setDescription}
                         multiline
+                        numberOfLines={4}
                     />
                 </View>
 
@@ -187,7 +381,11 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                 <View className="flex flex-col gap-2 mb-4">
                     <Text className="text-[#96A4B1] font-medium">Add Media</Text>
                     <View className="flex flex-row gap-2 justify-between w-full">
-                        <TouchableOpacity className="bg-[#DFE9F4] rounded-lg p-4 flex-1 items-center">
+
+                        <TouchableOpacity
+                            className="bg-[#DFE9F4] rounded-lg p-4 flex-1 items-center"
+                            onPress={showPhotoOptions}
+                        >
                             <View className="flex flex-row items-center gap-2">
                                 <Image
                                     style={{ width: 20, height: 20 }}
@@ -198,7 +396,10 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                                 <Text className="text-[#1173D4] font-semibold">Add Photo</Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity className="bg-[#DFE9F4] rounded-lg p-4 flex-1 items-center">
+                        <TouchableOpacity
+                            className="bg-[#DFE9F4] rounded-lg p-4 flex-1 items-center"
+                            onPress={pickVideo}
+                        >
                             <View className="flex flex-row items-center gap-2">
                                 <Image
                                     style={{ width: 20, height: 20 }}
@@ -212,17 +413,60 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                     </View>
                 </View>
 
+                {/* Media Preview */}
+                {mediaItems.length > 0 && (
+                    <View className="flex flex-col gap-2 mb-4 ">
+                        <Text className="text-[#96A4B1] font-medium">Preview</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                            <View className="flex flex-row gap-2">
+                                {mediaItems.map((item) => (
+                                    <View key={item.id} className="relative mt-2">
+                                        {item.type === 'photo' ? (
+                                            <Image
+                                                source={{ uri: item.uri }}
+                                                className="w-24 h-24 rounded-lg"
+                                                resizeMode="cover"
+                                            />
+                                        ) : (
+                                            <View className="w-24 h-24 rounded-lg bg-gray-300 justify-center items-center">
+                                                <View className="w-full h-full justify-center items-center bg-blue-100 rounded-lg">
+                                                    <Text className="text-blue-600 text-xs font-bold">VIDEO</Text>
+                                                    <Text className="text-blue-600 text-xs">📹</Text>
+                                                </View>
+                                            </View>
+                                        )}
+                                        <TouchableOpacity
+                                            className="absolute -top-2 -right-2 bg-red-500 rounded-full w-6 h-6 justify-center items-center"
+                                            onPress={() => removeMediaItem(item.id)}
+                                        >
+                                            <Text className="text-white text-xs font-bold">×</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                ))}
+                            </View>
+                        </ScrollView>
+                    </View>
+                )}
+
                 {/* Submit */}
                 <View className="mt-4">
                     <TouchableOpacity
-                        className="bg-[#1173D4] p-3 items-center rounded-xl"
+                        className={`p-3 items-center rounded-xl ${uploading ? 'bg-gray-400' : 'bg-[#1173D4]'}`}
                         onPress={handleSubmit}
+                        disabled={uploading}
                     >
-                        <Text className="text-white font-medium">Submit Issue</Text>
+                        {uploading ? (
+                            <View className="flex-row items-center">
+                                <ActivityIndicator color="white" size="small" />
+                                <Text className="text-white font-medium ml-2">Uploading...</Text>
+                            </View>
+                        ) : (
+                            <Text className="text-white font-medium">Submit Issue</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
