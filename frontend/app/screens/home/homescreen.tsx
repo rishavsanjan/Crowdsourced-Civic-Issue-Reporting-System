@@ -18,6 +18,7 @@ import LottieView from 'lottie-react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
 import NetInfo from '@react-native-community/netinfo';
+import API_BASE_URL from '../../../config/api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
@@ -67,6 +68,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         return () => unsubscribe();
     }, []);
 
+    console.log(API_BASE_IP)
+    
     if (!isConnected) {
         return (
             < View className="flex-1 justify-center items-center" >
@@ -106,7 +109,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             const token = await AsyncStorage.getItem('citytoken');
             const response = await axios({
                 method: 'POST',
-                url: `http://${API_BASE_IP}:3000/api/complain/getHomeComplaints`,
+                url: `${API_BASE_IP}/api/complain/getHomeComplaints`,
                 data: {
                     userLat: loc.coords.latitude,
                     userLng: loc.coords.longitude
@@ -209,7 +212,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             const token = await AsyncStorage.getItem('citytoken');
             const response = await axios({
                 method: 'POST',
-                url: `http://${API_BASE_IP}:3000/api/complain/addvote`,
+                url: `${API_BASE_IP}/api/complain/addvote`,
                 data: {
                     complaint_id,
                     vote_type
@@ -240,7 +243,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             const token = await AsyncStorage.getItem('citytoken');
             const response = await axios({
                 method: 'POST',
-                url: `http://${API_BASE_IP}:3000/api/complain/updatevote`,
+                url: `${API_BASE_IP}/api/complain/updatevote`,
                 data: {
                     complaint_id,
                     vote_type
@@ -278,7 +281,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
         const response = await axios({
             method: 'POST',
-            url: `http://${API_BASE_IP}:3000/api/complain/removevote`,
+            url: `${API_BASE_IP}/api/complain/removevote`,
             data: {
                 complaint_id,
                 vote_type

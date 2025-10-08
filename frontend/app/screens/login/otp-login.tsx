@@ -14,7 +14,7 @@ import {
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
-import API_BASE_URL from '../../../config/api';
+import API_BASE_IP from '../../../config/api';
 import axios from 'axios';
 import { Toast } from 'toastify-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -41,7 +41,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
 
     const otpInputs = useRef([]);
-
+    console.log(API_BASE_IP)
     useEffect(() => {
         if (showOtpInput && timer > 0) {
             const interval = setInterval(() => {
@@ -72,7 +72,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
         };
 
         const response = await axios({
-            url: `http://${API_BASE_URL}:3000/api/user/login-otp`,
+            url: `${API_BASE_IP}/api/user/login-otp`,
             method: "post",
             data: {
                 phone: phone
@@ -121,7 +121,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
         const enteredOtp = otpToVerify.join('');
         if (enteredOtp === generatedOtp) {
             const response = await axios({
-                url: `http://${API_BASE_URL}:3000/api/user/confirm-login-otp`,
+                url: `${API_BASE_IP}/api/user/confirm-login-otp`,
                 method: 'post',
                 data: {
                     phonenumber: phone,
@@ -169,7 +169,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
         }
         setLoading(true)
         const response = await axios({
-            url: `http://${API_BASE_URL}:3000/api/user/login-password`,
+            url: `${API_BASE_IP}/api/user/login-password`,
             method: 'post',
             data: {
                 phonenumber: phone,
@@ -428,7 +428,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                             <Text className="text-gray-600 text-sm">
                                 Don't have an account?{' '}
                             </Text>
-                            <TouchableOpacity activeOpacity={0.7}>
+                            <TouchableOpacity onPress={() => {navigation.navigate('OTPSignUp')}} activeOpacity={0.7}>
                                 <Text className="text-gray-900 text-sm font-semibold">
                                     Sign Up
                                 </Text>

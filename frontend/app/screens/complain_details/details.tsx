@@ -59,7 +59,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
         const token = await AsyncStorage.getItem('citytoken');
         const response = await axios({
             method: 'get',
-            url: `http://${API_BASE_IP}:3000/api/complain/complainDetail/${complaintId}`,
+            url: `${API_BASE_IP}/api/complain/complainDetail/${complaintId}`,
             headers: {
                 'Authorization': 'Bearer ' + token
             }

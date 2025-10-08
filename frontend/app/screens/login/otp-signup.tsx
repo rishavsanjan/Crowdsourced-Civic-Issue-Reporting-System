@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
-import API_BASE_URL from '../../../config/api';
+import API_BASE_IP from '../../../config/api';
 import axios from 'axios';
 import { Toast } from 'toastify-react-native';
 
@@ -52,7 +52,7 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
 
     const sendOtp = async () => {
         const response = await axios({
-            url: `http://${API_BASE_URL}:3000/api/user/signup-no-otp`,
+            url: `${API_BASE_IP}/api/user/signup-no-otp`,
             method: "post",
             data: {
                 phone: phone
@@ -130,7 +130,7 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
             return;
         }
         const res = await axios({
-            url: `http://${API_BASE_URL}:3000/api/user/signup-final`,
+            url: `${API_BASE_IP}/api/user/signup-final`,
             method: 'post',
             data: {
                 name,

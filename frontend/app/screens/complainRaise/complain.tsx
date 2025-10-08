@@ -21,6 +21,7 @@ import LoginScreen from "../login/login";
 import axios from "axios";
 import { Toast } from 'toastify-react-native';
 import NetInfo from '@react-native-community/netinfo';
+import API_BASE_IP from '../../../config/api';
 
 type Props = NativeStackScreenProps<RootStackParamList, "RaiseComplainScreen">;
 
@@ -270,7 +271,7 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
             console.log('hello')
             const token = await AsyncStorage.getItem('citytoken');
             const response = await axios({
-                url: 'http://10.11.8.198:3000/api/user/addcomplain',
+                url: `${API_BASE_IP}/api/user/addcomplain`,
                 method: 'POST',
                 data: {
                     category: 'other',

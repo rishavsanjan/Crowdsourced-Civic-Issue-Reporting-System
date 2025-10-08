@@ -84,16 +84,6 @@ const ComplaintCard = ({ complaint }: { complaint: Complaint }) => {
     );
 };
 
-const NavButton = ({ icon, label, isActive = false }: { icon: string, label: string, isActive?: boolean }) => (
-    <TouchableOpacity className="flex-1 items-center justify-center py-1">
-        <Text className={`text-2xl ${isActive ? 'text-[#1173D4]' : 'text-gray-400'}`}>
-            {icon}
-        </Text>
-        <Text className={`text-xs font-medium mt-1 ${isActive ? 'text-[#1173D4]' : 'text-gray-400'}`}>
-            {label}
-        </Text>
-    </TouchableOpacity>
-);
 
 const AllComplaints: React.FC<Props> = ({ navigation, route }) => {
 
@@ -104,7 +94,7 @@ const AllComplaints: React.FC<Props> = ({ navigation, route }) => {
             const token = await AsyncStorage.getItem('citytoken');
             const response = await axios({
                 method: 'get',
-                url: `http://${API_BASE_IP}:3000/api/user/allcomplain`,
+                url: `${API_BASE_IP}/user/allcomplain`,
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }

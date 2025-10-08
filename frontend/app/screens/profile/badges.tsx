@@ -59,7 +59,7 @@ const Badges: React.FC<Props> = ({ navigation }) => {
     const [badges, setBadges] = useState<Badge[]>([]);
     const getBadges = async () => {
         const token = await AsyncStorage.getItem('citytoken')
-        const response = await axios.get(`http://${API_BASE_IP}:3000/api/user/badges`, {
+        const response = await axios.get(`${API_BASE_IP}/api/user/badges`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

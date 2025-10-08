@@ -69,7 +69,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
 
   const getProfile = async (token: string) => {
     try {
-      const response = await axios.get(`http://${API_BASE_IP}:3000/api/user/profile`, {
+      const response = await axios.get(`${API_BASE_IP}/api/user/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -167,7 +167,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   if (!isLogin) {
-    navigation.replace("Login");
+    navigation.replace('OTPLogin');
     return null;
   };
 
@@ -277,7 +277,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         <View className='flex flex-row justify-between'>
           <Text className="text-lg font-semibold mb-4 w-32">{t('myReports')}</Text>
           <TouchableOpacity onPress={() => { navigation.navigate('AllComplaints') }}>
-            <Text className="text-lg font-semibold mb-4 w-16">{t('viewAll')}</Text>
+            <Text className="text-lg font-semibold mb-4 w-20">{t('viewAll')}</Text>
 
           </TouchableOpacity>
         </View>
@@ -334,7 +334,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         <View className='flex flex-row justify-between'>
           <Text className="text-lg font-semibold mb-4 w-32">{t('myBadges')}</Text>
           <TouchableOpacity onPress={() => { navigation.navigate('Badges') }}>
-            <Text className="text-lg font-semibold mb-4 w-16">{t('viewAll')}</Text>
+            <Text className="text-lg font-semibold mb-4 w-20">{t('viewAll')}</Text>
           </TouchableOpacity>
         </View>
 
