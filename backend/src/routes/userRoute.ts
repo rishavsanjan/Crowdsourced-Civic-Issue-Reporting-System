@@ -5,10 +5,13 @@ import prisma from '../config/db';
 import { createUserSchema, vadlidateComplainSchema, validateUserSchema } from '../zodType';
 import authMid from '../middlewares/userAuth';
 import { success } from 'zod';
+import { Twilio } from "twilio";
 
-const accountSid = process.env.accountSid;
-const authToken = process.env.authToken;
-const client = require('twilio')(accountSid, authToken);
+import dotenv from 'dotenv';
+dotenv.config();
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = new Twilio(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!);
 
 
 const userRoute = express.Router();
@@ -381,7 +384,7 @@ userRoute.get('/allcomplain', authMid, async (req, res) => {
             }
         })
 
-        return res.status(200).json({success:true, msg:'success', complaint:complaint})
+        return res.status(200).json({ success: true, msg: 'success', complaint: complaint })
     } catch (error) {
         console.error('Error creating complaint:', error);
 
