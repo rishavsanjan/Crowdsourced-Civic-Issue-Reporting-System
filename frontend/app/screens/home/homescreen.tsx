@@ -6,7 +6,6 @@ import {
     ScrollView,
     Image,
     RefreshControl,
-    ActivityIndicator
 } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,7 +17,7 @@ import LottieView from 'lottie-react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
 import NetInfo from '@react-native-community/netinfo';
-import API_BASE_URL from '../../../config/api';
+import Slider from '@react-native-community/slider';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
@@ -59,6 +58,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [filteredComplaints, setFilteredComplaints] = useState<Complaint[]>([]);
     const [isConnected, setIsConnected] = useState(true);
+    const [distance, setDistance] = useState(8);
 
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
@@ -69,7 +69,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     }, []);
 
     console.log(API_BASE_IP)
-    
+
     if (!isConnected) {
         return (
             < View className="flex-1 justify-center items-center" >
@@ -321,8 +321,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             {/* Header */}
             <View className="bg-white px-4 py-3 border-b border-gray-200">
                 <View className=" items-center justify-between">
-
-                    <Text className="text-lg font-bold text-center">CivicVoice</Text>
+                    <Text className="text-lg font-bold text-center">FixMyCity</Text>
 
                 </View>
             </View>
@@ -354,6 +353,29 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                     <Text className={`${selectedStatus === 'resolved' ? 'text-white' : 'text-blue-500'} font-medium`}>Resolved</Text>
                 </TouchableOpacity>
             </View>
+            <View className="bg-indigo-600  py-2 items-center mb-2 shadow-lg">
+                <Text className="text-lg font-medium text-indigo-200">
+                    Filter by distance
+                </Text>
+                <Text className="text-3xl font-bold text-white ">
+                    {distance}
+                </Text>
+                <Text className="text-lg font-medium text-indigo-200">
+                    kilometers
+                </Text>
+            </View>
+
+            <Slider
+                style={{ width: '100%', height:20}}
+                minimumValue={0}
+                maximumValue={100}
+                step={1}
+                value={distance}
+                onValueChange={setDistance}
+                minimumTrackTintColor="#6366f1"
+                maximumTrackTintColor="#e5e7eb"
+                thumbTintColor="#8b5cf6"
+            />
 
             {/* Complaints Feed */}
             {loading ? (
@@ -488,8 +510,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                             </TouchableOpacity>
                         ))
                     )}
-
-                    {/* Bottom spacing */}
+                    <View className='flex justify-center'>
+                        <Text className='text-black text-center text-xl'>No more reports!</Text>
+                    </View>
                     <View className="h-20" />
                 </ScrollView>
             )}

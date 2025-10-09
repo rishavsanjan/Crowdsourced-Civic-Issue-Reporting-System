@@ -302,23 +302,13 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
         }
     };
 
-    // if (!isLogin) {
-    //     // @ts-ignore
-    //     return <LoginScreen />;
-    // }
-
+    
     return (
         <ScrollView className="flex-1 bg-[#F6F7F8]">
             {/* Header */}
-            <View className="flex flex-row items-center justify-between w-full px-4 p-4 border-b border-gray-300">
-                <Image
-                    style={{ width: 20, height: 20 }}
-                    source={{
-                        uri: "https://img.icons8.com/?size=100&id=WWzSFZsWqPFD&format=png&color=1A1A1A",
-                    }}
-                />
+            <View className="flex flex-row items-center justify-center w-full px-4 p-4 border-b border-gray-300">
+                
                 <Text className="font-bold text-xl">{t('reportIssue')}</Text>
-                <Text></Text>
             </View>
 
             {/* Form */}

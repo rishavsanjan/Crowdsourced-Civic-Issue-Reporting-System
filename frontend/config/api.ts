@@ -1,4 +1,4 @@
-const isProduction = process.env.NODE_ENV !== 'production';
+const isProduction = process.env.NODE_ENV === 'production';
 
 const API_BASE_URL = isProduction
     ? 'https://crowdsourced-civic-issue-reporting-system.onrender.com' // your Render backend

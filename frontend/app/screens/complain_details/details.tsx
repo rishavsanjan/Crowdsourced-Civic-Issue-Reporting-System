@@ -15,10 +15,12 @@ import { Toast } from 'toastify-react-native';
 import { Video } from 'expo-av';
 
 import MapView, { Marker } from "react-native-maps";
+import { Ionicons } from '@expo/vector-icons';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
 import API_BASE_IP from '../../../config/api';
+import LottieView from 'lottie-react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ComplainDetails'>;
 
@@ -53,7 +55,9 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
     const [mediaItems, setMediaItems] = useState([]);
     const flatListRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(0);
-    const [comments, setComments] = useState<AdminstrativeComments[]>([])
+    const [comments, setComments] = useState<AdminstrativeComments[]>([]);
+    const [loading, setLoading] = useState(true);
+
 
     const getDetails = async () => {
         const token = await AsyncStorage.getItem('citytoken');
@@ -68,8 +72,10 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
         setMediaItems(response.data.response.media);
         setComments(response.data.response.AdminstrativeComments);
         console.log(response.data);
-
+        setLoading(false);
     }
+
+
 
     console.log(comments)
 
@@ -127,15 +133,32 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
         return date.toLocaleString("en-GB");
     }
 
-    console.log(mediaItems)
+    if (loading) {
+        return (
+            <View className="flex-1 justify-center items-center">
+                <View className="flex-1 justify-center items-center ">
+                    <LottieView
+                        source={require('../../../assets/loading_animations/loader.json')}
+                        autoPlay
+                        loop
+                        speed={2}
+                        style={{ width: 50, height: 50 }}
+                    />
+                </View>
+            </View>
+        )
+    }
+
     return (
         <SafeAreaView className="flex-1 bg-white">
             {/* Header */}
-            <View className="flex-row items-center px-4 py-3 border-b border-gray-200">
-                <TouchableOpacity className="mr-4">
-                    <Image style={{ width: 20, height: 20 }} source={{ uri: 'https://img.icons8.com/?size=100&id=100033&format=png&color=000000' }} />
+            <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200">
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Ionicons name="arrow-back" size={24} color="#000" />
                 </TouchableOpacity>
                 <Text className="text-lg font-semibold">Issue Details</Text>
+                <Text className="text-lg font-semibold"></Text>
+
             </View>
 
             <ScrollView className="flex-1">

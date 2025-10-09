@@ -15,6 +15,7 @@ import type { RootStackParamList } from '../../navigation/navigation';
 import { Ionicons } from '@expo/vector-icons';
 import API_BASE_IP from '../../../config/api';
 import { useTranslation } from 'react-i18next';
+import LottieView from 'lottie-react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ProfileScreen'>;
 
@@ -159,9 +160,14 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text className="mt-4 text-gray-600">Loading...</Text>
+      <View className="flex-1 justify-center items-center ">
+        <LottieView
+          source={require('../../../assets/loading_animations/loader.json')}
+          autoPlay
+          loop
+          speed={2}
+          style={{ width: 50, height: 50 }}
+        />
       </View>
     );
   }
@@ -208,15 +214,12 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <ScrollView className="flex-1 bg-gray-50">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-3 bg-white">
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text className="text-lg font-semibold">Profile</Text>
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b-2 border-gray-200">
+        <View></View>
+        <Text className="text-2xl font-semibold">Profile</Text>
         <TouchableOpacity onPress={() => { navigation.navigate('Settings') }}>
           <Image style={{ width: 25, height: 25 }} source={{ uri: 'https://img.icons8.com/?size=100&id=82535&format=png&color=000000' }} />
         </TouchableOpacity>
-
       </View>
 
       {/* Profile Section */}
