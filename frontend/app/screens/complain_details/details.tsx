@@ -21,6 +21,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
 import API_BASE_IP from '../../../config/api';
 import LottieView from 'lottie-react-native';
+import Constants from 'expo-constants'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ComplainDetails'>;
 
@@ -49,6 +50,7 @@ interface AdminstrativeComments extends Complaint {
 }
 
 const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
+    const { googleApiKey } = Constants.expoConfig?.extra || {};
     const { complaintId } = route.params;
 
     const [complaint, setComplaint] = useState<Complaint | null>(null);

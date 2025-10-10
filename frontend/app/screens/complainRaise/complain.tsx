@@ -21,6 +21,7 @@ import axios from "axios";
 import { Toast } from 'toastify-react-native';
 import NetInfo from '@react-native-community/netinfo';
 import API_BASE_IP from '../../../config/api';
+import Constants from 'expo-constants'
 
 type Props = NativeStackScreenProps<RootStackParamList, "RaiseComplainScreen">;
 
@@ -32,6 +33,7 @@ interface MediaItem {
 }
 
 const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
+    const { googleApiKey } = Constants.expoConfig?.extra || {};
 
     const { t } = useTranslation();
     const [isLogin, setIsLogin] = useState(false);
@@ -207,7 +209,7 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
     // Fetch address from Google Maps API
     const fetchAddress = async (lat: number, lng: number) => {
         try {
-            const apiKey = "AIzaSyDjyRoO4ogCeRr9IMw9LXYFL-y2HuxjZKg";
+            const apiKey = googleApiKey;
             const response = await fetch(
                 `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`
             );
