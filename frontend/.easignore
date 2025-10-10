@@ -13,5 +13,7 @@ android/
 # Git files
 .git/
 .gitignore
+.env.local
+node_modules
 # Logs
 *.log
