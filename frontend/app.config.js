@@ -1,7 +1,9 @@
 import 'dotenv/config';
 
-export default {
+export default ({ config }) => ({
+  ...config,
   expo: {
+    ...config.expo,
     name: "frontend",
     slug: "frontend",
     version: "1.0.0",
@@ -12,6 +14,7 @@ export default {
     newArchEnabled: true,
 
     ios: {
+      ...config.expo?.ios,
       supportsTablet: true,
       infoPlist: {
         NSLocationWhenInUseUsageDescription:
@@ -20,6 +23,7 @@ export default {
     },
 
     android: {
+      ...config.expo?.android,
       adaptiveIcon: {
         backgroundColor: "#E6F4FE",
         foregroundImage: "./assets/images/icon.png",
@@ -28,14 +32,10 @@ export default {
       },
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
-      permissions: [
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-      ],
+      permissions: ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
       package: "com.rishavsanjan.frontend",
-
-      // ✅ Inject your Google Maps API key dynamically from .env
       config: {
+        ...config.expo?.android?.config,
         googleMaps: {
           apiKey: process.env.GOOGLE_MAPS_API_KEY,
         },
@@ -43,11 +43,12 @@ export default {
     },
 
     web: {
+      ...config.expo?.web,
       output: "static",
       favicon: "./assets/images/icon.png",
     },
 
-    plugins: [
+    plugins: config.expo?.plugins || [
       "expo-router",
       [
         "expo-splash-screen",
@@ -56,9 +57,7 @@ export default {
           imageWidth: 200,
           resizeMode: "contain",
           backgroundColor: "#ffffff",
-          dark: {
-            backgroundColor: "#000000",
-          },
+          dark: { backgroundColor: "#000000" },
         },
       ],
       "expo-localization",
@@ -72,12 +71,13 @@ export default {
     assetBundlePatterns: ["assets/**/*"],
 
     extra: {
+      ...config.expo?.extra,
       router: {},
       eas: {
         projectId: "9e4046e5-85ea-46b3-92cf-7edac5fbcef4",
       },
-      // ✅ Make .env variables accessible at runtime via EXPO_PUBLIC_ prefix
-      googleApiKey: process.env.GOOGLE_API_KEY
+      // ✅ Embed .env variable at build time
+      googleApiKey: process.env.GOOGLE_API_KEY,
     },
   },
-};
+});

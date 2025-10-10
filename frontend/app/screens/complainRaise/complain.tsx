@@ -34,7 +34,7 @@ interface MediaItem {
 
 const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
     const { googleApiKey } = Constants.expoConfig?.extra || {};
-
+    console.log(googleApiKey)
     const { t } = useTranslation();
     const [isLogin, setIsLogin] = useState(false);
     const [title, setTitle] = useState("");
