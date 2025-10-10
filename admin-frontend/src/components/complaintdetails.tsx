@@ -47,7 +47,7 @@ const ReportDetail: React.FC = () => {
 
     const getReportDetails = async () => {
         const response = await axios({
-            url: `http://127.0.0.1:3000/api/admin/details/${complaint_id}`,
+            url: `http://10.12.20.226:3000/api/admin/details/${complaint_id}`,
             method: 'get'
         });
         setComplaindetails(response.data.complaint);
@@ -71,7 +71,7 @@ const ReportDetail: React.FC = () => {
         formData.append('commentType', commentType);
         const token = localStorage.getItem('admincitytoken');
         console.log(token)
-        const response = await axios(`http://127.0.0.1:3000/api/admin/add-comment`, {
+        const response = await axios(`http://10.12.20.226:3000/api/admin/add-comment`, {
             method: 'post',
             headers: {
                 'Authorization': 'Bearer ' + token
@@ -129,7 +129,7 @@ const ReportDetail: React.FC = () => {
 
     const updateStatus = async () => {
         const token = localStorage.getItem('admincitytoken');
-        const response = await axios(`http://127.0.0.1:3000/api/admin/update-status`, {
+        const response = await axios(`http://10.12.20.226:3000/api/admin/update-status`, {
             method: 'post',
             headers: {
                 'Authorization': 'Bearer ' + token

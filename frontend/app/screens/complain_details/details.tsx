@@ -165,7 +165,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                 {/* Media Carousel */}
                 <FlatList
                     ref={flatListRef}
-                    data={mediaItems}
+                    data={mediaItems || []}
                     //@ts-ignore
                     renderItem={renderMediaItem}
                     keyExtractor={(item, index) => index.toString()}
@@ -243,27 +243,25 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                 {/* Location */}
                 <View >
                     <Text className="text-lg font-bold text-gray-900 mb-3 px-4 ">Location</Text>
-                    {Platform.OS === "android" && (
-                        <>
-                            <MapView
-                                style={{ width: "100%", height: 200, marginVertical: 10 }}
-                                initialRegion={{
-                                    latitude: complaint?.latitude || 78,
-                                    longitude: complaint?.longitude || 23,
-                                    latitudeDelta: 0.01,
-                                    longitudeDelta: 0.01,
-                                }}
+                    <>
+                        <MapView
+                            style={{ width: "100%", height: 200, marginVertical: 10 }}
+                            initialRegion={{
+                                latitude: complaint?.latitude || 78,
+                                longitude: complaint?.longitude || 23,
+                                latitudeDelta: 0.01,
+                                longitudeDelta: 0.01,
+                            }}
 
-                            >
-                                <Marker
-                                    coordinate={{
-                                        latitude: complaint?.latitude || 78,
-                                        longitude: complaint?.longitude || 23
-                                    }}
-                                />
-                            </MapView>
-                        </>
-                    )}
+                        >
+                            <Marker
+                                coordinate={{
+                                    latitude: complaint?.latitude || 78,
+                                    longitude: complaint?.longitude || 23
+                                }}
+                            />
+                        </MapView>
+                    </>
                 </View>
 
 

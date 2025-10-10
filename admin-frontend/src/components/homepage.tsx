@@ -30,7 +30,7 @@ const AdminHome: React.FC = () => {
       navigate("/admin-signup");
     }
     const response = await axios({
-      url: `http://127.0.0.1:3000/api/admin/admin-home`,
+      url: `http://10.12.20.226:3000/api/admin/admin-home`,
       method: 'get'
     });
     setComplaints(response.data.complaints);
@@ -108,6 +108,15 @@ const AdminHome: React.FC = () => {
                   </svg>
                   <span className="font-medium">Dashboard</span>
                 </a>
+              </li>
+              <li>
+                <Link to={'/my-map-all'} className="flex items-center gap-3 px-3 py-2 rounded text-gray-700 light:text-gray-300 hover:bg-blue-50 light:hover:bg-blue-900/20 hover:text-blue-600">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
+                  </svg>
+                  <span className="font-medium">Map</span>
+                </Link>
+
               </li>
               <li>
                 <a className="flex items-center gap-3 px-3 py-2 rounded bg-blue-50 light:bg-blue-900/20 text-blue-600 font-medium" href="#">
@@ -233,7 +242,7 @@ const AdminHome: React.FC = () => {
                     <div className="relative">
                       <select
                         className="appearance-none w-full md:w-auto bg-gray-50 light:bg-gray-900 border border-gray-300 light:border-gray-600 text-gray-700 light:text-gray-300 py-2 pl-3 pr-8 rounded leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        
+
                         onChange={(e) => setSortFilter(e.target.value)}
                       >
                         <option value={'new'}>Sort by : {`${sortFilter}`}</option>

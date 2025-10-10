@@ -1,0 +1,17 @@
+# Node modules (optional if using managed workflow)
+node_modules/
+# Local assets not needed for build
+**/*.mp4
+**/*.mov
+**/*.zip
+# iOS and Android native folders (not needed for managed workflow)
+ios/
+android/
+# Expo caches and temp files
+.expo/
+.expo-shared/
+# Git files
+.git/
+.gitignore
+# Logs
+*.log

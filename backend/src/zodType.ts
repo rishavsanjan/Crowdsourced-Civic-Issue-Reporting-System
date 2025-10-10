@@ -16,6 +16,11 @@ export const validateUserSchema = z.object({
     password: z.string().min(8, "Password must be at least 8 charcters")
 })
 
+export const validateAdminSchema = z.object({
+    email: z.email(),
+    password: z.string().min(8, "Password must be at least 8 charcters")
+})
+
 export const vadlidateComplainSchema = z.object({
     category:z.enum(complaintCategory),
     title: z.string(),

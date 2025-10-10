@@ -17,7 +17,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from "react-i18next";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/navigation";
-import LoginScreen from "../login/login";
 import axios from "axios";
 import { Toast } from 'toastify-react-native';
 import NetInfo from '@react-native-community/netinfo';
@@ -302,12 +301,12 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
         }
     };
 
-    
+
     return (
         <ScrollView className="flex-1 bg-[#F6F7F8]">
             {/* Header */}
             <View className="flex flex-row items-center justify-center w-full px-4 p-4 border-b border-gray-300">
-                
+
                 <Text className="font-bold text-xl">{t('reportIssue')}</Text>
             </View>
 
@@ -349,37 +348,33 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                 </View>
 
                 {/* Map */}
-                {Platform.OS === "android" && (
-                    <>
-                        <MapView
-                            style={{ width: "100%", height: 200, marginVertical: 10 }}
-                            initialRegion={{
-                                latitude: location.latitude,
-                                longitude: location.longitude,
-                                latitudeDelta: 0.01,
-                                longitudeDelta: 0.01,
-                            }}
-                            onPress={(e) => {
-                                const coords = e.nativeEvent.coordinate;
-                                setLocation(coords);
-                                fetchAddress(coords.latitude, coords.longitude);
-                            }}
-                        >
-                            <Marker
-                                coordinate={location}
-                                draggable
-                                onDragEnd={(e) => {
-                                    const coords = e.nativeEvent.coordinate;
-                                    setLocation(coords);
-                                    fetchAddress(coords.latitude, coords.longitude);
-                                }}
-                            />
-                        </MapView>
-                        {address ? (
-                            <Text className="text-[#1173D4] font-semibold mt-2">📍 {address}</Text>
-                        ) : null}
-                    </>
-                )}
+                <MapView
+                    style={{ width: "100%", height: 200, marginVertical: 10 }}
+                    initialRegion={{
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                        latitudeDelta: 0.01,
+                        longitudeDelta: 0.01,
+                    }}
+                    onPress={(e) => {
+                        const coords = e.nativeEvent.coordinate;
+                        setLocation(coords);
+                        fetchAddress(coords.latitude, coords.longitude);
+                    }}
+                >
+                    <Marker
+                        coordinate={location}
+                        draggable
+                        onDragEnd={(e) => {
+                            const coords = e.nativeEvent.coordinate;
+                            setLocation(coords);
+                            fetchAddress(coords.latitude, coords.longitude);
+                        }}
+                    />
+                </MapView>
+                {address ? (
+                    <Text className="text-[#1173D4] font-semibold mt-2">📍 {address}</Text>
+                ) : null}
 
                 {/* Add Media */}
                 <View className="flex flex-col gap-2 mb-4">

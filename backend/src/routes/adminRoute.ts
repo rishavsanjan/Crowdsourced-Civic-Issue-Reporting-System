@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
 import prisma from '../config/db';
-import { createUserSchema, vadlidateComplainSchema, validateUserSchema } from '../zodType';
+import { validateAdminSchema } from '../zodType';
 import authMid from '../middlewares/userAuth';
 import { success } from 'zod';
 import { Twilio } from "twilio";
@@ -15,6 +15,36 @@ const adminRoute = express.Router();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = new Twilio(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!);
+
+
+adminRoute.post('/login', async (req, res) => {
+
+    const p = validateAdminSchema.safeParse(req.body);
+    if (!p.success) {
+        return res.status(400).json({ "msg": "Invalid format or less info", "success": false })
+    }
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email: p.data.email }
+        })
+
+        if (!user) {
+            return res.status(200).json({ error: "Wrong phone number!", success: false })
+        }
+
+        const match = await bcrypt.compare(p.data.password, user.password);
+        if (!match) {
+            return res.status(200).json({ error: "Wrong password!", success: false })
+        }
+
+        const token = jwt.sign({ user_id: user.id, iat: Math.floor(Date.now() / 1000) }, process.env.JWT_SECRET!)
+        return res.status(200).json({ msg: token, success: true })
+    } catch (error) {
+        console.log(error)
+        return res.status(403).json({ error: "Server Problem!", success: false })
+    }
+});
 
 adminRoute.get('/admin-home', async (req, res) => {
     try {
