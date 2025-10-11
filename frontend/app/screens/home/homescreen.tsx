@@ -135,9 +135,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
     useEffect(() => {
         getLoginStatus();
-        getLocation();
+        if (isLogin) {
+            getLocation();
+        }
 
-    }, []);
+
+    }, [isLogin]);
 
     const onRefresh = async () => {
         setRefreshing(true);
@@ -366,7 +369,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             </View>
 
             <Slider
-                style={{ width: '100%', height:20}}
+                style={{ width: '100%', height: 20 }}
                 minimumValue={0}
                 maximumValue={100}
                 step={1}
