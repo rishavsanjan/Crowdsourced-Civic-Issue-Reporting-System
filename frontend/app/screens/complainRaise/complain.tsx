@@ -11,7 +11,7 @@ import {
     ActivityIndicator
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import MapView, { Marker } from "react-native-maps";
+// import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ import { Toast } from 'toastify-react-native';
 import NetInfo from '@react-native-community/netinfo';
 import API_BASE_IP from '../../../config/api';
 import Constants from 'expo-constants'
-
+import MapPicker from '../../../config/MapPicker'
 type Props = NativeStackScreenProps<RootStackParamList, "RaiseComplainScreen">;
 
 interface MediaItem {
@@ -325,6 +325,8 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                     />
                 </View>
 
+
+
                 {/* Description */}
                 <View className="flex flex-col gap-2 mb-4">
                     <Text className="text-[#96A4B1] font-medium">{t('description')}</Text>
@@ -350,7 +352,17 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                 </View>
 
                 {/* Map */}
-                <MapView
+                <MapPicker
+                    latitude={location.latitude}
+                    longitude={location.longitude}
+                    googleApiKey={googleApiKey}
+                    onLocationSelect={(lat, lng) => {
+                        setLocation({ latitude: lat, longitude: lng });
+                        fetchAddress(lat, lng);
+                    }}
+                />
+
+                {/* <MapView
                     style={{ width: "100%", height: 200, marginVertical: 10 }}
                     initialRegion={{
                         latitude: location.latitude,
@@ -373,7 +385,9 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                             fetchAddress(coords.latitude, coords.longitude);
                         }}
                     />
-                </MapView>
+                </MapView> */}
+
+
                 {address ? (
                     <Text className="text-[#1173D4] font-semibold mt-2">📍 {address}</Text>
                 ) : null}
