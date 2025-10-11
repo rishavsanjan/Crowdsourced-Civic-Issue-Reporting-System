@@ -22,6 +22,7 @@ import type { RootStackParamList } from '../../navigation/navigation';
 import API_BASE_IP from '../../../config/api';
 import LottieView from 'lottie-react-native';
 import Constants from 'expo-constants'
+import { WebView } from "react-native-webview";
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ComplainDetails'>;
 
@@ -52,6 +53,7 @@ interface AdminstrativeComments extends Complaint {
 const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
     const { googleApiKey } = Constants.expoConfig?.extra || {};
     const { complaintId } = route.params;
+  const webviewRef = useRef<WebView>(null);
 
     const [complaint, setComplaint] = useState<Complaint | null>(null);
     const [mediaItems, setMediaItems] = useState([]);
@@ -151,6 +153,38 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
         )
     }
 
+    const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <style>
+          #map { height: 100%; width: 100%; }
+          html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
+        </style>
+        <script src="https://maps.googleapis.com/maps/api/js?key=${googleApiKey}"></script>
+        <script>
+          function initMap() {
+            const initialPos = { lat: ${complaint?.latitude || 78}, lng: ${complaint?.longitude || 78} };
+            const map = new google.maps.Map(document.getElementById('map'), {
+              zoom: 15,
+              center: initialPos,
+            });
+            const marker = new google.maps.Marker({
+              position: initialPos,
+              map: map,
+              draggable: true
+            });
+
+          }
+        </script>
+      </head>
+      <body onload="initMap()">
+        <div id="map"></div>
+      </body>
+    </html>
+  `;
+
     return (
         <SafeAreaView className="flex-1 bg-white">
             {/* Header */}
@@ -245,7 +279,13 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                 {/* Location */}
                 <View >
                     <Text className="text-lg font-bold text-gray-900 mb-3 px-4 ">Location</Text>
-                    <>
+                    <View style={{ width: "100%", height: 200 }}>
+                          <WebView
+                            originWhitelist={['*']}
+                            source={{ html }}
+                          />
+                        </View>
+                    {/* <>
                         <MapView
                             style={{ width: "100%", height: 200, marginVertical: 10 }}
                             initialRegion={{
@@ -263,7 +303,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                                 }}
                             />
                         </MapView>
-                    </>
+                    </> */}
                 </View>
 
 

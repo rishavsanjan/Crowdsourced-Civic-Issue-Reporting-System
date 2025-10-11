@@ -11,7 +11,7 @@ import {
     ActivityIndicator
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from "react-i18next";
@@ -324,8 +324,8 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                         onChangeText={setTitle}
                     />
                 </View>
-
-
+                
+                
 
                 {/* Description */}
                 <View className="flex flex-col gap-2 mb-4">
@@ -361,7 +361,6 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                         fetchAddress(lat, lng);
                     }}
                 />
-
                 {/* <MapView
                     style={{ width: "100%", height: 200, marginVertical: 10 }}
                     initialRegion={{
