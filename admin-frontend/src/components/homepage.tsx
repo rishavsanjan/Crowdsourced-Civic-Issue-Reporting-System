@@ -30,7 +30,7 @@ const AdminHome: React.FC = () => {
       navigate("/admin-signup");
     }
     const response = await axios({
-      url: `http://10.12.20.226:3000/api/admin/admin-home`,
+      url: `http://172.20.10.2:3000/api/admin/admin-home`,
       method: 'get'
     });
     setComplaints(response.data.complaints);

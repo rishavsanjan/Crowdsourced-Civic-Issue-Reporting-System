@@ -84,10 +84,10 @@ model AdminstrativeComments {
 
 model BadgeType {
   id          Int      @id @default(autoincrement())
-  name        String   @unique 
+  name        String   @unique
   description String?
-  criteria    String? 
-  icon_url    String? 
+  criteria    String?
+  icon_url    String?
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
@@ -103,7 +103,7 @@ model UserBadge {
   user  User      @relation(fields: [user_id], references: [id])
   badge BadgeType @relation(fields: [badge_id], references: [id])
 
-  @@unique([user_id, badge_id]) 
+  @@unique([user_id, badge_id])
 }
 
 enum AdminstrativeCommentType {
@@ -119,6 +119,41 @@ enum Category {
   water
   parks
   other
+  ADVERTISEMENT
+  ARCHITECTURE_DEPARTMENT
+  ASSESSMENT_AND_COLLECTION_DEPARTMENT
+  AYUSH_DEPARTMENT
+  BUILDING_DEPARTMENT
+  CENTRAL_ESTABLISHMENT
+  COMMITTEE_AND_CORPORATION
+  COMMUNITY_SERVICES
+  DIRECTORATE_OF_INQUIRY
+  DIRECTORATE_OF_PRESS_AND_INFORMATION
+  ENVIRONMENTAL_MANAGEMENT
+  EDUCATION
+  ELECTION_DEPARTMENT
+  ENGINEERING_DEPARTMENT
+  ELECTRICAL_AND_MECHANICAL_DEPARTMENT
+  FACTORY_LICENSE
+  FINANCE_DEPARTMENT
+  HACKNEY_CARRIAGE
+  HORTICULTURE_DEPARTMENT
+  HOSPITAL_ADMINISTRATION
+  INFORMATION_TECHNOLOGY
+  LABOUR_WELFARE_DEPARTMENT
+  LAND_AND_ESTATE
+  LANGUAGE_DEPARTMENT
+  LAW_DEPARTMENT
+  LICENSING_DEPARTMENT
+  MUNICIPAL_SECRETARY_OFFICE
+  ORGANIZATION_AND_METHOD_DEPARTMENT
+  PUBLIC_HEALTH_DEPARTMENT
+  REMUNERATIVE_PROJECT_CELL
+  STATUTORY_AUDIT_DEPARTMENT
+  TOWN_PLANNING
+  TOLL_TAX
+  VETERINARY
+  VIGILANCE
 }
 
 enum Status {

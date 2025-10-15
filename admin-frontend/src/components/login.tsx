@@ -21,7 +21,7 @@ export default function AdminLogin() {
 
     const handleSubmit = async () => {
         const response = await axios({
-            url: 'http://10.12.20.226:3000/api/admin/login',
+            url: 'http://172.20.10.2:3000/api/admin/login',
             method: 'POST',
             data: {
                 email: formData.email,

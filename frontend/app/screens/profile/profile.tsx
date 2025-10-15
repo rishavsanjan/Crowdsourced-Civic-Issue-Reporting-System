@@ -85,7 +85,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
       console.log("Profile fetch error:", error.response?.data || error.message);
       await AsyncStorage.removeItem("citytoken");
       setIsLogin(false);
-      navigation.replace("Login");
+      navigation.replace("WelcomeLoginScreen");
     } finally {
       setLoading(false);
     }

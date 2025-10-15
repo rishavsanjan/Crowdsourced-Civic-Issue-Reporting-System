@@ -519,6 +519,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                     <View className="h-20" />
                 </ScrollView>
             )}
+            <TouchableOpacity onPress={() => {navigation.navigate('WelcomeChatbot')}}>
+                <Image style={{ width: 70, height: 70, bottom: 17, position: 'absolute', right: 20 }} src='https://img.icons8.com/?size=100&id=9Otd0Js4uSYi&format=png&color=000000' />
+            </TouchableOpacity>
 
 
         </View>

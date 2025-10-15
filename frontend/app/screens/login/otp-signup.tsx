@@ -161,7 +161,7 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
                     <Text className="text-base text-gray-600 text-center mb-8 leading-6">
                         Welcome aboard! Your account has been successfully created.
                     </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('Login')} className="w-full bg-gray-900 rounded-xl py-4 items-center">
+                    <TouchableOpacity onPress={() => navigation.navigate('OTPLogin')} className="w-full bg-gray-900 rounded-xl py-4 items-center">
                         <Text className="text-white text-base font-semibold">Get Started</Text>
                     </TouchableOpacity>
                 </View>

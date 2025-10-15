@@ -6,8 +6,9 @@ import { createUserSchema, vadlidateComplainSchema, validateUserSchema } from '.
 import authMid from '../middlewares/userAuth';
 import { success } from 'zod';
 import { Twilio } from "twilio";
-
 import dotenv from 'dotenv';
+import axios from 'axios'
+
 dotenv.config();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -319,11 +320,23 @@ userRoute.post('/addcomplain', authMid, async (req, res) => {
             latitude,
             longitude,
             address,
-            media // This will be an array of media objects
+            media
         } = req.body;
         //@ts-ignore
-        const userId = req.user.user_id; // From authentication middleware
+        const userId = req.user.user_id;
+        const response = await axios({
+            url: `http://127.0.0.1:8000/predict`,
+            method: 'post',
+            data: {
+                complaint: description
+            }
+        })
+
+        console.log(response.data)
+
         checkActiveReporterBadge(userId);
+        const formattedDepartment = await response.data.predicted_department.toUpperCase().replace(/\s+/g, "_");
+
 
         // Create complaint with media in a transaction
         const result = await prisma.$transaction(async (prisma) => {
@@ -331,7 +344,7 @@ userRoute.post('/addcomplain', authMid, async (req, res) => {
             const complaint = await prisma.complaint.create({
                 data: {
                     user_id: userId,
-                    category: category,
+                    category: formattedDepartment || 'N/A',
                     title: title,
                     description: description,
                     latitude: latitude,
@@ -385,6 +398,36 @@ userRoute.get('/allcomplain', authMid, async (req, res) => {
         })
 
         return res.status(200).json({ success: true, msg: 'success', complaint: complaint })
+    } catch (error) {
+        console.error('Error creating complaint:', error);
+
+    }
+});
+
+
+userRoute.post('/chatbot-message', authMid, async (req, res) => {
+    console.log('i m hit')
+    try {
+        //@ts-ignore
+        const userId = req.user.user_id;
+        let { message } = req.body;
+        message = message.toLowerCase();
+        if (message === 'hi' || message === 'hello' || message === 'hey' || message === 'hii' || message === 'hiii') {
+            return res.status(200).json({ success: true, msg: "Hey there, How may I help you today ?" })
+        }
+
+        if (message === 'complaint status') {
+            const complaint = await prisma.complaint.findMany({
+                where: {
+                    user_id: userId
+                }
+            })
+            return res.status(200).json({ success: true, msg: 'Here are all the complaints, Please choose the one whose status you want to know:', complaint: complaint })
+
+        }
+        
+
+        return res.status(200).json({ success: false })
     } catch (error) {
         console.error('Error creating complaint:', error);
 

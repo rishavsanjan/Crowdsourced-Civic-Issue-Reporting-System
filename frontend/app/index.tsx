@@ -25,6 +25,8 @@ import Settings from './screens/profile/settings';
 
 // i18n setup
 import { initI18n } from './i18n/i18n';
+import WelcomeChatbot from './screens/chatbot/welcome';
+import Chatbot from './screens/chatbot/chatbot';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -53,10 +55,11 @@ function BottomTabs() {
     >
       <Tab.Screen
         //@ts-ignore
-        name={t('home')}
+        name="HomeTab"
         //@ts-ignore
         component={HomeScreen}
         options={{
+          tabBarLabel: t('home'),
           tabBarIcon: ({ focused }) => (
             <Image
               style={{
@@ -74,10 +77,11 @@ function BottomTabs() {
 
       <Tab.Screen
         //@ts-ignore
-        name={t('upload')}
+        name="UploadTab"
         //@ts-ignore
         component={RaiseComplainScreen}
         options={{
+          tabBarLabel: t('upload'),
           tabBarIcon: ({ focused }) => (
             <Image
               style={{
@@ -95,10 +99,11 @@ function BottomTabs() {
 
       <Tab.Screen
         //@ts-ignore
-        name={t('profile')}
+        name="ProfileTab"
         //@ts-ignore
         component={ProfileScreen}
         options={{
+          tabBarLabel: t('profile'),
           tabBarIcon: ({ focused }) => (
             <Image
               style={{
@@ -116,6 +121,7 @@ function BottomTabs() {
     </Tab.Navigator>
   );
 }
+
 
 export default function Index() {
   const [ready, setReady] = useState(false);
@@ -151,6 +157,7 @@ export default function Index() {
         <ToastManager />
 
         <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
+
           <Stack.Screen name="HomeScreen" component={BottomTabs} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="WelcomeLoginScreen" component={WelcomeLoginScreen} />
@@ -161,6 +168,9 @@ export default function Index() {
           <Stack.Screen name="Badges" component={Badges} />
           <Stack.Screen name="AllComplaints" component={AllComplaints} />
           <Stack.Screen name="Settings" component={Settings} />
+          <Stack.Screen name="WelcomeChatbot" component={WelcomeChatbot} />
+          <Stack.Screen name="Chatbot" component={Chatbot} />
+
         </Stack.Navigator>
       </SafeAreaView>
     </SafeAreaProvider>

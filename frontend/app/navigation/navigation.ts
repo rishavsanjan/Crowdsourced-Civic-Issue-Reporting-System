@@ -11,5 +11,7 @@ export type RootStackParamList = {
     Badges:undefined,
     Upload:undefined,
     AllComplaints:undefined,
-    Settings:undefined
+    Settings:undefined,
+    WelcomeChatbot:undefined,
+    Chatbot:undefined
 }
