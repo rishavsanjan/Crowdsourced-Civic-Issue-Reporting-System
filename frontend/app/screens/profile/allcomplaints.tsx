@@ -94,7 +94,7 @@ const AllComplaints: React.FC<Props> = ({ navigation, route }) => {
             const token = await AsyncStorage.getItem('citytoken');
             const response = await axios({
                 method: 'get',
-                url: `${API_BASE_IP}/user/allcomplain`,
+                url: `${API_BASE_IP}/api/user/allcomplain`,
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
@@ -102,6 +102,7 @@ const AllComplaints: React.FC<Props> = ({ navigation, route }) => {
             console.log(response.data);
             setComplaints(response.data.complaint);
         } catch (error) {
+            console.log(error)
             console.error('Error fetching complaints:', error);
         }
     }

@@ -399,6 +399,7 @@ userRoute.get('/allcomplain', authMid, async (req, res) => {
 
         return res.status(200).json({ success: true, msg: 'success', complaint: complaint })
     } catch (error) {
+        console.log(error)
         console.error('Error creating complaint:', error);
 
     }
@@ -425,7 +426,7 @@ userRoute.post('/chatbot-message', authMid, async (req, res) => {
             return res.status(200).json({ success: true, msg: 'Here are all the complaints, Please choose the one whose status you want to know:', complaint: complaint })
 
         }
-        
+
 
         return res.status(200).json({ success: false })
     } catch (error) {
@@ -433,6 +434,31 @@ userRoute.post('/chatbot-message', authMid, async (req, res) => {
 
     }
 });
+
+userRoute.post('save-expo-token', authMid, async (req, res) => {
+    try {
+        //@ts-ignore
+        const userId = req.user.user_id;
+        const { pushToken } = req.body;
+
+        if (!pushToken) {
+            return res.status(404).json({ success: false, msg: 'Token is missing' })
+        }
+
+        await prisma.user.update({
+            where: { id: userId },
+            data: {
+                expoPushToken: pushToken
+            }
+        })
+
+        return res.status(201).json({ success: true, msg: 'Token added successfully' })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ success: false, msg: 'Server Error' })
+    }
+})
 
 
 

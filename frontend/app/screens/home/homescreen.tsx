@@ -13,7 +13,7 @@ import { Toast } from 'toastify-react-native';
 import * as Location from "expo-location";
 import API_BASE_IP from '../../../config/api';
 import LottieView from 'lottie-react-native';
-
+import { registerForPushNotificationsAsync } from '../../notifications/notificationService'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
 import NetInfo from '@react-native-community/netinfo';
@@ -84,10 +84,32 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         )
     }
 
+    async function savePushToken() {
+        const pushToken = await registerForPushNotificationsAsync();
+
+        if (pushToken) {
+            await AsyncStorage.setItem("expoPushToken", pushToken);
+            const token = await AsyncStorage.getItem('citytoken')
+            const response = await axios({
+                url: `${API_BASE_IP}/api/user/save-expo-token`,
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                },
+                data:{
+                    pushToken
+                }
+            })
+        }
+    }
+
+    
+
 
     const getLoginStatus = async () => {
         const token = await AsyncStorage.getItem('citytoken');
         if (token) {
+            savePushToken();
             setIsLogin(true);
         } else {
             navigation.navigate('WelcomeLoginScreen');
@@ -519,7 +541,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                     <View className="h-20" />
                 </ScrollView>
             )}
-            <TouchableOpacity onPress={() => {navigation.navigate('WelcomeChatbot')}}>
+            <TouchableOpacity onPress={() => { navigation.navigate('WelcomeChatbot') }}>
                 <Image style={{ width: 70, height: 70, bottom: 17, position: 'absolute', right: 20 }} src='https://img.icons8.com/?size=100&id=9Otd0Js4uSYi&format=png&color=000000' />
             </TouchableOpacity>
 

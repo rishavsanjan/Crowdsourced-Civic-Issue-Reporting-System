@@ -37,12 +37,7 @@ const Chatbot: React.FC<Props> = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const [complaints, setComplaints] = useState<Complaint[]>([]);
 
-    const quickOptions = [
-        'Complaint Status',
-        'Raise New Complaint',
-        'What is our vision ?',
-        'Contact Support',
-    ];
+    const quickOptions = ['Complaint Status', 'Raise New Complaint', 'What is our vision ?',];
 
     useEffect(() => {
         setMessages([

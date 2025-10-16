@@ -6,6 +6,7 @@ import { validateAdminSchema } from '../zodType';
 import authMid from '../middlewares/userAuth';
 import { success } from 'zod';
 import { Twilio } from "twilio";
+import fetch from "node-fetch";
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -15,6 +16,30 @@ const adminRoute = express.Router();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = new Twilio(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!);
+
+async function SendPushNotification(expoPushToken: string, title: string, body: string, data: number | undefined) {
+    const message = {
+        to: expoPushToken,
+        sound: 'default',
+        title,
+        body,
+        data,
+    }
+
+    try {
+        const response = await fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(message),
+        });
+
+        const result = await response.json();
+        console.log("Expo push result:", result);
+    } catch (error) {
+        console.error("Error sending push:", error);
+    }
+}
+
 
 
 adminRoute.post('/login', async (req, res) => {
@@ -119,7 +144,7 @@ adminRoute.post('/update-status', authMid, async (req, res) => {
             where: {
                 complaint_id
             },
-            select: {
+            include: {
                 user: true
             }
         })
@@ -132,6 +157,16 @@ adminRoute.post('/update-status', authMid, async (req, res) => {
                 status: newStatus
             }
         })
+        const user = await prisma.user.findUnique({ where: { id: complaint?.user.id } });
+
+        if (user?.expoPushToken) {
+            await SendPushNotification(
+                user.expoPushToken,
+                "Complaint Status Updated ✅",
+                `Your status is changed to  ${newStatus}. Please log in the app to check the new status of your report.`,
+                complaint?.complaint_id
+            );
+        }
         try {
             const message = await client.messages.create({
                 body: `Your status is changed to  ${newStatus}. Please log in the app to check the new status of your report.`,
