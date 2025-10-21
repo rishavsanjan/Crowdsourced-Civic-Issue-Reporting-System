@@ -21,7 +21,7 @@ export default function AdminSignup() {
 
     const handleSubmit = async () => {
         const response = await axios({
-            url: 'http://172.20.10.2:3000/api/user/signup',
+            url: 'http://192.168.29.105:3000/api/user/signup',
             method: 'POST',
             data: {
                 email: formData.email,

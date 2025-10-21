@@ -41,7 +41,7 @@ const MyMapAll: React.FC<MyMapProps> = ({ }) => {
             const token = localStorage.getItem('admincitytoken');
 
             const response = await axios({
-                url: `http://172.20.10.2:3000/api/admin/admin-home`,
+                url: `http://192.168.29.105:3000/api/admin/admin-home`,
                 method: 'get',
                 headers: token ? { Authorization: `Bearer ${token}` } : {}
             });

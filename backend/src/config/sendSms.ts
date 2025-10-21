@@ -32,7 +32,7 @@ const sendSms = async () => {
     try {
         const message = await client.messages.create({
             body: `Your verification code is ${OTP}`,
-            messagingServiceSid: "MGc32bd6eb432459172852c6e93b77a461", // ✅ Correct property
+            messagingServiceSid: "MGc32bd6eb432459172852c6e93b77a461",
             to: "+917051901216"
         });
 

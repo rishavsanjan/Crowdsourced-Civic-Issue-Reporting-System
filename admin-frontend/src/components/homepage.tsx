@@ -22,6 +22,13 @@ const AdminHome: React.FC = () => {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [filteredComplaints, setFilteredComplaints] = useState<Complaint[]>([]);
   const [sortFilter, setSortFilter] = useState('new');
+  
+  const [complainCounts, setComplainCounts] = useState({
+    resloved: 0,
+    pending: 0,
+    in_progress: 0
+  });
+
   const navigate = useNavigate();
 
   const getReports = async () => {
@@ -30,11 +37,12 @@ const AdminHome: React.FC = () => {
       navigate("/admin-signup");
     }
     const response = await axios({
-      url: `http://172.20.10.2:3000/api/admin/admin-home`,
+      url: `http://192.168.29.105:3000/api/admin/admin-home`,
       method: 'get'
     });
     setComplaints(response.data.complaints);
     setFilteredComplaints(response.data.complaints);
+    setComplainCounts(response.data.countComplaints)
     console.log(response.data)
   };
 
@@ -65,7 +73,6 @@ const AdminHome: React.FC = () => {
     setFilteredComplaints(sortedComplaints)
   }, [sortFilter]);
 
-  console.log(statusFilter)
 
 
 
@@ -88,6 +95,7 @@ const AdminHome: React.FC = () => {
     return `${month}-${day}-${year}`;
   }
 
+
   return (
     <div className="flex h-screen bg-gray-100 light:bg-gray-900">
       {/* Sidebar */}
@@ -102,12 +110,12 @@ const AdminHome: React.FC = () => {
           <nav className="mt-8 flex-1">
             <ul className="space-y-2">
               <li>
-                <a className="flex items-center gap-3 px-3 py-2 rounded text-gray-700 light:text-gray-300 hover:bg-blue-50 light:hover:bg-blue-900/20 hover:text-blue-600" href="#">
+                <Link to={'/dashboard'} className="flex items-center gap-3 px-3 py-2 rounded text-gray-700 light:text-gray-300 hover:bg-blue-50 light:hover:bg-blue-900/20 hover:text-blue-600" >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
                   </svg>
                   <span className="font-medium">Dashboard</span>
-                </a>
+                </Link>
               </li>
               <li>
                 <Link to={'/my-map-all'} className="flex items-center gap-3 px-3 py-2 rounded text-gray-700 light:text-gray-300 hover:bg-blue-50 light:hover:bg-blue-900/20 hover:text-blue-600">
@@ -174,16 +182,16 @@ const AdminHome: React.FC = () => {
           {/* Stats Cards */}
           <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-white light:bg-gray-800 p-6 rounded-lg shadow-sm">
-              <p className="text-sm font-medium text-gray-500 light:text-gray-400">New</p>
-              <p className="text-3xl font-bold text-gray-900 light:text-white mt-1">25</p>
+              <p className="text-sm font-medium text-gray-500 light:text-gray-400">Pending</p>
+              <p className="text-3xl font-bold text-gray-900 light:text-white mt-1">{complainCounts?.pending || 0}</p>
             </div>
             <div className="bg-white light:bg-gray-800 p-6 rounded-lg shadow-sm">
               <p className="text-sm font-medium text-gray-500 light:text-gray-400">In Progress</p>
-              <p className="text-3xl font-bold text-gray-900 light:text-white mt-1">75</p>
+              <p className="text-3xl font-bold text-gray-900 light:text-white mt-1">{complainCounts?.in_progress || 0}</p>
             </div>
             <div className="bg-white light:bg-gray-800 p-6 rounded-lg shadow-sm">
               <p className="text-sm font-medium text-gray-500 light:text-gray-400">Resolved</p>
-              <p className="text-3xl font-bold text-gray-900 light:text-white mt-1">150</p>
+              <p className="text-3xl font-bold text-gray-900 light:text-white mt-1">{complainCounts?.resloved || 0}</p>
             </div>
           </section>
 

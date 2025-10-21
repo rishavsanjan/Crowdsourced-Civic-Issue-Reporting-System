@@ -13,98 +13,92 @@ model User {
   email         String?     @unique
   password      String
   createdAt     DateTime    @default(now())
-  verified      Boolean     @default(false)
-  phonenumber   String?     @unique
   role          UserRole    @default(user)
+  phonenumber   String?     @unique
+  verified      Boolean     @default(false)
   expoPushToken String?
   Complaint     Complaint[]
-  Vote          Vote[]
   UserBadge     UserBadge[]
+  Vote          Vote[]
+}
+
+model Complaint {
+  complaint_id          Int                     @id @default(autoincrement())
+  user_id               Int
+  category              Category
+  title                 String
+  description           String?
+  status                Status                  @default(pending)
+  latitude              Float?
+  longitude             Float?
+  address               String?
+  bert_category         String?
+  updated_at            DateTime                @updatedAt
+  createdAt             DateTime                @default(now())
+  AdminstrativeComments AdminstrativeComments[]
+  user                  User                    @relation(fields: [user_id], references: [id])
+  media                 Media[]
+  votes                 Vote[]
+}
+
+model Media {
+  media_id     Int       @id @default(autoincrement())
+  complaint_id Int
+  file_url     String
+  file_type    FileType
+  uploaded_at  DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  complaint    Complaint @relation(fields: [complaint_id], references: [complaint_id])
+}
+
+model Vote {
+  vote_id      Int       @id @default(autoincrement())
+  complaint_id Int
+  user_id      Int
+  vote_type    VoteType
+  createdAt    DateTime  @default(now())
+  complaint    Complaint @relation(fields: [complaint_id], references: [complaint_id])
+  user         User      @relation(fields: [user_id], references: [id])
+
+  @@unique([complaint_id, user_id])
+}
+
+model AdminstrativeComments {
+  id           String                   @id @default(uuid())
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+  complaint_id Int
+  comment      String
+  type         AdminstrativeCommentType
+  complain     Complaint                @relation(fields: [complaint_id], references: [complaint_id])
+}
+
+model BadgeType {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  description String?
+  criteria    String?
+  icon_url    String?
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+  userBadges  UserBadge[]
+}
+
+model UserBadge {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  badge_id   Int
+  awarded_at DateTime  @default(now())
+  badge      BadgeType @relation(fields: [badge_id], references: [id])
+  user       User      @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, badge_id])
 }
 
 enum UserRole {
   admin
   user
-}
-
-model Complaint {
-  complaint_id  Int      @id @default(autoincrement())
-  user_id       Int
-  category      Category
-  title         String
-  description   String?
-  status        Status   @default(pending)
-  latitude      Float?
-  longitude     Float?
-  address       String?
-  bert_category String? // auto-classified category
-  createdAt     DateTime @default(now())
-  updated_at    DateTime @updatedAt
-
-  user                  User                    @relation(fields: [user_id], references: [id])
-  media                 Media[]
-  votes                 Vote[]
-  AdminstrativeComments AdminstrativeComments[]
-}
-
-model Media {
-  media_id     Int      @id @default(autoincrement())
-  complaint_id Int
-  file_url     String
-  file_type    FileType
-  uploaded_at  DateTime @default(now())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  complaint Complaint @relation(fields: [complaint_id], references: [complaint_id])
-}
-
-model Vote {
-  vote_id      Int      @id @default(autoincrement())
-  complaint_id Int
-  user_id      Int
-  vote_type    VoteType
-  createdAt    DateTime @default(now())
-
-  complaint Complaint @relation(fields: [complaint_id], references: [complaint_id])
-  user      User      @relation(fields: [user_id], references: [id])
-
-  @@unique([complaint_id, user_id]) // prevent duplicate votes
-}
-
-model AdminstrativeComments {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  complaint_id Int
-  complain     Complaint                @relation(fields: [complaint_id], references: [complaint_id])
-  comment      String
-  type         AdminstrativeCommentType
-}
-
-model BadgeType {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  description String?
-  criteria    String?
-  icon_url    String?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-
-  userBadges UserBadge[]
-}
-
-model UserBadge {
-  id         Int      @id @default(autoincrement())
-  user_id    Int
-  badge_id   Int
-  awarded_at DateTime @default(now())
-
-  user  User      @relation(fields: [user_id], references: [id])
-  badge BadgeType @relation(fields: [badge_id], references: [id])
-
-  @@unique([user_id, badge_id])
 }
 
 enum AdminstrativeCommentType {

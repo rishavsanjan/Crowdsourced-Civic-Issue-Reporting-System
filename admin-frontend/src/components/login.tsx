@@ -21,7 +21,7 @@ export default function AdminLogin() {
 
     const handleSubmit = async () => {
         const response = await axios({
-            url: 'http://172.20.10.2:3000/api/admin/login',
+            url: 'http://192.168.29.105:3000/api/admin/login',
             method: 'POST',
             data: {
                 email: formData.email,
@@ -35,6 +35,7 @@ export default function AdminLogin() {
         })
 
         localStorage.setItem('admincitytoken', response.data.msg);
+        console.log(response.data)
         navigate("/");
 
     };
@@ -65,7 +66,7 @@ export default function AdminLogin() {
                         </div>
 
                         <div id="onboarding-steps">                            <div className="space-y-6">
-                            
+
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 light:text-gray-300" htmlFor="email">Email Address</label>
                                 <div className="mt-1">
