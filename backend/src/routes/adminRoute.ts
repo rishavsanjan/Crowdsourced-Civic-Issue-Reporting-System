@@ -257,4 +257,4 @@ adminRoute.get('/admin-dashboard', async (req, res) => {
     }
 });
 
-export default adminRoute
+export default adminRoute;

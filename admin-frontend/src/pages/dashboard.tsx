@@ -23,7 +23,7 @@ const Dashboard = () => {
       navigate("/admin-signup");
     }
     const response = await axios({
-      url: `http://192.168.29.105:3000/api/admin/admin-dashboard`,
+      url: `http://localhost:3000/api/admin/admin-dashboard`,
       method: 'get',
       headers: {
         'Authorization': 'Bearer ' + token

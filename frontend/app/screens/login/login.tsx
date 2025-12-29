@@ -135,7 +135,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             </View>
             <View className='items-center mb-8'>
                 <Text className='text-[#1173D4] font-bold'>Forgot Password?</Text>
-                <Text className='text-gray-500 font-semibold'>Don't have a acoount ?
+                <Text className='text-gray-500 font-semibold'>Dont have a acoount ?
                     <TouchableOpacity onPress={() => navigation.navigate('SignUpScreen')}>
                         <Text className='text-[#1173D4] font-bold'> Sign Up</Text>
                     </TouchableOpacity>

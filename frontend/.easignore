@@ -1,21 +1,63 @@
-# Node modules (optional if using managed workflow)
+@"
+# Dependencies
 node_modules/
-# Local assets not needed for build
-**/*.mp4
-**/*.mov
-**/*.zip
-# iOS and Android native folders (not needed for managed workflow)
-ios/
-android/
-# Expo caches and temp files
-.expo/
-.expo-shared/
-# Git files
-.git/
-.gitignore
-.env.local
-node_modules
+
+# Android build artifacts - CRITICAL
+android/app/build/
+android/.gradle/
+android/build/
+android/.cxx/
+
+# iOS build artifacts
+ios/Pods/
+ios/build/
+
+# Node modules build artifacts inside packages
+**/node_modules/**/android/build/
+**/node_modules/**/android/.cxx/
+**/node_modules/**/android/.gradle/
+**/node_modules/**/ios/build/
+
 # Logs
 *.log
-.vscode
+npm-debug.log*
+yarn-debug.log*
+
+# IDE
 .vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+
+# Git
+.git/
+
+# Environment files
+.env*
+
+# Expo
+.expo/
+.expo-shared/
+
+# Build outputs
+dist/
+build/
+
+# Documentation
+*.md
+docs/
+
+# Tests
+**/__tests__/
+**/__mocks__/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+"@ | Out-File -FilePath .easignore -Encoding utf8 -Force

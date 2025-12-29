@@ -56,7 +56,7 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
 
     // Cloudinary configuration
     const CLOUDINARY_CLOUD_NAME = "diwmvqto3"; // Replace with your Cloudinary cloud name
-    const CLOUDINARY_UPLOAD_PRESET = "crowd-app"; // Replace with your upload preset
+    const CLOUDINARY_UPLOAD_PRESET = "crowd-app"; 
 
     // Get login status
     const getLoginStatus = async () => {

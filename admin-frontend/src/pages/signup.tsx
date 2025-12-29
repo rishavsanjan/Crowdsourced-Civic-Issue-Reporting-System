@@ -9,7 +9,7 @@ export default function AdminSignup() {
         password: '',
     });
 
-    const handleInputChange = (e: any) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -21,7 +21,7 @@ export default function AdminSignup() {
 
     const handleSubmit = async () => {
         const response = await axios({
-            url: 'http://192.168.29.105:3000/api/user/signup',
+            url: 'http://localhost:3000/api/user/signup',
             method: 'POST',
             data: {
                 email: formData.email,
