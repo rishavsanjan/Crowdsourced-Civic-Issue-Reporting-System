@@ -35,7 +35,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         setLoading(true);
         try {
             const response = await axios({
-                url: 'http://10.11.9.95:3000/api/user/login',
+                url: 'http://192.168.29.179:3000/api/user/login',
                 method: 'POST',
                 data: {
                     email: loginForm.email,
@@ -135,9 +135,9 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             </View>
             <View className='items-center mb-8'>
                 <Text className='text-[#1173D4] font-bold'>Forgot Password?</Text>
-                <Text className='text-gray-500 font-semibold'>Don't have a acoount ?
+                <Text className='text-gray-500 font-semibold'>Dont have a acoount ?
                     <TouchableOpacity onPress={() => navigation.navigate('SignUpScreen')}>
-                        <Text className='text-[#1173D4] font-bold'> Sign Up</Text>
+                        <Text className='text-[#1173D4] font-bold'>Sign Up</Text>
                     </TouchableOpacity>
 
                 </Text>

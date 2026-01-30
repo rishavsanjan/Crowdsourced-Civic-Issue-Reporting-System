@@ -30,13 +30,12 @@ interface Complaint {
 
 interface AdminstrativeComments extends Complaint {
     id: string
-    type: String
+    type: string
     comment: string
 }
 
 const ReportDetail: React.FC = () => {
     const [status, setStatus] = useState('pending');
-    const [category, setCategory] = useState('Roads & Streets');
     const { complaint_id } = useParams();
     const [comment, setComment] = useState('');
     const [commentType, setCommentType] = useState('');
@@ -59,10 +58,6 @@ const ReportDetail: React.FC = () => {
     useEffect(() => {
         getReportDetails();
     }, []);
-
-
-
-
 
     const addComment = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -129,7 +124,7 @@ const ReportDetail: React.FC = () => {
 
     const updateStatus = async () => {
         const token = localStorage.getItem('admincitytoken');
-        const response = await axios(`http://172.20.10.2:3000/api/admin/update-status`, {
+         await axios(`http://172.20.10.2:3000/api/admin/update-status`, {
             method: 'post',
             headers: {
                 'Authorization': 'Bearer ' + token

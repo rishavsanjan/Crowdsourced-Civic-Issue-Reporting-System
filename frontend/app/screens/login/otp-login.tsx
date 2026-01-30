@@ -28,7 +28,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'OTPLogin'>;
 
 
 const OTPLogin: React.FC<Props> = ({ navigation }) => {
-    const [loginMethod, setLoginMethod] = useState('password'); // 'password' or 'otp'
+    const [loginMethod, setLoginMethod] = useState('password'); 
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -203,7 +203,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                         Welcome Back!
                     </Text>
                     <Text className="text-base text-gray-600 text-center mb-8 leading-6">
-                        You've successfully logged in to your account.
+                        You have successfully logged in to your account.
                     </Text>
                     <TouchableOpacity onPress={() => { navigation.navigate('HomeScreen') }} className="w-full bg-[#1173D4] rounded-xl py-4 items-center">
                         <Text className="text-white text-base font-semibold">Continue</Text>
@@ -426,7 +426,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                         {/* Sign Up Link */}
                         <View className="flex-row justify-center items-center mt-6">
                             <Text className="text-gray-600 text-sm">
-                                Don't have an account?{' '}
+                                Dont have an account?{' '}
                             </Text>
                             <TouchableOpacity onPress={() => {navigation.navigate('OTPSignUp')}} activeOpacity={0.7}>
                                 <Text className="text-gray-900 text-sm font-semibold">

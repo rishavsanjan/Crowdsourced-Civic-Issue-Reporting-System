@@ -27,6 +27,7 @@ import Settings from './screens/profile/settings';
 import { initI18n } from './i18n/i18n';
 import WelcomeChatbot from './screens/chatbot/welcome';
 import Chatbot from './screens/chatbot/chatbot';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -125,6 +126,7 @@ function BottomTabs() {
 
 export default function Index() {
   const [ready, setReady] = useState(false);
+  const queryClient = new QueryClient()
 
   useEffect(() => {
     const init = async () => {
@@ -152,27 +154,30 @@ export default function Index() {
   }
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
-        <ToastManager />
+    <QueryClientProvider client={queryClient}>
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+          <ToastManager />
 
-        <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
+          <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
 
-          <Stack.Screen name="HomeScreen" component={BottomTabs} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="WelcomeLoginScreen" component={WelcomeLoginScreen} />
-          <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
-          <Stack.Screen name="ComplainDetails" component={ComplaintDetails} />
-          <Stack.Screen name="OTPSignUp" component={OTPSignUp} />
-          <Stack.Screen name="OTPLogin" component={OTPLogin} />
-          <Stack.Screen name="Badges" component={Badges} />
-          <Stack.Screen name="AllComplaints" component={AllComplaints} />
-          <Stack.Screen name="Settings" component={Settings} />
-          <Stack.Screen name="WelcomeChatbot" component={WelcomeChatbot} />
-          <Stack.Screen name="Chatbot" component={Chatbot} />
+            <Stack.Screen name="HomeScreen" component={BottomTabs} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="WelcomeLoginScreen" component={WelcomeLoginScreen} />
+            <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+            <Stack.Screen name="ComplainDetails" component={ComplaintDetails} />
+            <Stack.Screen name="OTPSignUp" component={OTPSignUp} />
+            <Stack.Screen name="OTPLogin" component={OTPLogin} />
+            <Stack.Screen name="Badges" component={Badges} />
+            <Stack.Screen name="AllComplaints" component={AllComplaints} />
+            <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="WelcomeChatbot" component={WelcomeChatbot} />
+            <Stack.Screen name="Chatbot" component={Chatbot} />
 
-        </Stack.Navigator>
-      </SafeAreaView>
-    </SafeAreaProvider>
+          </Stack.Navigator>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </QueryClientProvider>
+
   );
 }
