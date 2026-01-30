@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { ClipLoader } from 'react-spinners';
 
 export default function AdminLogin() {
     const navigate = useNavigate();
@@ -8,8 +9,9 @@ export default function AdminLogin() {
         email: '',
         password: '',
     });
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const handleInputChange = (e: any) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -20,22 +22,31 @@ export default function AdminLogin() {
 
 
     const handleSubmit = async () => {
-        const response = await axios({
-            url: 'http://172.20.10.2:3000/api/admin/login',
-            method: 'POST',
-            data: {
-                email: formData.email,
-                password: formData.password,
-            }
-        });
-        console.log(response);
-        setFormData({
-            email: "",
-            password: ''
-        })
+        setLoading(true)
+        try {
+            const response = await axios({
+                url: 'http://localhost:3000/api/admin/login',
+                method: 'POST',
+                data: {
+                    email: formData.email,
+                    password: formData.password,
+                }
+            });
+            console.log(response.data);
+            setFormData({
+                email: "",
+                password: ''
+            })
 
-        localStorage.setItem('admincitytoken', response.data.msg);
-        navigate("/");
+            localStorage.setItem('admincitytoken', response.data.msg);
+            console.log(response.data)
+            navigate("/");
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+
 
     };
 
@@ -65,7 +76,7 @@ export default function AdminLogin() {
                         </div>
 
                         <div id="onboarding-steps">                            <div className="space-y-6">
-                            
+
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 light:text-gray-300" htmlFor="email">Email Address</label>
                                 <div className="mt-1">
@@ -98,11 +109,20 @@ export default function AdminLogin() {
                             </div>
                             <div className="pt-4">
                                 <button
+                                    disabled={loading}
                                     className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600"
                                     onClick={() => handleSubmit()}
                                     type="button"
                                 >
-                                    Submit
+                                    {
+                                        loading ?
+                                            <ClipLoader />
+                                            :
+                                            <>
+                                                Submit
+                                            </>
+                                    }
+
                                 </button>
                             </div>
                             <div className='flex flex-row gap-2 items-center justify-center'>

@@ -41,7 +41,6 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
 
     const otpInputs = useRef([]);
-    console.log(API_BASE_IP)
     useEffect(() => {
         if (showOtpInput && timer > 0) {
             const interval = setInterval(() => {
@@ -66,11 +65,12 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
     };
 
     const sendOtp = async () => {
+
         if (phone.length < 10) {
             setError('Please enter a valid phone number');
             return;
         };
-
+        setLoading(true)
         const response = await axios({
             url: `${API_BASE_IP}/api/user/login-otp`,
             method: "post",
@@ -78,7 +78,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                 phone: phone
             }
         });
-
+        setLoading(false)
         if (response.data.error) {
             Toast.error(`${response.data.error}`);
             return;
@@ -118,6 +118,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
     };
 
     const verifyOtp = async (otpToVerify = otp) => {
+        setLoading(true)
         const enteredOtp = otpToVerify.join('');
         if (enteredOtp === generatedOtp) {
             const response = await axios({
@@ -138,12 +139,13 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
 
             }
             setSuccess(true);
-
+            setLoading(false)
         } else {
             setError('Invalid OTP. Please try again.');
             setOtp(['', '', '', '', '', '']);
             //@ts-ignore
             otpInputs.current[0]?.focus();
+            setLoading(false)
         }
     };
 
@@ -319,6 +321,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                         className="bg-[#1173D4] rounded-xl py-4 items-center mb-4"
                                         onPress={handlePasswordLogin}
                                         activeOpacity={0.8}
+                                        disabled={loading}
                                     >
                                         {
                                             loading ?
@@ -346,10 +349,19 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                                 className="bg-[#1173D4] rounded-xl py-4 items-center mb-4"
                                                 onPress={sendOtp}
                                                 activeOpacity={0.8}
+                                                disabled={loading}
                                             >
-                                                <Text className="text-white text-base font-semibold">
-                                                    Send OTP
-                                                </Text>
+                                                {
+                                                    loading ?
+                                                        <View className="flex-row items-center">
+                                                            <ActivityIndicator color="white" size="small" />
+                                                            <Text className="text-white font-medium ml-2">Sending OTP...</Text>
+                                                        </View>
+                                                        :
+                                                        <Text className="text-white text-base font-semibold">
+                                                            Send OTP
+                                                        </Text>
+                                                }
                                             </TouchableOpacity>
                                         </>
                                     ) : (
@@ -401,10 +413,19 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                                 className="bg-[#1173D4] rounded-xl py-4 items-center mb-3"
                                                 onPress={() => verifyOtp()}
                                                 activeOpacity={0.8}
+                                                disabled={loading}
                                             >
-                                                <Text className="text-white text-base font-semibold">
-                                                    Verify & Login
-                                                </Text>
+                                                {
+                                                    loading ?
+                                                        <View className="flex-row items-center">
+                                                            <ActivityIndicator color="white" size="small" />
+                                                            <Text className="text-white font-medium ml-2">Verifying...</Text>
+                                                        </View>
+                                                        :
+                                                        <Text className="text-white text-base font-semibold">
+                                                            Verify & Login
+                                                        </Text>
+                                                }
                                             </TouchableOpacity>
 
                                             <TouchableOpacity
@@ -428,7 +449,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                             <Text className="text-gray-600 text-sm">
                                 Dont have an account?{' '}
                             </Text>
-                            <TouchableOpacity onPress={() => {navigation.navigate('OTPSignUp')}} activeOpacity={0.7}>
+                            <TouchableOpacity onPress={() => { navigation.navigate('OTPSignUp') }} activeOpacity={0.7}>
                                 <Text className="text-gray-900 text-sm font-semibold">
                                     Sign Up
                                 </Text>

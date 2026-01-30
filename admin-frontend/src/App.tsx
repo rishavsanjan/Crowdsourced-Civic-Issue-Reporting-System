@@ -1,11 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import './App.css'
-import AdminHome from "./components/homepage";
-import ReportDetail from "./components/complaintdetails";
-import AdminLogin from "./components/login";
-import AdminSignup from "./components/signup";
-import MyMapAll from "./components/alllocationsmap";
+import AdminHome from "./pages/homepage";
+import ReportDetail from "./pages/complaintdetails";
+import AdminLogin from "./pages/login";
+import AdminSignup from "./pages/signup";
+import MyMapAll from "./pages/alllocationsmap";
+import Dashboard from "./pages/dashboard";
 
 function App() {
 
@@ -19,7 +20,7 @@ function App() {
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin-signup" element={< AdminSignup />} />
         <Route path="/my-map-all" element={< MyMapAll />} />
-
+        <Route path="/dashboard" element={< Dashboard />} />
       </Routes>
     )
   }

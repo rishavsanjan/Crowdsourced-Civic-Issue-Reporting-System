@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import MyMap from './map';
+import { ClipLoader } from 'react-spinners';
 
 interface Complaint {
     address: string,
@@ -31,6 +32,7 @@ interface Complaint {
 interface AdminstrativeComments extends Complaint {
     id: string
     type: string
+    type: string
     comment: string
 }
 
@@ -41,14 +43,15 @@ const ReportDetail: React.FC = () => {
     const [commentType, setCommentType] = useState('');
     const [comments, setComments] = useState<AdminstrativeComments[]>([]);
     const [complainDetails, setComplaindetails] = useState<Complaint | null>(null);
+    const [loading, setLoading] = useState(false);
 
-    console.log(status)
 
     const getReportDetails = async () => {
         const response = await axios({
-            url: `http://172.20.10.2:3000/api/admin/details/${complaint_id}`,
+            url: `http://localhost:3000/api/admin/details/${complaint_id}`,
             method: 'get'
         });
+        console.log(response.data)
         setComplaindetails(response.data.complaint);
         setComments(response.data.complaint.AdminstrativeComments);
         console.log(response.data);
@@ -66,7 +69,7 @@ const ReportDetail: React.FC = () => {
         formData.append('commentType', commentType);
         const token = localStorage.getItem('admincitytoken');
         console.log(token)
-        const response = await axios(`http://172.20.10.2:3000/api/admin/add-comment`, {
+        const response = await axios(`http://localhost:3000/api/admin/add-comment`, {
             method: 'post',
             headers: {
                 'Authorization': 'Bearer ' + token
@@ -315,8 +318,15 @@ const ReportDetail: React.FC = () => {
                                             <option>Public Parks</option>
                                         </select>
                                     </div> */}
-                                    <button onClick={updateStatus} disabled={complainDetails?.status == status} className={`${complainDetails?.status == status ? 'bg-gray-600 hover:bg-gray-700' : 'bg-blue-600 hover:bg-blue-700'} w-full px-4 py-2  text-white rounded-lg font-medium  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 light:focus:ring-offset-gray-900`}>
-                                        {complainDetails?.status == status ? 'Change Status' : 'Update Status'}
+                                    <button
+                                        onClick={updateStatus} disabled={complainDetails?.status == status || loading} className={`${complainDetails?.status == status ? 'bg-gray-600 hover:bg-gray-700' : 'bg-blue-600 hover:bg-blue-700'} w-full px-4 py-2  text-white rounded-lg font-medium  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 light:focus:ring-offset-gray-900 items-center`}>
+                                        {
+                                            loading ?
+                                                <ClipLoader color="#fffff" size={25} speedMultiplier={0.8} />
+                                                :
+                                                complainDetails?.status == status ? 'Change Status' : 'Update Status'
+
+                                        }
                                     </button>
                                 </div>
                             </div>

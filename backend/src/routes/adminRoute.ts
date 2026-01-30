@@ -13,8 +13,7 @@ dotenv.config();
 
 const adminRoute = express.Router();
 
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
+
 const client = new Twilio(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!);
 
 async function SendPushNotification(expoPushToken: string, title: string, body: string, data: number | undefined) {
@@ -58,7 +57,8 @@ adminRoute.post('/login', async (req, res) => {
             return res.status(200).json({ error: "Wrong phone number!", success: false })
         }
 
-        const match = await bcrypt.compare(p.data.password, user.password);
+        //const match = await bcrypt.compare(p.data.password, user.password);
+        const match = await p.data.password === user.password;
         if (!match) {
             return res.status(200).json({ error: "Wrong password!", success: false })
         }
@@ -76,13 +76,31 @@ adminRoute.get('/admin-home', async (req, res) => {
         //@ts-ignore
         const complaints = await prisma.complaint.findMany({
             include: {
-                media: true
+                media: true,
+
             },
             orderBy: {
                 createdAt: 'asc'
             }
         })
-        return res.status(200).json({ success: true, complaints });
+
+        const countComplaints = {
+            resloved: 0,
+            pending: 0,
+            in_progress: 0
+        }
+
+        complaints.map((complain) => {
+            if (complain.status === 'in_progress') {
+                countComplaints.in_progress++;
+            } else if (complain.status === 'pending') {
+                countComplaints.pending++;
+            } else {
+                countComplaints.resloved++;
+            }
+        })
+
+        return res.status(200).json({ success: true, complaints, countComplaints });
     } catch (error) {
 
         return res.status(403).json({ error: "Server Problem!", success: false })
@@ -185,4 +203,58 @@ adminRoute.post('/update-status', authMid, async (req, res) => {
     }
 });
 
-export default adminRoute
+adminRoute.get('/admin-dashboard', async (req, res) => {
+    try {
+
+        //pie chart for complaint status
+        const complaints = await prisma.complaint.findMany({
+            include: {
+                media: true,
+
+            },
+            orderBy: {
+                createdAt: 'asc'
+            }
+        })
+
+        const countComplaints = {
+            resloved: 0,
+            pending: 0,
+            in_progress: 0
+        }
+
+        complaints.map((complain) => {
+            if (complain.status === 'in_progress') {
+                countComplaints.in_progress++;
+            } else if (complain.status === 'pending') {
+                countComplaints.pending++;
+            } else {
+                countComplaints.resloved++;
+            }
+        })
+
+        //line chart : complaints over time
+
+        const result = await prisma.complaint.groupBy({
+            by: 'createdAt',
+            _count: { complaint_id: true }
+        })
+
+        const monthlyData: Record<string, number> = {}
+        result.forEach((item) => {
+            const month = new Date(item.createdAt).toLocaleString("default", {
+                month: "short",
+                year: "numeric",
+            });
+            monthlyData[month] = (monthlyData[month] || 0) + item._count.complaint_id;
+        });
+
+        return res.status(200).json({ success: true, complaints, countComplaints, monthlyData });
+
+    } catch (error) {
+        console.log(error)
+        return res.status(403).json({ error: "Server Problem!", success: false })
+    }
+});
+
+export default adminRoute;

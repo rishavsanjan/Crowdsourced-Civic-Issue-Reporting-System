@@ -28,7 +28,7 @@ interface Location {
 interface MyMapProps {
 }
 
-const MyMapAll: React.FC<MyMapProps> = ({ }) => {
+const MyMapAll: React.FC<MyMapProps> = () => {
     const [selectedMarker, setSelectedMarker] = useState<Location | null>(null);
     const [locations, setLocations] = useState<Location[]>([]);
     const [loading, setLoading] = useState(true);
@@ -41,7 +41,7 @@ const MyMapAll: React.FC<MyMapProps> = ({ }) => {
             const token = localStorage.getItem('admincitytoken');
 
             const response = await axios({
-                url: `http://172.20.10.2:3000/api/admin/admin-home`,
+                url: `http://localhost:3000/api/admin/admin-home`,
                 method: 'get',
                 headers: token ? { Authorization: `Bearer ${token}` } : {}
             });
