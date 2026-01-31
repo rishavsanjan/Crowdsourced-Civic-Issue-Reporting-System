@@ -47,9 +47,10 @@ async function checkActiveReporterBadge(userId: number) {
 
 
 
+
+
 userRoute.post('/signup-no-otp', async (req, res) => {
 
-    console.log('hello')
     const { phone } = await req.body;
     const user = await prisma.user.findUnique({
         where: { phonenumber: phone }
@@ -216,6 +217,25 @@ userRoute.post('/login-no-otp', async (req, res) => {
         console.log("Error sending OTP:", error);
     }
 });
+
+userRoute.get('/isValid', authMid, async (req, res) => {
+    //@ts-ignore
+    const userId = req.user.user_id;
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userId
+        },
+        select: {
+            id: true,
+            name: true,
+            phonenumber: true
+        }
+    })
+    console.log('i m here')
+    console.log(user)
+    return res.status(200).json({ msg: 'success', success: true, user: user })
+
+})
 
 
 userRoute.get('/profile', authMid, async (req, res) => {

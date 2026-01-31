@@ -24,6 +24,7 @@ import Animated, {
     Layout,
     FadeInLeft
 } from 'react-native-reanimated';
+import { useAuth } from '@/app/context/auth-context';
 type Props = NativeStackScreenProps<RootStackParamList, 'OTPLogin'>;
 
 
@@ -39,6 +40,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
+    const {login} = useAuth();
 
     const otpInputs = useRef([]);
     useEffect(() => {
@@ -186,7 +188,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
         }
         setError('');
         if (response.status === 200 && response.data.success) {
-            AsyncStorage.setItem('citytoken', response.data.msg);
+            login(response.data.msg)
 
         }
         setLoading(false)
