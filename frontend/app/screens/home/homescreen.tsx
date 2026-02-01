@@ -18,6 +18,10 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
 import NetInfo from '@react-native-community/netinfo';
 import Slider from '@react-native-community/slider';
+import { getStatusColor, getStatusIcon, getStatusText } from '@/app/util/styles';
+import { useAuth } from '@/app/context/auth-context';
+import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
+import { fetchHomePosts } from '@/app/util/posts';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
@@ -59,6 +63,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     const [filteredComplaints, setFilteredComplaints] = useState<Complaint[]>([]);
     const [isConnected, setIsConnected] = useState(true);
     const [distance, setDistance] = useState(8);
+    const [coordinates, setCoordiantes] = useState({
+        lat: 0.0,
+        long: 0.0
+    })
+    const user = useAuth();
 
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
@@ -68,7 +77,27 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         return () => unsubscribe();
     }, []);
 
-    console.log(API_BASE_IP)
+
+    const getLoc = async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+            Toast.error('Permission to access location was denied');
+            return;
+        }
+
+        let loc = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Highest,
+        });
+        setCoordiantes(prev => ({...prev, lat:loc.coords.latitude, long:loc.coords.longitude}))
+    }
+
+    const {data, fetchNextPage, isFetchingNextPage, isLoading, hasNextPage} = useInfiniteQuery({
+        queryKey: ['home-posts', selectedStatus],
+        queryFn: fetchHomePosts,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextPage,
+    });
+    console.log(data)
 
     if (!isConnected) {
         return (
@@ -84,32 +113,34 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         )
     }
 
-    async function savePushToken() {
-        const pushToken = await registerForPushNotificationsAsync();
+    // async function savePushToken() {
+    //     const pushToken = await registerForPushNotificationsAsync();
 
-        if (pushToken) {
-            await AsyncStorage.setItem("expoPushToken", pushToken);
-            const token = await AsyncStorage.getItem('citytoken')
-            const response = await axios({
-                url: `${API_BASE_IP}/api/user/save-expo-token`,
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                },
-                data:{
-                    pushToken
-                }
-            })
-        }
-    }
+    //     if (pushToken) {
+    //         await AsyncStorage.setItem("expoPushToken", pushToken);
+    //         const token = await AsyncStorage.getItem('citytoken')
+    //         const response = await axios({
+    //             url: `${API_BASE_IP}/api/user/save-expo-token`,
+    //             method: 'POST',
+    //             headers: {
+    //                 'Authorization': 'Bearer ' + token
+    //             },
+    //             data: {
+    //                 pushToken
+    //             }
+    //         })
+    //     }
+    // }
 
-    
+
+
+
 
 
     const getLoginStatus = async () => {
         const token = await AsyncStorage.getItem('citytoken');
         if (token) {
-            savePushToken();
+            // savePushToken();
             setIsLogin(true);
         } else {
             navigation.navigate('WelcomeLoginScreen');
@@ -128,6 +159,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             let loc = await Location.getCurrentPositionAsync({
                 accuracy: Location.Accuracy.Highest,
             });
+
             const token = await AsyncStorage.getItem('citytoken');
             const response = await axios({
                 method: 'POST',
@@ -141,7 +173,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                 }
             });
 
-            console.log(response.data);
             if (response.data.complaints) {
                 setComplaints(response.data.complaints);
                 setFilteredComplaints(response.data.complaints);
@@ -155,10 +186,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     };
 
 
+
     useEffect(() => {
         getLoginStatus();
         if (isLogin) {
             getLocation();
+            getLoc();
         }
 
 
@@ -172,57 +205,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
 
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'pending':
-                return '#FF9500';
-            case 'in_progress':
-                return '#007AFF';
-            case 'resolved':
-                return '#34C759';
-            default:
-                return '#8E8E93';
-        }
-    };
-
-    const getStatusIcon = (status: string) => {
-        switch (status) {
-            case 'pending':
-                return 'https://img.icons8.com/?size=100&id=37439&format=png&color=FAB005';
-            case 'in_progress':
-                return 'https://img.icons8.com/?size=100&id=71202&format=png&color=228BE6';
-            case 'resolved':
-                return 'https://img.icons8.com/?size=100&id=114054&format=png&color=40C057';
-            default:
-                return '#8E8E93';
-        }
-    }
-
-    const getStatusText = (status: string) => {
-        switch (status) {
-            case 'pending':
-                return 'Pending';
-            case 'in_progress':
-                return 'In Progress';
-            case 'resolved':
-                return 'Resolved';
-            default:
-                return status;
-        }
-    };
-
     const getPriorityColor = (status: string) => {
-        // You can implement priority logic here
-        return '#FF4444'; // High priority red for demo
+        return '#FF4444';
     };
 
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric'
-        });
-    };
 
     const truncateText = (text: string, maxLength: number) => {
         if (text.length <= maxLength) return text;
@@ -246,7 +232,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                     'Authorization': ' Bearer ' + token
                 }
             });
-            console.log(response.data)
             setFilteredComplaints(prevPosts =>
                 prevPosts.map((post) => {
                     if (post.complaint_id !== complaint_id) return post;
@@ -266,7 +251,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             )
         } else {
             const token = await AsyncStorage.getItem('citytoken');
-            const response = await axios({
+            await axios({
                 method: 'POST',
                 url: `${API_BASE_IP}/api/complain/updatevote`,
                 data: {
@@ -300,11 +285,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     }
 
     const removeVote = async (complaint_id: number, vote_type: 'like' | 'dislike' | null, currentReaction: 'like' | 'dislike' | null) => {
-        console.log(complaint_id, vote_type)
         const token = await AsyncStorage.getItem('citytoken');
 
 
-        const response = await axios({
+        await axios({
             method: 'POST',
             url: `${API_BASE_IP}/api/complain/removevote`,
             data: {
@@ -340,6 +324,17 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         }
 
     }, [selectedStatus])
+
+    const handleScroll = (event: any) => {
+        const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+        const paddingToBottom = 100;
+
+        if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
+            if (hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
+            }
+        }
+    };
 
     return (
         <View className="flex-1 bg-[#F6F7F8]">
@@ -418,6 +413,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             ) : (
                 <ScrollView
                     className="flex-1 px-2"
+                    onScroll={handleScroll}
                     refreshControl={
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }

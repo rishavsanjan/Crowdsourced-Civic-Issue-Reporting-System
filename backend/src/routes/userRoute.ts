@@ -406,6 +406,25 @@ userRoute.post('/addcomplain', authMid, async (req, res) => {
     }
 });
 
+userRoute.post('/test/:page', authMid, async (req, res) => {
+    //@ts-ignore
+    const userId = req.user.user_id;
+    const page = req.params.page;
+    const {lat, long, filter} = req.body;
+
+
+    const limit = 5;
+    const offset = parseInt(page) * limit - 5
+    const posts = await prisma.complaint.findMany({
+       
+    });
+
+    res.json({
+        posts:posts
+    })
+
+})
+
 
 userRoute.get('/allcomplain', authMid, async (req, res) => {
     try {

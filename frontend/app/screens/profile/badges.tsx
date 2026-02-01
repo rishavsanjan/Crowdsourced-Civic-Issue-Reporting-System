@@ -7,19 +7,12 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_IP from '../../../config/api';
 import { Ionicons } from '@expo/vector-icons';
+import { useQuery } from '@tanstack/react-query';
+import { Badge } from '@/app/types/badge';
+import LottieView from 'lottie-react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Badges'>;
 
-interface Badge {
-    created_at: string,
-    criteria: string,
-    description: string,
-    icon_url: string,
-    name: string,
-    updated_at: string,
-    current: number,
-    goal: number
-}
 
 //@ts-ignore
 const BadgeCard = ({ badge, isLocked = false }) => {
@@ -56,24 +49,37 @@ const BadgeCard = ({ badge, isLocked = false }) => {
 
 const Badges: React.FC<Props> = ({ navigation }) => {
 
-    const [badges, setBadges] = useState<Badge[]>([]);
-    const getBadges = async () => {
-        const token = await AsyncStorage.getItem('citytoken')
-        const response = await axios.get(`${API_BASE_IP}/api/user/badges`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        setBadges(response.data.badges)
-        console.log(response.data)
+
+
+    const { data, isLoading } = useQuery({
+        queryKey: ['all-complaints'],
+        queryFn: async () => {
+            const token = await AsyncStorage.getItem('citytoken');
+            const response = await axios({
+                method: 'get',
+                url: `${API_BASE_IP}/api/user/badges`,
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+
+            return response.data.badges as Badge[]
+        }
+    })
+
+    if (isLoading) {
+        return (
+            <View className="flex-1 justify-center items-center ">
+                <LottieView
+                    source={require('../../../assets/loading_animations/loader.json')}
+                    autoPlay
+                    loop
+                    speed={2}
+                    style={{ width: 50, height: 50 }}
+                />
+            </View>
+        );
     }
-
-    useEffect(() => {
-        getBadges();
-
-    }, []);
-
-
 
     return (
         <SafeAreaView className="flex-1 bg-[#F6F7F8]">
@@ -95,7 +101,7 @@ const Badges: React.FC<Props> = ({ navigation }) => {
             {/* Main Content */}
             <ScrollView className="flex-1 px-4">
 
-                {badges!.map((badge, index) => (
+                {data!.map((badge, index) => (
                     <BadgeCard
                         key={index}
                         badge={badge}

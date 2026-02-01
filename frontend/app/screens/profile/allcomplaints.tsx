@@ -7,6 +7,10 @@ import type { RootStackParamList } from '../../navigation/navigation';
 import API_BASE_IP from '../../../config/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { getStatusColor, getStatusIcon, getStatusText } from '@/app/util/styles';
+import { useQuery } from '@tanstack/react-query';
+import LottieView from 'lottie-react-native';
+import Loading from './components/Loading';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AllComplaints'>;
 
@@ -26,45 +30,6 @@ interface Complaint {
         dislike: number;
         userReaction: 'like' | 'dislike' | null;
     };
-};
-
-const getStatusColor = (status: string) => {
-    switch (status) {
-        case 'pending':
-            return '#FF9500';
-        case 'in_progress':
-            return '#007AFF';
-        case 'resolved':
-            return '#34C759';
-        default:
-            return '#8E8E93';
-    }
-};
-
-const getStatusIcon = (status: string) => {
-    switch (status) {
-        case 'pending':
-            return 'https://img.icons8.com/?size=100&id=37439&format=png&color=FAB005';
-        case 'in_progress':
-            return 'https://img.icons8.com/?size=100&id=71202&format=png&color=228BE6';
-        case 'resolved':
-            return 'https://img.icons8.com/?size=100&id=114054&format=png&color=40C057';
-        default:
-            return '#8E8E93';
-    }
-}
-
-const getStatusText = (status: string) => {
-    switch (status) {
-        case 'pending':
-            return 'Pending';
-        case 'in_progress':
-            return 'In Progress';
-        case 'resolved':
-            return 'Resolved';
-        default:
-            return status;
-    }
 };
 
 const ComplaintCard = ({ complaint }: { complaint: Complaint }) => {
@@ -87,10 +52,10 @@ const ComplaintCard = ({ complaint }: { complaint: Complaint }) => {
 
 const AllComplaints: React.FC<Props> = ({ navigation, route }) => {
 
-    const [complaints, setComplaints] = useState<Complaint[]>([]);
 
-    const getComplaints = async () => {
-        try {
+    const { data, isLoading } = useQuery({
+        queryKey: ['all-complaints'],
+        queryFn: async () => {
             const token = await AsyncStorage.getItem('citytoken');
             const response = await axios({
                 method: 'get',
@@ -99,18 +64,16 @@ const AllComplaints: React.FC<Props> = ({ navigation, route }) => {
                     'Authorization': 'Bearer ' + token
                 }
             });
-            console.log(response.data);
-            setComplaints(response.data.complaint);
-        } catch (error) {
-            console.log(error)
-            console.error('Error fetching complaints:', error);
+
+            return response.data.complaint as Complaint[]
         }
+    })
+
+    if (isLoading) {
+        return (
+            <Loading />
+        );
     }
-
-    useEffect(() => {
-        getComplaints();
-    }, []);
-
 
 
     return (
@@ -132,8 +95,8 @@ const AllComplaints: React.FC<Props> = ({ navigation, route }) => {
 
             {/* Main Content */}
             <ScrollView className="flex-1 p-4">
-                {complaints.length > 0 ? (
-                    complaints.map((complaint, index) => (
+                {data?.length !== undefined ? (
+                    data.map((complaint, index) => (
                         <ComplaintCard key={complaint.complaint_id || index} complaint={complaint} />
                     ))
                 ) : (
