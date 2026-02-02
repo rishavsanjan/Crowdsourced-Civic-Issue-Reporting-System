@@ -185,6 +185,63 @@ complainRoute.get('/complainDetail/:complaintId', authMid, async (req, res) => {
     }
 });
 
+complainRoute.post('/test', authMid, async (req, res) => {
+    //@ts-ignore
+    const userId = req.user.user_id;
+    console.log(' i m here')
+    const page = Number(req.query.page) || 1;
+
+    const { lat, long, filter } = req.body;
+
+
+    const limit = 5;
+    const offset = page * limit - 5
+    const complaints = await prisma.complaint.findMany({
+        skip: offset,  // Pagination: 0-based offset
+        take: limit,
+        where: filter === 'all' ? {} : { status: filter },
+        orderBy: { createdAt: 'desc' },  // Add sorting
+
+    });
+    const complaintIds = complaints.map(c => c.complaint_id);
+
+    const votes = await prisma.vote.findMany({
+        where: { complaint_id: { in: complaintIds } },
+        select: {
+            complaint_id: true,
+            vote_type: true,
+            user_id: true
+        }
+    });
+
+    const voteMap: {
+        [complaintId: number]: {
+            like: number,
+            dislike: number,
+            userReaction: 'like' | 'dislike' | null
+        }
+    } = {};
+
+    for (const complain of complaints) {
+        voteMap[complain.complaint_id] = { like: 0, dislike: 0, userReaction: null }
+    };
+
+    for (const r of votes) {
+        if (r.vote_type === 'like') voteMap[r.complaint_id].like++
+        if (r.vote_type === 'dislike') voteMap[r.complaint_id].dislike++
+        if (r.user_id === userId) voteMap[r.complaint_id].userReaction = r.vote_type
+    }
+
+    const response = complaints.map(complaint => ({
+        ...complaint,
+        votes: voteMap[complaint.complaint_id]
+    }))
+
+    return res.status(200).json({ msg: 'success', success: true, posts: response })
+
+
+})
+
 
 complainRoute.get('/profile', authMid, async (req, res) => {
     try {

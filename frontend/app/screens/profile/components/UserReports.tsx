@@ -55,7 +55,7 @@ const UserReports: React.FC<Props> = ({ data, navigation }) => {
                                 </View>
                             </View>
                             <View>
-                                <Text className="text-gray-500 text-sm">{formatISTDateTime(complain.createdAt)}</Text>
+                                <Text className="text-gray-500 text-sm">{formatISTDateTime(complain.created_at)}</Text>
                             </View>
 
                         </TouchableOpacity>
