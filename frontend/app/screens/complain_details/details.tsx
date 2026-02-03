@@ -23,26 +23,12 @@ import API_BASE_IP from '../../../config/api';
 import LottieView from 'lottie-react-native';
 import Constants from 'expo-constants'
 import { WebView } from "react-native-webview";
+import Status from './components/Status';
+import { Complaint } from '@/app/types/complain';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ComplainDetails'>;
 
-interface Complaint {
-    address: string,
-    complaint_id: number,
-    createdAt: string,
-    description: string,
-    latitude: number,
-    longitude: number,
-    status: string,
-    title: string,
-    updatedAt: string,
-    user_id: number,
-    votes: {
-        like: number;
-        dislike: number;
-        userReaction: 'like' | 'dislike' | null;
-    };
-}
+
 
 interface AdminstrativeComments extends Complaint {
     id: string
@@ -53,7 +39,6 @@ interface AdminstrativeComments extends Complaint {
 const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
     const { googleApiKey } = Constants.expoConfig?.extra || {};
     const { complaintId } = route.params;
-  const webviewRef = useRef<WebView>(null);
 
     const [complaint, setComplaint] = useState<Complaint | null>(null);
     const [mediaItems, setMediaItems] = useState([]);
@@ -185,6 +170,10 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
     </html>
   `;
 
+  if(!complaint){
+    return;
+  }
+
     return (
         <SafeAreaView className="flex-1 bg-white">
             {/* Header */}
@@ -241,40 +230,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                 </View>
 
                 {/* Status */}
-                <View className="px-4 pb-4">
-                    <Text className="text-lg font-bold text-gray-900 mb-3">Status</Text>
-                    <View className="flex-row items-center">
-                        {/* Pending */}
-                        <View className="flex-1 items-center">
-                            <View>
-                                <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=12582&format=png&color=228BE6' }} />
-                            </View>
-                            <Text className="text-xs text-gray-600">Pending</Text>
-                        </View>
-
-                        {/* Progress Line */}
-                        <View className={`${complaint?.status === 'pending' ? 'bg-gray-300' : 'bg-green-500 '} h-1 flex-1 -mt-6`} />
-
-                        {/* In Progress */}
-                        <View className="flex-1 items-center">
-                            <View className=" mb-2">
-                                <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=71202&format=png&color=228BE6' }} />
-                            </View>
-                            <Text className="text-xs text-gray-600">In Progress</Text>
-                        </View>
-
-                        {/* Progress Line */}
-                        <View className={`${complaint?.status === 'pending' || 'in_progress' ? 'bg-gray-300' : 'bg-green-500 '} h-1 flex-1 -mt-6`} />
-                        {/* Resolved */}
-                        <View className="flex-1 items-center">
-                            <View className=" mb-2">
-                                <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=gWpFZsHoozrx&format=png&color=40C057' }} />
-                            </View>
-                            <Text className="text-xs text-gray-600">Resolved</Text>
-                        </View>
-                    </View>
-                </View>
-
+                <Status complaint={complaint}/>
 
                 {/* Location */}
                 <View >
@@ -285,25 +241,6 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                             source={{ html }}
                           />
                         </View>
-                    {/* <>
-                        <MapView
-                            style={{ width: "100%", height: 200, marginVertical: 10 }}
-                            initialRegion={{
-                                latitude: complaint?.latitude || 78,
-                                longitude: complaint?.longitude || 23,
-                                latitudeDelta: 0.01,
-                                longitudeDelta: 0.01,
-                            }}
-
-                        >
-                            <Marker
-                                coordinate={{
-                                    latitude: complaint?.latitude || 78,
-                                    longitude: complaint?.longitude || 23
-                                }}
-                            />
-                        </MapView>
-                    </> */}
                 </View>
 
 

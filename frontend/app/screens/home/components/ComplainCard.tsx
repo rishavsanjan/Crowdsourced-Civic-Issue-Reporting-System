@@ -21,8 +21,6 @@ interface Props {
     distance: number
     latitude: number
     longitute: number
-
-
 }
 
 const ComplainCard: React.FC<Props> = ({ complaint, navigation, selectedStatus, distance, latitude, longitute }) => {

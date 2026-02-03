@@ -30,6 +30,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         lat: 0.0,
         long: 0.0
     });
+    
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
             setIsConnected(state.isConnected ?? false);
