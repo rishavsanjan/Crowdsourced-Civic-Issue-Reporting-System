@@ -3,10 +3,10 @@ import React from 'react'
 import { Image, Text, View } from 'react-native'
 
 interface Props{
-    complaint: Complaint
+    status : "pending" | "in_progress" | "resolved"
 }
 
-const Status:React.FC<Props> = ({complaint}) => {
+const Status:React.FC<Props> = ({status}) => {
     return (
         <View className="px-4 pb-4">
             <Text className="text-lg font-bold text-gray-900 mb-3">Status</Text>
@@ -20,7 +20,7 @@ const Status:React.FC<Props> = ({complaint}) => {
                 </View>
 
                 {/* Progress Line */}
-                <View className={`${complaint?.status === 'pending' ? 'bg-gray-300' : 'bg-green-500 '} h-1 flex-1 -mt-6`} />
+                <View className={`${status === 'pending' ? 'bg-gray-300' : 'bg-green-500 '} h-1 flex-1 -mt-6`} />
 
                 {/* In Progress */}
                 <View className="flex-1 items-center">
@@ -31,7 +31,7 @@ const Status:React.FC<Props> = ({complaint}) => {
                 </View>
 
                 {/* Progress Line */}
-                <View className={`${complaint?.status === 'pending' || 'in_progress' ? 'bg-gray-300' : 'bg-green-500 '} h-1 flex-1 -mt-6`} />
+                <View className={`${status === 'pending' || 'in_progress' ? 'bg-gray-300' : 'bg-green-500 '} h-1 flex-1 -mt-6`} />
                 {/* Resolved */}
                 <View className="flex-1 items-center">
                     <View className=" mb-2">

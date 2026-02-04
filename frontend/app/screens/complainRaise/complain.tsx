@@ -361,30 +361,7 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                         fetchAddress(lat, lng);
                     }}
                 />
-                {/* <MapView
-                    style={{ width: "100%", height: 200, marginVertical: 10 }}
-                    initialRegion={{
-                        latitude: location.latitude,
-                        longitude: location.longitude,
-                        latitudeDelta: 0.01,
-                        longitudeDelta: 0.01,
-                    }}
-                    onPress={(e) => {
-                        const coords = e.nativeEvent.coordinate;
-                        setLocation(coords);
-                        fetchAddress(coords.latitude, coords.longitude);
-                    }}
-                >
-                    <Marker
-                        coordinate={location}
-                        draggable
-                        onDragEnd={(e) => {
-                            const coords = e.nativeEvent.coordinate;
-                            setLocation(coords);
-                            fetchAddress(coords.latitude, coords.longitude);
-                        }}
-                    />
-                </MapView> */}
+                
 
 
                 {address ? (
