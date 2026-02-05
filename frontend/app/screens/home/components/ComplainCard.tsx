@@ -9,6 +9,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { Toast } from 'toastify-react-native';
+import { Entypo } from '@expo/vector-icons';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+
 type P = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
 
@@ -136,9 +139,9 @@ const ComplainCard: React.FC<Props> = ({ complaint, navigation, selectedStatus, 
             }}
         >
             {/* Complaint Image */}
-            {complaint.media && complaint.media.length > 0 && complaint.media[0].file_type === 'image' ? (
+            {complaint.media && complaint.media.file_type === 'image' ? (
                 <Image
-                    source={{ uri: complaint.media[0].file_url }}
+                    source={{ uri:complaint.media.file_url }}
                     className="w-full h-48"
                     resizeMode="cover"
                 />
@@ -184,21 +187,23 @@ const ComplainCard: React.FC<Props> = ({ complaint, navigation, selectedStatus, 
                         {truncateText(complaint.address || 'Location not specified', 40)}
                     </Text>
                 </View>
-
+            
                 {/* Bottom Actions */}
                 <View className='border-gray-200 border-b -px-8 my-2'></View>
                 <View className="flex-row justify-between items-center px-4 py-2 self-end">
                     <View className='flex flex-row  gap-4'>
                         <View className="flex-row items-center space-x-4">
+                        
                             <View className="flex-row items-center">
                                 {
                                     complaint.votes.userReaction === 'like' ?
                                         <TouchableOpacity onPress={() => { removeVote(complaint.complaint_id, null, 'like') }}>
-                                            <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=HhxwuilvXTcb&format=png&color=228BE6' }} />
+                                            <Entypo name='arrow-up' color={'blue'} className='' size={25} />
+                                            {/* <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=HhxwuilvXTcb&format=png&color=228BE6' }} /> */}
                                         </TouchableOpacity>
                                         :
                                         <TouchableOpacity onPress={() => { addVote(complaint.complaint_id, 'like', complaint.votes.userReaction) }}>
-                                            <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=96384&format=png&color=000000' }} />
+                                            <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=JI32DyTXU1J6&format=png&color=000000' }} />
                                         </TouchableOpacity>
                                 }
 
@@ -211,11 +216,12 @@ const ComplainCard: React.FC<Props> = ({ complaint, navigation, selectedStatus, 
                             <View className="flex-row items-center">{
                                 complaint.votes.userReaction === 'dislike' ?
                                     <TouchableOpacity onPress={() => { removeVote(complaint.complaint_id, null, 'dislike') }}>
-                                        <Image style={{ width: 20, height: 20 }} source={{ uri: 'https://img.icons8.com/?size=100&id=87726&format=png&color=228BE6' }} />
+                                        {/* <Image style={{ width: 20, height: 20 }} source={{ uri: 'https://img.icons8.com/?size=100&id=87726&format=png&color=228BE6' }} /> */}
+                                        <Entypo name='arrow-down' color={'blue'} className='' size={25} />
                                     </TouchableOpacity>
                                     :
                                     <TouchableOpacity onPress={() => { addVote(complaint.complaint_id, 'dislike', complaint.votes.userReaction) }}>
-                                        <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=gqN8RslTqitJ&format=png&color=000000' }} />
+                                        <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=70731&format=png&color=1A1A1A' }} />
                                     </TouchableOpacity>
                             }
 

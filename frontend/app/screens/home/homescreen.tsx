@@ -79,6 +79,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     }, [allComplaints, selectedStatus]);
 
 
+    console.log(data)
 
     const onRefresh = async () => {
         await refetch();

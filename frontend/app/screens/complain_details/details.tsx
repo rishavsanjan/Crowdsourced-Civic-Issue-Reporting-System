@@ -116,15 +116,6 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
 
     function formatDate(isoString: string) {
         const date = new Date(isoString);
-        const options = {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-            hour12: false,
-        };
-
         return date.toLocaleString("en-GB");
     }
 

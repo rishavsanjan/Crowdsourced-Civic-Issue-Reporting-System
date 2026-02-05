@@ -5,7 +5,7 @@ export interface Complaint {
   status: 'pending' | 'in_progress' | 'resolved';
   category: string;
   address: string;
-  created_at: string;
+  createdAt: string;
   latitude?: number;
   longitude?: number;
   user: {
@@ -16,7 +16,7 @@ export interface Complaint {
     media_id: number;
     file_url: string;
     file_type: 'image' | 'video';
-  }[];
+  };
   votes: {
     like: number;
     dislike: number;

@@ -15,6 +15,7 @@ interface Props {
 }
 
 const UserReports: React.FC<Props> = ({ data, navigation }) => {
+    console.log(data)
     const { t } = useTranslation();
     return (
         <View className="bg-white mx-4 rounded-lg p-4 mb-4 shadow-sm">
@@ -55,7 +56,7 @@ const UserReports: React.FC<Props> = ({ data, navigation }) => {
                                 </View>
                             </View>
                             <View>
-                                <Text className="text-gray-500 text-sm">{formatISTDateTime(complain.created_at)}</Text>
+                                <Text className="text-gray-500 text-sm">{formatISTDateTime(complain.createdAt)}</Text>
                             </View>
 
                         </TouchableOpacity>
