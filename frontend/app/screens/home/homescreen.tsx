@@ -6,6 +6,7 @@ import {
     ScrollView,
     Image,
     RefreshControl,
+    TouchableWithoutFeedback,
 } from 'react-native';
 import { Toast } from 'toastify-react-native';
 import * as Location from "expo-location";
@@ -18,6 +19,8 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchHomePosts } from '@/app/util/posts';
 import StatusFilterTab from './components/StatusFilterTab';
 import ComplainCard from './components/ComplainCard';
+import { Button } from '@react-navigation/elements';
+import { useAuth } from '@/app/context/auth-context';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
@@ -30,6 +33,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         lat: 0.0,
         long: 0.0
     });
+    const {user} = useAuth();
+    
+     if(!user){
+        navigation.navigate('WelcomeLoginScreen')
+    }
     
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
@@ -99,6 +107,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             </View>
         );
     }
+
+   
 
 
     const handleScroll = (event: any) => {
@@ -209,9 +219,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                     <View className="h-20" />
                 </ScrollView>
             )}
-            <TouchableOpacity onPress={() => { navigation.navigate('WelcomeChatbot') }}>
+            <TouchableWithoutFeedback 
+            onPress={() => { 
+                console.log('hello')
+                navigation.navigate('WelcomeChatbot') }}>
                 <Image style={{ width: 70, height: 70, bottom: 17, position: 'absolute', right: 20 }} src='https://img.icons8.com/?size=100&id=9Otd0Js4uSYi&format=png&color=000000' />
-            </TouchableOpacity>
+            </TouchableWithoutFeedback>
         </View>
     );
 };

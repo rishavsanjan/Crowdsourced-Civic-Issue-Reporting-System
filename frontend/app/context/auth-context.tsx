@@ -21,7 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
 
     const getUser = async () => {
-        const token = AsyncStorage.getItem("citytoken");
+        const token = await AsyncStorage.getItem("citytoken");
         const response = await axios({
             url: `${API_BASE_URL}/api/user/isValid`,
             headers: {
@@ -30,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         })
 
         if (response.data.success) {
+            console.log('i hitting isValid')
             setUser(response.data.user)
         } else {
             setUser(null)
@@ -42,6 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const login = (token: string) => {
         AsyncStorage.setItem("citytoken", token);
+        getUser();
 
     };
 

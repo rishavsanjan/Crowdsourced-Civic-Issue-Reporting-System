@@ -57,7 +57,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     <ScrollView className="flex-1 bg-gray-50">
       {/* Header */}
       <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b-2 border-gray-200">
-        <View></View>
+        
         <Text className="text-2xl font-semibold">Profile</Text>
         <TouchableOpacity onPress={() => { navigation.navigate('Settings') }}>
           <Image style={{ width: 25, height: 25 }} source={{ uri: 'https://img.icons8.com/?size=100&id=82535&format=png&color=000000' }} />
@@ -65,9 +65,14 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       {/* Profile Section */}
-      <UserInfo data={data} />
-      <TouchableOpacity className='bg-blue-500 p-2 rounded-lg flex flex-row items-center self-center gap-2'>
-        <Image style={{ width: 20, height: 20 }} source={{ uri: "https://img.icons8.com/?size=100&id=VMo8ScDaJ5lL&format=png&color=FFFFFF" }} />
+      <UserInfo data={data} navigation={navigation}/>
+      <TouchableOpacity
+        onPress={() => {navigation.navigate('EditProfile')}}
+        className='bg-blue-500 p-2 rounded-lg flex flex-row items-center self-center gap-2'>
+        <Image
+          style={{ width: 20, height: 20 }}
+          source={{ uri: "https://img.icons8.com/?size=100&id=VMo8ScDaJ5lL&format=png&color=FFFFFF" }}
+        />
         <Text className='text-white font-bold'>{t('editProfile')}</Text>
       </TouchableOpacity>
 

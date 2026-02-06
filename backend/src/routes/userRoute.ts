@@ -412,7 +412,7 @@ userRoute.post('/addcomplain', authMid, async (req, res) => {
 userRoute.get('/allcomplain', authMid, async (req, res) => {
     try {
         //@ts-ignore
-        const userId = req.user.user_id; // From authentication middleware
+        const userId = req.user.user_id; 
         const complaint = await prisma.complaint.findMany({
             where: {
                 user_id: userId

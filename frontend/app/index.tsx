@@ -29,6 +29,7 @@ import WelcomeChatbot from './screens/chatbot/welcome';
 import Chatbot from './screens/chatbot/chatbot';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/auth-context';
+import EditProfile from './screens/profile/edit_profile';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -175,6 +176,7 @@ export default function Index() {
               <Stack.Screen name="Settings" component={Settings} />
               <Stack.Screen name="WelcomeChatbot" component={WelcomeChatbot} />
               <Stack.Screen name="Chatbot" component={Chatbot} />
+              <Stack.Screen name="EditProfile" component={EditProfile} />
 
             </Stack.Navigator>
           </SafeAreaView>

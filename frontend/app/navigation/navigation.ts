@@ -14,4 +14,5 @@ export type RootStackParamList = {
     Settings:undefined,
     WelcomeChatbot:undefined,
     Chatbot:undefined
+    EditProfile:undefined
 }
