@@ -36,6 +36,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     const {user} = useAuth();
     
      if(!user){
+        console.log("user not available")
         navigation.navigate('WelcomeLoginScreen')
     }
     

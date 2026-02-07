@@ -1,6 +1,10 @@
 import { useAuth } from '@/app/context/auth-context';
 import { RootStackParamList } from '@/app/navigation/navigation';
+import API_BASE_URL from '@/config/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import React, { useState } from 'react';
 import {
     View,
@@ -11,6 +15,7 @@ import {
     Image,
     SafeAreaView,
     StatusBar,
+    ActivityIndicator,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -31,27 +36,34 @@ const EditIcon = ({ color = 'white' }: { color?: string }) => (
 );
 
 
-interface EditProfileProps {
-    onBack?: () => void;
-    onNavigate?: (screen: string) => void;
-    onSave?: (data: ProfileData) => void;
-    Props: Props
-}
-
-interface ProfileData {
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-}
 
 const EditProfile: React.FC<Props> = () => {
 
 
-    const { user } = useAuth();
+    const { user, getUser } = useAuth();
     const [name, setName] = useState(user?.name);
-    const [phone, setPhone] = useState(user?.phonenumber);
     console.log(user)
+
+    const updateProfileMutation = useMutation({
+        mutationKey: ['user-profile'],
+        mutationFn: async () => {
+            const token = await AsyncStorage.getItem('citytoken');
+            const res = await axios({
+                method:'post',
+                url: `${API_BASE_URL}/api/user/update-profile`,
+                data: {
+                    name
+                },
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            })
+            console.log(res.data)
+        },
+        onSuccess: () => {
+            getUser();
+        }
+    })
 
 
 
@@ -126,7 +138,7 @@ const EditProfile: React.FC<Props> = () => {
                             </Text>
                             <TextInput
                                 className="w-full rounded-lg border border-[#1173d4]/30 bg-[#f6f7f8] light:bg-[#101922]/50 px-4 py-3 text-slate-900 light:text-slate-50"
-                                value={phone}
+                                value={user?.phonenumber}
                                 placeholder="Enter your phone number"
                                 keyboardType="phone-pad"
                                 placeholderTextColor="#94a3b8"
@@ -138,12 +150,23 @@ const EditProfile: React.FC<Props> = () => {
                         {/* Save Button */}
                         <View className="pt-4 pb-20">
                             <TouchableOpacity
-                                disabled={user?.name === name}
-                                className="w-full bg-[#1173d4] py-3 px-4 rounded-lg active:bg-[#1173d4]/90 disabled:cursor-not-allowed disabled:opacity-70"
+                                onPress={() => { updateProfileMutation.mutate() }}
+
+                                disabled={(user?.name === name) || updateProfileMutation.isPending}
+                                className="w-full bg-[#1173d4] py-3 px-4 rounded-lg active:bg-[#1173d4]/90 disabled:cursor-not-allowed disabled:opacity-90"
                             >
-                                <Text className="text-white font-bold text-center text-base">
-                                    Save Changes
-                                </Text>
+                                {
+                                    updateProfileMutation.isPending ?
+                                        <View className='flex flex-row  items-center justify-center'>
+                                            <ActivityIndicator color="white" size="small" />
+                                            <Text className="text-white font-medium ml-2">Updating profile...</Text>
+                                        </View>
+                                        :
+                                        <Text className="text-white font-bold text-center text-base">
+                                            Save Changes
+                                        </Text>
+                                }
+
                             </TouchableOpacity>
                         </View>
                     </View>

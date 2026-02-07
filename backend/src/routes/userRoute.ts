@@ -412,7 +412,7 @@ userRoute.post('/addcomplain', authMid, async (req, res) => {
 userRoute.get('/allcomplain', authMid, async (req, res) => {
     try {
         //@ts-ignore
-        const userId = req.user.user_id; 
+        const userId = req.user.user_id;
         const complaint = await prisma.complaint.findMany({
             where: {
                 user_id: userId
@@ -476,6 +476,28 @@ userRoute.post('save-expo-token', authMid, async (req, res) => {
 
         return res.status(201).json({ success: true, msg: 'Token added successfully' })
 
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ success: false, msg: 'Server Error' })
+    }
+})
+
+userRoute.post('/update-profile', authMid, async (req, res) => {
+    try {
+        //@ts-ignore
+        const userId = req.user.user_id;
+        const { name } = req.body;
+
+        const user = await prisma.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                name
+            }
+        })
+
+        return res.status(200).json({ success: true, user })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ success: false, msg: 'Server Error' })

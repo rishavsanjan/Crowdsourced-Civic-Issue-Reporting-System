@@ -17,7 +17,8 @@ interface Props {
 
 const UserInfo: React.FC<Props> = ({ data,navigation }) => {
     const { t } = useTranslation();
-    const { logout } = useAuth()
+    const { logout, user } = useAuth();
+    
     return (
         <View className="bg-white px-6 py-8 items-center relative">
             <View className='flex self-end absolute right-12 top-4'>
@@ -37,7 +38,7 @@ const UserInfo: React.FC<Props> = ({ data,navigation }) => {
                         />
                     ) : (
                         <Text className="text-2xl font-semibold text-orange-800">
-                            {data?.user?.name?.charAt(0) || 'U'}
+                            {user?.name?.charAt(0) || 'U'}
                         </Text>
                     )}
                 </View>
@@ -46,7 +47,7 @@ const UserInfo: React.FC<Props> = ({ data,navigation }) => {
                 </View>
             </View>
 
-            <Text className="text-xl font-bold mt-4">{data?.user?.name}</Text>
+            <Text className="text-xl font-bold mt-4">{user?.name}</Text>
             <Text className="text-gray-500">{t('citizenReporter')}</Text>
             <Text className="text-gray-400 text-sm">{t('joined')} {formatMonthYear(data!.user.createdAt)}</Text>
         </View>

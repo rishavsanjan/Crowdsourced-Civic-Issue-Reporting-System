@@ -13,6 +13,7 @@ type AuthContextType = {
     user: User | null
     login: (token: string) => void;
     logout: () => void;
+    getUser: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -28,7 +29,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 Authorization: `Bearer ${token}`,
             }
         })
-
         if (response.data.success) {
             console.log('i hitting isValid')
             setUser(response.data.user)
@@ -41,8 +41,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         getUser();
     }, [])
 
-    const login = (token: string) => {
-        AsyncStorage.setItem("citytoken", token);
+    const login = async(token: string) => {
+       await AsyncStorage.setItem("citytoken", token);
         getUser();
 
     };
@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, getUser }}>
             {children}
         </AuthContext.Provider>
     );

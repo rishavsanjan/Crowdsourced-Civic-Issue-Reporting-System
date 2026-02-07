@@ -68,7 +68,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
       <UserInfo data={data} navigation={navigation}/>
       <TouchableOpacity
         onPress={() => {navigation.navigate('EditProfile')}}
-        className='bg-blue-500 p-2 rounded-lg flex flex-row items-center self-center gap-2'>
+        className='bg-blue-500 p-2 rounded-lg flex flex-row items-center self-center gap-2 my-2'>
         <Image
           style={{ width: 20, height: 20 }}
           source={{ uri: "https://img.icons8.com/?size=100&id=VMo8ScDaJ5lL&format=png&color=FFFFFF" }}
