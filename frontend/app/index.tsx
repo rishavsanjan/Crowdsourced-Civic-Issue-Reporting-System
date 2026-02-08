@@ -30,6 +30,8 @@ import Chatbot from './screens/chatbot/chatbot';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/auth-context';
 import EditProfile from './screens/profile/edit_profile';
+import { ThemeProvider, useTheme } from './context/theme-context';
+import { Text } from '@react-navigation/elements';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -125,14 +127,78 @@ function BottomTabs() {
   );
 }
 
+// function RootLayout() {
+//   const { mode } = useTheme();
+//   console.log('CURRENT THEME:', mode);
+//   return (
+//     <View className={`flex-1 ${mode === 'dark' ? 'dark' : 'light'}`}>
+//       <SafeAreaProvider>
+//         <SafeAreaView>
+//           <ToastManager />
+
+//           <Stack.Navigator
+//             initialRouteName="HomeScreen"
+//             screenOptions={{ headerShown: false }}
+//           >
+//             <Stack.Screen name="HomeScreen" component={BottomTabs} />
+//             <Stack.Screen name="Login" component={LoginScreen} />
+//             <Stack.Screen name="WelcomeLoginScreen" component={WelcomeLoginScreen} />
+//             <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+//             <Stack.Screen name="ComplainDetails" component={ComplaintDetails} />
+//             <Stack.Screen name="OTPSignUp" component={OTPSignUp} />
+//             <Stack.Screen name="OTPLogin" component={OTPLogin} />
+//             <Stack.Screen name="Badges" component={Badges} />
+//             <Stack.Screen name="AllComplaints" component={AllComplaints} />
+//             <Stack.Screen name="Settings" component={Settings} />
+//             <Stack.Screen name="WelcomeChatbot" component={WelcomeChatbot} />
+//             <Stack.Screen name="Chatbot" component={Chatbot} />
+//             <Stack.Screen name="EditProfile" component={EditProfile} />
+//           </Stack.Navigator>
+//         </SafeAreaView>
+//       </SafeAreaProvider>
+//     </View>
+
+//   );
+// }
+
+
+function RootLayout() {
+  const { mode } = useTheme();
+
+  return (
+    <View className={`flex-1 ${mode === 'dark' ? 'dark' : ''}`}>
+      <SafeAreaProvider>
+        <SafeAreaView className="flex-1 bg-white dark:bg-black">
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="HomeScreen" component={BottomTabs} />
+            <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="WelcomeLoginScreen" component={WelcomeLoginScreen} />
+            <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+            <Stack.Screen name="ComplainDetails" component={ComplaintDetails} />
+            <Stack.Screen name="OTPSignUp" component={OTPSignUp} />
+            <Stack.Screen name="OTPLogin" component={OTPLogin} />
+            <Stack.Screen name="Badges" component={Badges} />
+            <Stack.Screen name="AllComplaints" component={AllComplaints} />
+            <Stack.Screen name="WelcomeChatbot" component={WelcomeChatbot} />
+            <Stack.Screen name="Chatbot" component={Chatbot} />
+            <Stack.Screen name="EditProfile" component={EditProfile} />
+          </Stack.Navigator>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </View>
+  );
+}
+
+
+
 
 export default function Index() {
   const [ready, setReady] = useState(false);
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient();
 
   useEffect(() => {
     const init = async () => {
-      await initI18n(); // Wait until i18n setup is ready
+      await initI18n();
       setReady(true);
     };
     init();
@@ -141,14 +207,7 @@ export default function Index() {
   if (!ready) {
     return (
       <SafeAreaProvider>
-        <SafeAreaView
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#ffffff',
-          }}
-        >
+        <SafeAreaView className="flex-1 items-center justify-center bg-white dark:bg-black">
           <ActivityIndicator size="large" color="#1173D4" />
         </SafeAreaView>
       </SafeAreaProvider>
@@ -158,32 +217,11 @@ export default function Index() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <SafeAreaProvider>
-          <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
-            <ToastManager />
-
-            <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
-
-              <Stack.Screen name="HomeScreen" component={BottomTabs} />
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="WelcomeLoginScreen" component={WelcomeLoginScreen} />
-              <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
-              <Stack.Screen name="ComplainDetails" component={ComplaintDetails} />
-              <Stack.Screen name="OTPSignUp" component={OTPSignUp} />
-              <Stack.Screen name="OTPLogin" component={OTPLogin} />
-              <Stack.Screen name="Badges" component={Badges} />
-              <Stack.Screen name="AllComplaints" component={AllComplaints} />
-              <Stack.Screen name="Settings" component={Settings} />
-              <Stack.Screen name="WelcomeChatbot" component={WelcomeChatbot} />
-              <Stack.Screen name="Chatbot" component={Chatbot} />
-              <Stack.Screen name="EditProfile" component={EditProfile} />
-
-            </Stack.Navigator>
-          </SafeAreaView>
-        </SafeAreaProvider>
+        <ThemeProvider>
+          <RootLayout />
+        </ThemeProvider>
       </QueryClientProvider>
     </AuthProvider>
-
-
   );
 }
+

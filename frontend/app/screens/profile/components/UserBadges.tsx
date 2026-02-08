@@ -14,11 +14,11 @@ interface Props {
 const UserBadges: React.FC<Props> = ({ data, navigation }) => {
     const { t } = useTranslation();
     return (
-        <View className="bg-white mx-4 rounded-lg p-4 mb-4 shadow-sm">
+        <View className="bg-white mx-4 rounded-lg p-4 mb-4 shadow-sm dark:bg-slate-900/70">
             <View className='flex flex-row justify-between'>
-                <Text className="text-lg font-semibold mb-4 w-32">{t('myBadges')}</Text>
+                <Text className="text-lg font-semibold mb-4 w-32 dark:text-slate-200">{t('myBadges')}</Text>
                 <TouchableOpacity onPress={() => { navigation.navigate('Badges') }}>
-                    <Text className="text-lg font-semibold mb-4 w-20">{t('viewAll')}</Text>
+                    <Text className="text-lg font-semibold mb-4 w-20 dark:text-slate-200">{t('viewAll')}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -30,9 +30,9 @@ const UserBadges: React.FC<Props> = ({ data, navigation }) => {
                             {data?.user.UserBage.map((badge) => (
                                 <View key={badge.id} className="items-center mb-4 w-1/3">
                                     <View className="w-16 h-16 bg-teal-100 rounded-lg items-center justify-center mb-2">
-                                        <Text className="text-2xl">{badge.icon_url}</Text>
+                                        <Text className="text-2xl dark:text-slate-200">{badge.icon_url}</Text>
                                     </View>
-                                    <Text className="text-sm text-center font-medium">{badge.name}</Text>
+                                    <Text className="text-sm text-center font-medium dark:text-slate-200">{badge.name}</Text>
                                 </View>
                             ))}
                         </>
@@ -40,10 +40,10 @@ const UserBadges: React.FC<Props> = ({ data, navigation }) => {
 
                         <View className='flex flex-col items-center gap-4'>
                             <View>
-                                <Text>You have not earned any badges yet!</Text>
+                                <Text className='dark:text-slate-200'>You have not earned any badges yet!</Text>
                             </View>
                             <TouchableOpacity onPress={() => { navigation.navigate('Badges') }} className='bg-blue-600 rounded-lg p-4'>
-                                <Text className='text-white font-medium '>{t('viewProgress')}</Text>
+                                <Text className='text-white font-medium  dark:text-slate-200'>{t('viewProgress')}</Text>
                             </TouchableOpacity>
                         </View>
                 }

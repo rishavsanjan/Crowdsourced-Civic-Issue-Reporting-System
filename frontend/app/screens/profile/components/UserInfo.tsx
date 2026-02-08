@@ -20,7 +20,7 @@ const UserInfo: React.FC<Props> = ({ data,navigation }) => {
     const { logout, user } = useAuth();
     
     return (
-        <View className="bg-white px-6 py-8 items-center relative">
+        <View className="bg-white px-6 py-8 items-center relative dark:bg-slate-900/70">
             <View className='flex self-end absolute right-12 top-4'>
                 <TouchableOpacity onPress={() => {
                      logout()
@@ -30,14 +30,14 @@ const UserInfo: React.FC<Props> = ({ data,navigation }) => {
                 </TouchableOpacity>
             </View>
             <View className="relative">
-                <View className="w-24 h-24 bg-orange-200 rounded-full items-center justify-center">
+                <View className="w-24 h-24 bg-orange-200  rounded-full items-center justify-center">
                     {data?.user?.profileImage ? (
                         <Image
                             source={{ uri: data?.user.profileImage }}
                             className="w-24 h-24 rounded-full"
                         />
                     ) : (
-                        <Text className="text-2xl font-semibold text-orange-800">
+                        <Text className="text-2xl font-semibold text-orange-800 ">
                             {user?.name?.charAt(0) || 'U'}
                         </Text>
                     )}
@@ -47,9 +47,9 @@ const UserInfo: React.FC<Props> = ({ data,navigation }) => {
                 </View>
             </View>
 
-            <Text className="text-xl font-bold mt-4">{user?.name}</Text>
-            <Text className="text-gray-500">{t('citizenReporter')}</Text>
-            <Text className="text-gray-400 text-sm">{t('joined')} {formatMonthYear(data!.user.createdAt)}</Text>
+            <Text className="text-xl font-bold mt-4 dark:text-slate-200">{user?.name}</Text>
+            <Text className="text-gray-500 dark:text-slate-200">{t('citizenReporter')}</Text>
+            <Text className="text-gray-400 text-sm dark:text-slate-200">{t('joined')} {formatMonthYear(data!.user.createdAt)}</Text>
         </View>
     )
 }

@@ -18,11 +18,11 @@ const UserReports: React.FC<Props> = ({ data, navigation }) => {
     console.log(data)
     const { t } = useTranslation();
     return (
-        <View className="bg-white mx-4 rounded-lg p-4 mb-4 shadow-sm">
+        <View className="bg-white mx-4 rounded-lg p-4 mb-4 shadow-sm dark:bg-slate-900/70">
             <View className='flex flex-row justify-between'>
-                <Text className="text-lg font-semibold mb-4 w-32">{t('myReports')}</Text>
+                <Text className="text-lg font-semibold mb-4 w-32 dark:text-slate-200">{t('myReports')}</Text>
                 <TouchableOpacity onPress={() => { navigation.navigate('AllComplaints') }}>
-                    <Text className="text-lg font-semibold mb-4 w-20">{t('viewAll')}</Text>
+                    <Text className="text-lg font-semibold mb-4 w-20 dark:text-slate-200">{t('viewAll')}</Text>
 
                 </TouchableOpacity>
             </View>
@@ -37,7 +37,7 @@ const UserReports: React.FC<Props> = ({ data, navigation }) => {
 
 
                                 <View className="flex-1">
-                                    <Text className="font-medium">{complain.title}</Text>
+                                    <Text className="font-medium dark:text-slate-200">{complain.title}</Text>
                                     {/* <Text className="text-gray-500 text-sm">{report.category}</Text> */}
                                 </View>
 
@@ -56,16 +56,16 @@ const UserReports: React.FC<Props> = ({ data, navigation }) => {
                                 </View>
                             </View>
                             <View>
-                                <Text className="text-gray-500 text-sm">{formatISTDateTime(complain.createdAt)}</Text>
+                                <Text className="text-gray-500 text-sm dark:text-slate-200">{formatISTDateTime(complain.createdAt)}</Text>
                             </View>
 
                         </TouchableOpacity>
                     ))
                     :
                     <View className='flex flex-col items-center'>
-                        <Text className='text-center my-4'>{t('noReports')}</Text>
+                        <Text className='text-center my-4 dark:text-slate-200'>{t('noReports')}</Text>
                         <TouchableOpacity onPress={() => { navigation.navigate('Upload') }} className='bg-blue-600 rounded-lg p-4'>
-                            <Text className='text-white font-medium '>{t('startReporting')}</Text>
+                            <Text className='text-white font-medium  dark:text-slate-200'>{t('startReporting')}</Text>
                         </TouchableOpacity>
                     </View>
 
