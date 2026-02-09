@@ -9,12 +9,14 @@ import {
     Platform,
     ScrollView,
     StatusBar,
+    ActivityIndicator,
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
 import API_BASE_IP from '../../../config/api';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Toast } from 'toastify-react-native';
+import { useMutation } from '@tanstack/react-query';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'OTPSignUp'>;
 
@@ -50,22 +52,38 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
         }
     }, [step, timer]);
 
-    const sendOtp = async () => {
-        const response = await axios({
-            url: `${API_BASE_IP}/api/user/signup-no-otp`,
-            method: "post",
-            data: {
-                phone: phone
+    const sendOtpMutation = useMutation({
+        mutationKey: ['signup-otp'],
+        mutationFn: async () => {
+            const response = await axios({
+                url: `${API_BASE_IP}/api/user/signup-no-otp`,
+                method: "post",
+                data: {
+                    phone: phone
+                }
+            })
+            return response.data
+        },
+        onSuccess: (data) => {
+            Toast.success('OTP sent successfully!');
+            setGeneratedOtp(data.otp);
+            setError('');
+            setStep(2);
+            setTimer(30);
+            setCanResend(false);
+            console.log('OTP sent:', data.otp);
+        },
+        onError: (error: AxiosError<{ error?: string; message?: string }>) => {
+            if (error.response) {
+                Toast.error(error.response.data?.error || error.response.data?.message || 'An error occurred');
+            } else if (error.request) {
+                Toast.error('No response from server');
+            } else {
+                Toast.error(error.message || 'An error occurred');
             }
-        })
-        Toast.success('OTP sent successfully!');
-        setGeneratedOtp(response.data.otp);
-        setError('');
-        setStep(2);
-        setTimer(30);
-        setCanResend(false);
-        console.log('OTP sent:', response.data.otp);
-    };
+        }
+    })
+
 
     const handleOtpChange = (index: number, value: string) => {
         if (!/^\d*$/.test(value)) return;
@@ -129,7 +147,7 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
             setError('Password must be at least 8 characters');
             return;
         }
-        const res = await axios({
+        await axios({
             url: `${API_BASE_IP}/api/user/signup-final`,
             method: 'post',
             data: {
@@ -140,7 +158,7 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
 
             }
         });
-        
+
 
 
         setError('');
@@ -220,11 +238,22 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
                             ) : null}
 
                             <TouchableOpacity
-                                className="bg-gray-900 rounded-xl py-4 items-center mb-4"
-                                onPress={sendOtp}
+                                disabled={sendOtpMutation.isPending || phone.length < 10}
+                                className="bg-gray-900 rounded-xl py-4 items-center mb-4 disabled:cursor-not-allowed disabled:opacity-80"
+                                onPress={() => { sendOtpMutation.mutate() }}
                                 activeOpacity={0.8}
                             >
-                                <Text className="text-white text-base font-semibold">Send OTP</Text>
+                                {
+                                    sendOtpMutation.isPending ?
+                                        <View className='flex flex-row gap-2'>
+                                            <Text className='text-white text-base font-semibold'>Sending...</Text>
+                                            <ActivityIndicator color={'white'} />
+                                        </View>
+                                        :
+
+                                        <Text className="text-white text-base font-semibold">Send OTP</Text>
+                                }
+
                             </TouchableOpacity>
 
 

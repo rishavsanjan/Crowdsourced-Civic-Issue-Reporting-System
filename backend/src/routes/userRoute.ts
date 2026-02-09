@@ -57,7 +57,7 @@ userRoute.post('/signup-no-otp', async (req, res) => {
     })
 
     if (user) {
-        return res.status(200).json({ error: "Number already registered!", success: false })
+        return res.status(401).json({ message: "Number already registered!", success: false })
     }
 
     let digits = "0123456789";

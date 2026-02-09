@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next';
 
 // Screens
 import { RootStackParamList } from './navigation/navigation';
-import LoginScreen from './screens/login/login';
 import WelcomeLoginScreen from './screens/login/welcome';
 import SignUpScreen from './screens/login/signup';
 import HomeScreen from './screens/home/homescreen';
@@ -31,7 +30,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/auth-context';
 import EditProfile from './screens/profile/edit_profile';
 import { ThemeProvider, useTheme } from './context/theme-context';
-import { Text } from '@react-navigation/elements';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -127,44 +125,10 @@ function BottomTabs() {
   );
 }
 
-// function RootLayout() {
-//   const { mode } = useTheme();
-//   console.log('CURRENT THEME:', mode);
-//   return (
-//     <View className={`flex-1 ${mode === 'dark' ? 'dark' : 'light'}`}>
-//       <SafeAreaProvider>
-//         <SafeAreaView>
-//           <ToastManager />
-
-//           <Stack.Navigator
-//             initialRouteName="HomeScreen"
-//             screenOptions={{ headerShown: false }}
-//           >
-//             <Stack.Screen name="HomeScreen" component={BottomTabs} />
-//             <Stack.Screen name="Login" component={LoginScreen} />
-//             <Stack.Screen name="WelcomeLoginScreen" component={WelcomeLoginScreen} />
-//             <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
-//             <Stack.Screen name="ComplainDetails" component={ComplaintDetails} />
-//             <Stack.Screen name="OTPSignUp" component={OTPSignUp} />
-//             <Stack.Screen name="OTPLogin" component={OTPLogin} />
-//             <Stack.Screen name="Badges" component={Badges} />
-//             <Stack.Screen name="AllComplaints" component={AllComplaints} />
-//             <Stack.Screen name="Settings" component={Settings} />
-//             <Stack.Screen name="WelcomeChatbot" component={WelcomeChatbot} />
-//             <Stack.Screen name="Chatbot" component={Chatbot} />
-//             <Stack.Screen name="EditProfile" component={EditProfile} />
-//           </Stack.Navigator>
-//         </SafeAreaView>
-//       </SafeAreaProvider>
-//     </View>
-
-//   );
-// }
-
 
 function RootLayout() {
   const { mode } = useTheme();
-
+  console.log(mode)
   return (
     <View className={`flex-1 ${mode === 'dark' ? 'dark' : ''}`}>
       <SafeAreaProvider>
@@ -217,9 +181,10 @@ export default function Index() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <RootLayout />
-        </ThemeProvider>
+        <ToastManager/>
+          <ThemeProvider>
+            <RootLayout />
+          </ThemeProvider>
       </QueryClientProvider>
     </AuthProvider>
   );

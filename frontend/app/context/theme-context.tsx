@@ -18,16 +18,12 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [mode, setMode] = useState<ThemeMode>('light');
   const [isReady, setIsReady] = useState(false);
 
-  // 🔹 Decide theme ONCE on startup
   useEffect(() => {
     (async () => {
       const savedTheme = await AsyncStorage.getItem(THEME_KEY);
-
       if (savedTheme === 'light' || savedTheme === 'dark') {
-        // ✅ User preference wins
         setMode(savedTheme);
       } else {
-        // ✅ First launch → follow system
         const systemTheme = Appearance.getColorScheme() ?? 'light';
         setMode(systemTheme);
       }
@@ -36,9 +32,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     })();
   }, []);
 
-  // 🔹 Explicit user choice
   const setTheme = async (theme: ThemeMode) => {
     setMode(theme);
+    console.log('changing')
     await AsyncStorage.setItem(THEME_KEY, theme);
   };
 
@@ -46,7 +42,6 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     setTheme(mode === 'dark' ? 'light' : 'dark');
   };
 
-  // ⛔ Prevent rendering until theme is decided
   if (!isReady) return null;
 
   return (
