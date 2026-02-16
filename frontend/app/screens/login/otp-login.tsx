@@ -22,7 +22,6 @@ import Animated, {
     SlideInDown,
     SlideOutDown,
     Layout,
-    FadeInLeft
 } from 'react-native-reanimated';
 import { useAuth } from '@/app/context/auth-context';
 type Props = NativeStackScreenProps<RootStackParamList, 'OTPLogin'>;

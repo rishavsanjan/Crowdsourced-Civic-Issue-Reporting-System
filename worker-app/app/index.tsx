@@ -1,12 +1,13 @@
-import "./global.css"
-import { Text, View } from "react-native";
- 
-export default function App() {
+import { Redirect } from "expo-router";
+import "../app/global.css"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+export default function Index() {
+  const queryClient = new QueryClient();
+
   return (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-xl font-bold text-blue-500">
-        Welcome to Nativewindd!
-      </Text>
-    </View>
-  );
+    <QueryClientProvider client={queryClient}>
+      <Redirect href="/(auth)/auth" />
+    </QueryClientProvider>
+    );
 }

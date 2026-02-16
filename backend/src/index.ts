@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRoute from "./routes/userRoute";
 import complainRoute from "./routes/complainRoute";
 import adminRoute from "./routes/adminRoute";
+import workerRoute from "./routes/workerRoute";
 (async () => {
     try {
         console.log("Starting app...");
@@ -28,6 +29,7 @@ import adminRoute from "./routes/adminRoute";
         app.use('/api/user', userRoute);
         app.use('/api/complain', complainRoute);
         app.use('/api/admin', adminRoute);
+        app.use('/api/worker', workerRoute);
 
 
 

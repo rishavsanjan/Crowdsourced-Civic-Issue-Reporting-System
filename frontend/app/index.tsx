@@ -147,6 +147,7 @@ function RootLayout() {
             <Stack.Screen name="Chatbot" component={Chatbot} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
           </Stack.Navigator>
+        
         </SafeAreaView>
       </SafeAreaProvider>
     </View>

@@ -22,6 +22,14 @@ model User {
   Vote          Vote[]
 }
 
+model Worker {
+  id          Int      @id @default(autoincrement())
+  name        String
+  password    String
+  phoneNumber Int      @unique
+  createdAt   DateTime @default(now())
+}
+
 model Complaint {
   complaint_id          Int                     @id @default(autoincrement())
   user_id               Int
