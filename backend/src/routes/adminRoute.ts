@@ -9,6 +9,7 @@ import { Twilio } from "twilio";
 import fetch from "node-fetch";
 
 import dotenv from 'dotenv';
+import workerRoute from './workerRoute';
 dotenv.config();
 
 const adminRoute = express.Router();
@@ -140,6 +141,12 @@ adminRoute.post('/add-comment', authMid, async (req, res) => {
         const addComment = await prisma.adminstrativeComments.create({
             data: {
                 comment, type: commentType, complaint_id
+            },
+            select: {
+                comment: true,
+                type: true,
+                id: true,
+                createdAt: true
             }
         })
         return res.status(200).json({ success: true, addComment });
@@ -151,7 +158,7 @@ adminRoute.post('/add-comment', authMid, async (req, res) => {
 
 adminRoute.post('/update-status', authMid, async (req, res) => {
     try {
-
+        console.log('i m er')
         //@ts-ignore
         const userId = req.user.user_id;
 
@@ -173,29 +180,33 @@ adminRoute.post('/update-status', authMid, async (req, res) => {
             },
             data: {
                 status: newStatus
+            },
+            select: {
+                complaint_id: true,
+                status: true
             }
         })
         const user = await prisma.user.findUnique({ where: { id: complaint?.user.id } });
 
-        if (user?.expoPushToken) {
-            await SendPushNotification(
-                user.expoPushToken,
-                "Complaint Status Updated ✅",
-                `Your status is changed to  ${newStatus}. Please log in the app to check the new status of your report.`,
-                complaint?.complaint_id
-            );
-        }
-        try {
-            const message = await client.messages.create({
-                body: `Your status is changed to  ${newStatus}. Please log in the app to check the new status of your report.`,
-                messagingServiceSid: process.env.messagingServiceSid,
-                //@ts-ignore
-                to: `+91${complaint?.user.phonenumber}`
-            });
-            console.log("OTP sent successfully:", message.sid, ` ${newStatus}`);
-        } catch (error) {
-            console.log("Error sending OTP:", error);
-        }
+        // if (user?.expoPushToken) {
+        //     await SendPushNotification(
+        //         user.expoPushToken,
+        //         "Complaint Status Updated ✅",
+        //         `Your status is changed to  ${newStatus}. Please log in the app to check the new status of your report.`,
+        //         complaint?.complaint_id
+        //     );
+        // }
+        // try {
+        //     const message = await client.messages.create({
+        //         body: `Your status is changed to  ${newStatus}. Please log in the app to check the new status of your report.`,
+        //         messagingServiceSid: process.env.messagingServiceSid,
+        //         //@ts-ignore
+        //         to: `+91${complaint?.user.phonenumber}`
+        //     });
+        //     console.log("OTP sent successfully:", message.sid, ` ${newStatus}`);
+        // } catch (error) {
+        //     console.log("Error sending OTP:", error);
+        // }
         return res.status(200).json({ success: true, updateStatus });
     } catch (error) {
         console.log(error)
@@ -256,5 +267,26 @@ adminRoute.get('/admin-dashboard', async (req, res) => {
         return res.status(403).json({ error: "Server Problem!", success: false })
     }
 });
+
+adminRoute.post('/assign-work', async (req, res) => {
+    try {
+        const { workerId, complaintId } = req.body();
+
+        const worker = await prisma.workAssigned.create({
+            data: {
+                complaint_id: complaintId,
+                worker_id: workerId,
+                status: 'pending',
+            },
+
+        })
+
+        return res.status(200).json({ success: true, worker });
+
+    } catch (error) {
+        console.log(error)
+        return res.status(403).json({ error: "Server Problem!", success: false })
+    }
+})
 
 export default adminRoute;

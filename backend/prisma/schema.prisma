@@ -23,11 +23,28 @@ model User {
 }
 
 model Worker {
-  id          Int      @id @default(autoincrement())
-  name        String
-  password    String
-  phoneNumber Int      @unique
-  createdAt   DateTime @default(now())
+  id            Int            @id @default(autoincrement())
+  name          String
+  password      String
+  phoneNumber   String         @unique
+  createdAt     DateTime       @default(now())
+  workAssigneds WorkAssigned[]
+  complaints    Complaint[]
+}
+
+model WorkAssigned {
+  id           Int        @id @default(autoincrement())
+  status       WorkStatus
+  worker_id    Int
+  worker       Worker     @relation(fields: [worker_id], references: [id])
+  complaint_id Int
+  complaint    Complaint  @relation(fields: [complaint_id], references: [complaint_id])
+  @@unique([worker_id, complaint_id])
+}
+
+enum WorkStatus {
+  pending
+  completed
 }
 
 model Complaint {
@@ -47,6 +64,9 @@ model Complaint {
   user                  User                    @relation(fields: [user_id], references: [id])
   media                 Media[]
   votes                 Vote[]
+  worker                Worker?                 @relation(fields: [workerId], references: [id])
+  workerId              Int?
+  workAssigneds         WorkAssigned[]
 }
 
 model Media {

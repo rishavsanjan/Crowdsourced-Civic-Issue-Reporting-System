@@ -7,12 +7,16 @@ import {
     ScrollView,
     StatusBar,
     Switch,
+    ActivityIndicator,
 } from 'react-native';
 import Icon from '@react-native-vector-icons/ionicons';
 import { RootStackParamList } from '../navigation/navigation';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import {  useMutation, useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { useMutation } from '@tanstack/react-query';
+import axios, { Axios, AxiosError } from 'axios';
+import API_BASE_URL from '@/config/api';
+import { Toast } from 'toastify-react-native';
+import { useAuth } from '../context/auth-context';
 type Props = NativeStackScreenProps<RootStackParamList, 'AuthScreen'>;
 
 
@@ -23,18 +27,33 @@ const WorkerLoginScreen: React.FC<Props> = () => {
     })
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
-
+    const {login} = useAuth();
 
     const handleLoginMutation = useMutation({
         mutationKey: ['worker-login'],
         mutationFn: async () => {
             const res = await axios({
+                url: `${API_BASE_URL}/api/worker/login`,
                 method: 'post',
                 data: {
                     number: formData.number,
                     password: formData.password
                 }
             })
+            return res.data;
+        }, onSuccess: async (data) => {
+            Toast.success('Logged in successfully!');
+            console.log(data)
+            login(data.msg);
+        },
+        onError: (error: AxiosError<{ error?: string; message?: string }>) => {
+            if (error.response) {
+                Toast.error(error.response.data?.error || error.response.data?.message || 'An error occurred');
+            } else if (error.request) {
+                Toast.error('No response from server');
+            } else {
+                Toast.error(error.message || 'An error occurred');
+            }
         }
     })
 
@@ -67,7 +86,7 @@ const WorkerLoginScreen: React.FC<Props> = () => {
                     {/* Identity Input */}
                     <View className="mb-5">
                         <Text className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1 mb-1.5">
-                            Mobile or Email
+                            Mobile
                         </Text>
                         <View className="relative">
                             <View className="absolute left-4 top-4 z-10">
@@ -75,11 +94,11 @@ const WorkerLoginScreen: React.FC<Props> = () => {
                             </View>
                             <TextInput
                                 className="w-full pl-11 pr-4 py-4 bg-slate-50 dark:bg-slate-800 rounded-xl text-slate-900 dark:text-white text-base"
-                                placeholder="e.g., +1 555-0123"
+                                placeholder="+91 7051901216"
                                 placeholderTextColor="#94a3b8"
                                 value={formData.number}
                                 onChangeText={(text) => { setFormData(prev => ({ ...prev, number: text })) }}
-                                keyboardType="email-address"
+                                keyboardType="number-pad"
                                 autoCapitalize="none"
                             />
                         </View>
@@ -137,11 +156,25 @@ const WorkerLoginScreen: React.FC<Props> = () => {
                     {/* Submit Button */}
                     <TouchableOpacity
                         className="w-full bg-primary bg-blue-600 py-4 rounded-xl shadow-lg flex-row items-center justify-center space-x-2 mt-4 active:scale-95"
-                        onPress={() => {handleLoginMutation.mutate()}}
+                        onPress={() => {
+                            handleLoginMutation.mutate()
+                        }}
+                        disabled={handleLoginMutation.isPending}
                         activeOpacity={0.9}
                     >
-                        <Text className="text-white font-bold text-base">Login</Text>
-                        <Icon name="arrow-forward" size={18} color="#ffffff" />
+                        {
+                            handleLoginMutation.isPending ?
+                                <View className='flex flex-row gap-2'>
+                                    <Text className='text-white text-base font-semibold'>Logging...</Text>
+                                    <ActivityIndicator color={'white'} />
+                                </View>
+                                :
+                                <>
+                                    <Text className="text-white font-bold text-base">Login</Text>
+                                    <Icon name="arrow-forward" size={18} color="#ffffff" />
+                                </>
+                        }
+
                     </TouchableOpacity>
                 </View>
 
@@ -155,16 +188,6 @@ const WorkerLoginScreen: React.FC<Props> = () => {
                             <Text className="text-primary font-bold text-sm ml-2">Request Access</Text>
                         </TouchableOpacity>
                     </View>
-
-                    <View className="pt-8 border-t border-slate-100 dark:border-slate-800 w-full flex items-center">
-                        <TouchableOpacity className="flex-row items-center space-x-1">
-                            <Icon name="help-circle-outline" size={16} color="#94a3b8" />
-                            <Text className="text-xs text-slate-400 ml-1">Contact Support</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* iOS Home Indicator */}
-                    <View className="w-32 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mt-4" />
                 </View>
             </ScrollView>
 

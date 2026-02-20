@@ -7,10 +7,11 @@ import AdminLogin from "./pages/login";
 import AdminSignup from "./pages/signup";
 import MyMapAll from "./pages/alllocationsmap";
 import Dashboard from "./pages/dashboard";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
 
-
+  const queryClient = new QueryClient();
   function AppContent() {
 
     return (
@@ -27,9 +28,12 @@ function App() {
 
   return (
     <>
-      <Router>
-        <AppContent />
-      </Router>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <AppContent />
+        </Router>
+      </QueryClientProvider>
+
     </>
   )
 }
