@@ -1,8 +1,30 @@
 export interface Complaint {
-  complaint_id: string;
-  status: 'pending' | 'in_progress' | 'resolved';
-  address: string;
-  createdAt: string;
-  date: string;
-  media: [];
+    address: string,
+    complaint_id: number,
+    createdAt: string,
+    description: string,
+    latitude: number,
+    longitude: number,
+    status: "pending" | "in_progress" | "resolved" | undefined,
+    title: string,
+    updatedAt: string,
+    user_id: number,
+    media: Array<{
+        media_id: number;
+        file_url: string;
+        file_type: 'image' | 'video';
+    }>;
+    AdminstrativeComments: AdminstrativeComments[]
+    user: {
+        name: string,
+        email: string
+    }
+};
+
+
+
+export interface AdminstrativeComments extends Complaint {
+    id: string
+    type: string
+    comment: string
 }

@@ -4,18 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from '../components/Sidebar';
 import ReportsStats from '../components/ReportsStats';
 import ReportsTable from '../components/ReportsTable';
+import type { Complaint } from '../types/complaint';
 
 
-
-
-interface Complaint {
-  complaint_id: string;
-  status: 'pending' | 'in_progress' | 'resolved';
-  address: string;
-  createdAt: string;
-  date: string;
-  media: [];
-}
 
 const AdminHome: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -76,7 +67,7 @@ const AdminHome: React.FC = () => {
 
 
 
-  
+
 
 
   return (
