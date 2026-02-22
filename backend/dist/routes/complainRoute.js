@@ -162,6 +162,84 @@ complainRoute.get('/complainDetail/:complaintId', userAuth_1.default, async (req
         return res.status(403).json({ error: "Server Problem!", success: false });
     }
 });
+complainRoute.post('/test', userAuth_1.default, async (req, res) => {
+    try {
+        // @ts-ignore
+        const userId = req.user.user_id;
+        const page = Number(req.query.page) || 1;
+        const limit = 5;
+        const offset = (page - 1) * limit;
+        const { filter } = req.body;
+        // fetch complaints
+        const complaints = await db_1.default.complaint.findMany({
+            skip: offset,
+            take: limit,
+            where: filter === 'all' ? {} : { status: filter },
+            orderBy: { createdAt: 'desc' },
+        });
+        const complaintIds = complaints.map(c => c.complaint_id);
+        // Fetch votes
+        const votes = await db_1.default.vote.findMany({
+            where: { complaint_id: { in: complaintIds } },
+            select: {
+                complaint_id: true,
+                vote_type: true,
+                user_id: true
+            }
+        });
+        const voteMap = {};
+        for (const c of complaints) {
+            voteMap[c.complaint_id] = { like: 0, dislike: 0, userReaction: null };
+        }
+        for (const v of votes) {
+            if (v.vote_type === 'like')
+                voteMap[v.complaint_id].like++;
+            if (v.vote_type === 'dislike')
+                voteMap[v.complaint_id].dislike++;
+            if (v.user_id === userId)
+                voteMap[v.complaint_id].userReaction = v.vote_type;
+        }
+        // Fetch media 
+        const media = await db_1.default.media.findMany({
+            where: {
+                complaint_id: { in: complaintIds }
+            },
+            select: {
+                complaint_id: true,
+                file_type: true,
+                file_url: true
+            }
+        });
+        const mediaMap = {};
+        for (const c of complaints) {
+            mediaMap[c.complaint_id] = { file_type: null, file_url: null };
+        }
+        for (const m of media) {
+            mediaMap[m.complaint_id] = {
+                file_type: m.file_type,
+                file_url: m.file_url
+            };
+        }
+        // Final respones
+        const response = complaints.map(complaint => ({
+            ...complaint,
+            votes: voteMap[complaint.complaint_id],
+            media: mediaMap[complaint.complaint_id]
+        }));
+        return res.status(200).json({
+            msg: 'success',
+            success: true,
+            posts: response
+        });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            msg: 'Internal server error'
+        });
+    }
+});
 complainRoute.get('/profile', userAuth_1.default, async (req, res) => {
     try {
         //@ts-ignore

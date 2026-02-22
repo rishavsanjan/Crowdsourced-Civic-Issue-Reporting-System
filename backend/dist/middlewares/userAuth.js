@@ -7,7 +7,6 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 //@ts-ignore
 const authMid = (req, res, next) => {
     const head = req.headers.authorization;
-    console.log(head);
     if (!head || !head.startsWith('Bearer ')) {
         return res.status(401).json({ msg: "Authorization token missing", success: false });
     }
@@ -15,7 +14,6 @@ const authMid = (req, res, next) => {
     try {
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
-        console.log(req.user);
         next();
     }
     catch (error) {

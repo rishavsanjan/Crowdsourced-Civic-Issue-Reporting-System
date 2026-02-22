@@ -9,6 +9,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const userRoute_1 = __importDefault(require("./routes/userRoute"));
 const complainRoute_1 = __importDefault(require("./routes/complainRoute"));
 const adminRoute_1 = __importDefault(require("./routes/adminRoute"));
+const workerRoute_1 = __importDefault(require("./routes/workerRoute"));
 (async () => {
     try {
         console.log("Starting app...");
@@ -27,6 +28,7 @@ const adminRoute_1 = __importDefault(require("./routes/adminRoute"));
         app.use('/api/user', userRoute_1.default);
         app.use('/api/complain', complainRoute_1.default);
         app.use('/api/admin', adminRoute_1.default);
+        app.use('/api/worker', workerRoute_1.default);
         app.listen(3000, () => {
             console.log("http://localhost:3000/");
         });

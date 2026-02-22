@@ -9,9 +9,13 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const db_1 = __importDefault(require("../config/db"));
 const zodType_1 = require("../zodType");
 const userAuth_1 = __importDefault(require("../middlewares/userAuth"));
-const accountSid = process.env.accountSid;
-const authToken = process.env.authToken;
-const client = require('twilio')('ACda1eb41cb2a30553cc66f0178fbcd950', "2eb628697e455772e7dce4cbee7aa22e");
+const twilio_1 = require("twilio");
+const dotenv_1 = __importDefault(require("dotenv"));
+const axios_1 = __importDefault(require("axios"));
+dotenv_1.default.config();
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = new twilio_1.Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 const userRoute = express_1.default.Router();
 async function checkActiveReporterBadge(userId) {
     const complaintCount = await db_1.default.complaint.count({
@@ -37,13 +41,12 @@ async function checkActiveReporterBadge(userId) {
     }
 }
 userRoute.post('/signup-no-otp', async (req, res) => {
-    console.log('hello');
     const { phone } = await req.body;
     const user = await db_1.default.user.findUnique({
         where: { phonenumber: phone }
     });
     if (user) {
-        return res.status(200).json({ error: "Number already registered!", success: false });
+        return res.status(401).json({ message: "Number already registered!", success: false });
     }
     let digits = "0123456789";
     let OTP = "";
@@ -179,6 +182,23 @@ userRoute.post('/login-no-otp', async (req, res) => {
         console.log("Error sending OTP:", error);
     }
 });
+userRoute.get('/isValid', userAuth_1.default, async (req, res) => {
+    //@ts-ignore
+    const userId = req.user.user_id;
+    const user = await db_1.default.user.findUnique({
+        where: {
+            id: userId
+        },
+        select: {
+            id: true,
+            name: true,
+            phonenumber: true
+        }
+    });
+    console.log('i m here');
+    console.log(user);
+    return res.status(200).json({ msg: 'success', success: true, user: user });
+});
 userRoute.get('/profile', userAuth_1.default, async (req, res) => {
     try {
         //@ts-ignore
@@ -259,18 +279,26 @@ userRoute.get('/badges', userAuth_1.default, async (req, res) => {
 userRoute.post('/addcomplain', userAuth_1.default, async (req, res) => {
     try {
         console.log(req.body);
-        const { category, title, description, latitude, longitude, address, media // This will be an array of media objects
-         } = req.body;
+        const { category, title, description, latitude, longitude, address, media } = req.body;
         //@ts-ignore
-        const userId = req.user.user_id; // From authentication middleware
+        const userId = req.user.user_id;
+        const response = await (0, axios_1.default)({
+            url: `http://127.0.0.1:8000/predict`,
+            method: 'post',
+            data: {
+                complaint: description
+            }
+        });
+        console.log(response.data);
         checkActiveReporterBadge(userId);
+        const formattedDepartment = await response.data.predicted_department.toUpperCase().replace(/\s+/g, "_");
         // Create complaint with media in a transaction
         const result = await db_1.default.$transaction(async (prisma) => {
             // Create the complaint first
             const complaint = await prisma.complaint.create({
                 data: {
                     user_id: userId,
-                    category: category,
+                    category: formattedDepartment || 'N/A',
                     title: title,
                     description: description,
                     latitude: latitude,
@@ -310,7 +338,7 @@ userRoute.post('/addcomplain', userAuth_1.default, async (req, res) => {
 userRoute.get('/allcomplain', userAuth_1.default, async (req, res) => {
     try {
         //@ts-ignore
-        const userId = req.user.user_id; // From authentication middleware
+        const userId = req.user.user_id;
         const complaint = await db_1.default.complaint.findMany({
             where: {
                 user_id: userId
@@ -319,7 +347,73 @@ userRoute.get('/allcomplain', userAuth_1.default, async (req, res) => {
         return res.status(200).json({ success: true, msg: 'success', complaint: complaint });
     }
     catch (error) {
+        console.log(error);
         console.error('Error creating complaint:', error);
+    }
+});
+userRoute.post('/chatbot-message', userAuth_1.default, async (req, res) => {
+    console.log('i m hit');
+    try {
+        //@ts-ignore
+        const userId = req.user.user_id;
+        let { message } = req.body;
+        message = message.toLowerCase();
+        if (message === 'hi' || message === 'hello' || message === 'hey' || message === 'hii' || message === 'hiii') {
+            return res.status(200).json({ success: true, msg: "Hey there, How may I help you today ?" });
+        }
+        if (message === 'complaint status') {
+            const complaint = await db_1.default.complaint.findMany({
+                where: {
+                    user_id: userId
+                }
+            });
+            return res.status(200).json({ success: true, msg: 'Here are all the complaints, Please choose the one whose status you want to know:', complaint: complaint });
+        }
+        return res.status(200).json({ success: false });
+    }
+    catch (error) {
+        console.error('Error creating complaint:', error);
+    }
+});
+userRoute.post('save-expo-token', userAuth_1.default, async (req, res) => {
+    try {
+        //@ts-ignore
+        const userId = req.user.user_id;
+        const { pushToken } = req.body;
+        if (!pushToken) {
+            return res.status(404).json({ success: false, msg: 'Token is missing' });
+        }
+        await db_1.default.user.update({
+            where: { id: userId },
+            data: {
+                expoPushToken: pushToken
+            }
+        });
+        return res.status(201).json({ success: true, msg: 'Token added successfully' });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, msg: 'Server Error' });
+    }
+});
+userRoute.post('/update-profile', userAuth_1.default, async (req, res) => {
+    try {
+        //@ts-ignore
+        const userId = req.user.user_id;
+        const { name } = req.body;
+        const user = await db_1.default.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                name
+            }
+        });
+        return res.status(200).json({ success: true, user });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, msg: 'Server Error' });
     }
 });
 exports.default = userRoute;

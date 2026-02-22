@@ -10,6 +10,9 @@ import CommentCard from '../components/CommentCard';
 import StatusChange from '../components/StatusChange';
 import CitizenCard from '../components/CitizenCard';
 import type { Complaint } from '../types/complaint';
+import AssignWorker from '../components/AssignWorker';
+import AssignedWorker from '../components/AssignedWorker';
+
 
 
 
@@ -26,16 +29,12 @@ const ReportDetail: React.FC = () => {
             });
             setStatus(response.data.complaint.status)
             console.log(response.data)
-            return response.data.complaint as Complaint;
+            const res = { ...response.data.complaint, availableWorker: response.data.availableWorker }
+            console.log(res)
+            return res as Complaint;
         }
     })
 
-
-
-
-
-
-    console.log(status)
     if (!complaint_id || !data) return;
     return (
         <div className="flex h-screen bg-gray-100 light:bg-gray-900">
@@ -80,12 +79,26 @@ const ReportDetail: React.FC = () => {
                         {/* Right Column - Sidebar Actions */}
                         <div className="lg:col-span-1 space-y-8">
                             {/* Admin Actions Card */}
-
                             <StatusChange data={data} complaint_id={complaint_id} status={status} setStatus={setStatus} />
 
+                            {
+                                data.workerId ?
+                                    <>
+                                        <AssignedWorker/>
+                                    </>
+                                    :
+                                    <>
+                                        {/* Assign Worker Card */}
+                                        <AssignWorker worker={data.availableWorker} complaint_id={complaint_id} />
+                                    </>
+                            }
+
+
+
                             {/* Citizen Details Card */}
-                            
                             <CitizenCard data={data} />
+
+
                         </div>
                     </div>
                 </div>

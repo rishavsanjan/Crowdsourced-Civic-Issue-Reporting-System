@@ -113,17 +113,31 @@ adminRoute.get('/details/:complaint_id', async (req, res) => {
         console.log('hello')
         let { complaint_id }: any = req.params;
         complaint_id = parseInt(complaint_id);
-        const complaint = await prisma.complaint.findUnique({
+        let complaint = await prisma.complaint.findUnique({
             where: {
                 complaint_id
             },
             include: {
                 media: true,
                 user: true,
-                AdminstrativeComments: true
+                AdminstrativeComments: true,
+                worker:true
             }
         })
-        return res.status(200).json({ success: true, complaint });
+
+        let availableWorker;
+        if (!complaint?.workerId) {
+            availableWorker = await prisma.worker.findMany({
+                select:{
+                    id : true,
+                    name:true
+                }
+            })
+        }
+        
+
+
+        return res.status(200).json({ success: true, complaint, availableWorker });
     } catch (error) {
 
         return res.status(403).json({ error: "Server Problem!", success: false })
@@ -268,13 +282,14 @@ adminRoute.get('/admin-dashboard', async (req, res) => {
     }
 });
 
-adminRoute.post('/assign-work', async (req, res) => {
+adminRoute.post('/assign-worker', authMid, async (req, res) => {
+    console.log('i m hit')
     try {
-        const { workerId, complaintId } = req.body();
-
+        const { workerId, complaint_id } = req.body();
+        console.log('i mhere    ')
         const worker = await prisma.workAssigned.create({
             data: {
-                complaint_id: complaintId,
+                complaint_id: complaint_id,
                 worker_id: workerId,
                 status: 'pending',
             },
@@ -285,8 +300,12 @@ adminRoute.post('/assign-work', async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        return res.status(403).json({ error: "Server Problem!", success: false })
+        return res.status(403).json({ error: "Server Problemd!", success: false })
     }
+})
+
+adminRoute.get('/a', async (req, res) => {
+    console.log('i m hit')
 })
 
 export default adminRoute;

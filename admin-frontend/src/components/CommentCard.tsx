@@ -11,7 +11,7 @@ interface Props {
 const CommentCard: React.FC<Props> = ({ data, complaint_id }) => {
     const [comment, setComment] = useState('');
     const [commentType, setCommentType] = useState('');
-    const queryClient = useQueryClient();
+    const queryClient = useQueryClient();   
     
     const addCommentMutation = useMutation({
         mutationKey: ['add-comment'],

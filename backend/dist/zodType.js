@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.vadlidateComplainSchema = exports.validateUserSchema = exports.createUserSchema = void 0;
+exports.vadlidateComplainSchema = exports.validateAdminSchema = exports.validateUserSchema = exports.createUserSchema = void 0;
 const zod_1 = __importDefault(require("zod"));
 const complaintCategory = ['roads', 'streetlights', 'waste', 'water', 'parks', 'other'];
 const userRole = ['admin', 'user'];
@@ -16,6 +16,10 @@ exports.createUserSchema = zod_1.default.object({
 });
 exports.validateUserSchema = zod_1.default.object({
     phonenumber: zod_1.default.string().max(10),
+    password: zod_1.default.string().min(8, "Password must be at least 8 charcters")
+});
+exports.validateAdminSchema = zod_1.default.object({
+    email: zod_1.default.email(),
     password: zod_1.default.string().min(8, "Password must be at least 8 charcters")
 });
 exports.vadlidateComplainSchema = zod_1.default.object({
