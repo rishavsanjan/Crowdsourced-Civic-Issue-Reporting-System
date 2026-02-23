@@ -121,20 +121,21 @@ adminRoute.get('/details/:complaint_id', async (req, res) => {
                 media: true,
                 user: true,
                 AdminstrativeComments: true,
-                worker:true
+                worker: true,
+                workAssigneds:true
             }
         })
 
         let availableWorker;
         if (!complaint?.workerId) {
             availableWorker = await prisma.worker.findMany({
-                select:{
-                    id : true,
-                    name:true
+                select: {
+                    id: true,
+                    name: true
                 }
             })
         }
-        
+
 
 
         return res.status(200).json({ success: true, complaint, availableWorker });
@@ -283,18 +284,26 @@ adminRoute.get('/admin-dashboard', async (req, res) => {
 });
 
 adminRoute.post('/assign-worker', authMid, async (req, res) => {
-    console.log('i m hit')
     try {
-        const { workerId, complaint_id } = req.body();
-        console.log('i mhere    ')
+        const { workerId, complaint_id } = req.body;
         const worker = await prisma.workAssigned.create({
             data: {
-                complaint_id: complaint_id,
+                complaint_id: parseInt(complaint_id),
                 worker_id: workerId,
                 status: 'pending',
             },
-
         })
+
+        const update = await prisma.complaint.update({
+            where: {
+                complaint_id: parseInt(complaint_id),
+            },
+            data: {
+                workerId: workerId
+            }
+        })
+
+
 
         return res.status(200).json({ success: true, worker });
 
@@ -302,10 +311,6 @@ adminRoute.post('/assign-worker', authMid, async (req, res) => {
         console.log(error)
         return res.status(403).json({ error: "Server Problemd!", success: false })
     }
-})
-
-adminRoute.get('/a', async (req, res) => {
-    console.log('i m hit')
 })
 
 export default adminRoute;

@@ -17,17 +17,20 @@ import axios, { Axios, AxiosError } from 'axios';
 import API_BASE_URL from '@/config/api';
 import { Toast } from 'toastify-react-native';
 import { useAuth } from '../context/auth-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 type Props = NativeStackScreenProps<RootStackParamList, 'AuthScreen'>;
 
 
-const WorkerLoginScreen: React.FC<Props> = () => {
+const WorkerLoginScreen: React.FC<Props> = ({ navigation }) => {
     const [formData, setFormData] = useState({
         number: '',
         password: ''
     })
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
-    const {login} = useAuth();
+    const { login } = useAuth();
+    const router = useRouter();
 
     const handleLoginMutation = useMutation({
         mutationKey: ['worker-login'],
@@ -43,8 +46,8 @@ const WorkerLoginScreen: React.FC<Props> = () => {
             return res.data;
         }, onSuccess: async (data) => {
             Toast.success('Logged in successfully!');
-            console.log(data)
             login(data.msg);
+
         },
         onError: (error: AxiosError<{ error?: string; message?: string }>) => {
             if (error.response) {
@@ -56,6 +59,28 @@ const WorkerLoginScreen: React.FC<Props> = () => {
             }
         }
     })
+
+    if (handleLoginMutation.isSuccess) {
+        return (
+            <SafeAreaView className="flex-1 bg-gray-50">
+                <StatusBar barStyle="dark-content" />
+                <View className="flex-1 justify-center items-center px-6">
+                    <View className="w-20 h-20 rounded-full bg-green-500 justify-center items-center mb-6">
+                        <Text className="text-4xl text-white font-bold">✓</Text>
+                    </View>
+                    <Text className="text-3xl font-bold text-gray-900 mb-3">
+                        Welcome Back!
+                    </Text>
+                    <Text className="text-base text-gray-600 text-center mb-8 leading-6">
+                        You have successfully logged in to your account.
+                    </Text>
+                    <TouchableOpacity onPress={() => { router.replace("/(tabs)/HomeScreen") }} className="w-full bg-[#1173D4] rounded-xl py-4 items-center">
+                        <Text className="text-white text-base font-semibold">Continue</Text>
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
+        );
+    }
 
     console.log(formData)
 
@@ -155,11 +180,11 @@ const WorkerLoginScreen: React.FC<Props> = () => {
 
                     {/* Submit Button */}
                     <TouchableOpacity
-                        className="w-full bg-primary bg-blue-600 py-4 rounded-xl shadow-lg flex-row items-center justify-center space-x-2 mt-4 active:scale-95"
+                        className="w-full bg-primary bg-blue-600 py-4 rounded-xl shadow-lg flex-row items-center justify-center space-x-2 mt-4 active:scale-95 disabled:opacity-75"
                         onPress={() => {
                             handleLoginMutation.mutate()
                         }}
-                        disabled={handleLoginMutation.isPending}
+                        disabled={handleLoginMutation.isPending || formData.number.length < 10 || formData.password.length < 8}
                         activeOpacity={0.9}
                     >
                         {

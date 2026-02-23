@@ -84,7 +84,7 @@ const ReportDetail: React.FC = () => {
                             {
                                 data.workerId ?
                                     <>
-                                        <AssignedWorker/>
+                                        <AssignedWorker complaint={data}/>
                                     </>
                                     :
                                     <>

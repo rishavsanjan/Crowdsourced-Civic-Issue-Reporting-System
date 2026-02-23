@@ -39,6 +39,8 @@ model WorkAssigned {
   worker       Worker     @relation(fields: [worker_id], references: [id])
   complaint_id Int
   complaint    Complaint  @relation(fields: [complaint_id], references: [complaint_id])
+  createdAt    DateTime   @default(now())
+
   @@unique([worker_id, complaint_id])
 }
 

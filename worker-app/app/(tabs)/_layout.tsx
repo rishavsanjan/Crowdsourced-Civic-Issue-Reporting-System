@@ -3,8 +3,8 @@ export default function TabLayout() {
   return (
     <Tabs screenOptions={{ headerShown: false }}>
       <Tabs.Screen 
-        name="index" 
-        options={{ title: 'Home' }} 
+        name="HomeScreen" 
+        options={{ title: 'WorkerHomeScreen' }} 
       />
       <Tabs.Screen 
         name="profile" 

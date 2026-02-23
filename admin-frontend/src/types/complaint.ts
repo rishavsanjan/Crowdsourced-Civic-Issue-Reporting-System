@@ -20,9 +20,16 @@ export interface Complaint {
         email: string
     }
 
-    worker : Worker
-    availableWorker : Worker[]
-    workerId:number | null
+    worker: Worker
+    availableWorker: Worker[]
+    workerId: number | null
+    workAssigneds: Array<{
+        id: number,
+        status: string,
+        worker_id: number,
+        complaint_id: number,
+        createdAt: Date
+    }>
 };
 
 
