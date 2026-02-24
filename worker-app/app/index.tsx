@@ -1,13 +1,17 @@
 import { Redirect } from "expo-router";
+import { useAuth } from "./context/auth-context";
 import "../app/global.css"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ActivityIndicator } from "react-native";
 
 export default function Index() {
-  const queryClient = new QueryClient();
+  const { worker, loading } = useAuth();
+  if (loading) {
+    return <ActivityIndicator color={'black'} />
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Redirect href="/(auth)/auth" />
-    </QueryClientProvider>
-    );
+  }
+  if (worker) {
+    return <Redirect href="/(tabs)" />;
+  }
+
+  return <Redirect href="/(auth)/auth" />;
 }

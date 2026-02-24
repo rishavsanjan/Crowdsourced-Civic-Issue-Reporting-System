@@ -74,7 +74,7 @@ const WorkerLoginScreen: React.FC<Props> = ({ navigation }) => {
                     <Text className="text-base text-gray-600 text-center mb-8 leading-6">
                         You have successfully logged in to your account.
                     </Text>
-                    <TouchableOpacity onPress={() => { router.replace("/(tabs)/HomeScreen") }} className="w-full bg-[#1173D4] rounded-xl py-4 items-center">
+                    <TouchableOpacity onPress={() => { router.replace("/(tabs)") }} className="w-full bg-[#1173D4] rounded-xl py-4 items-center">
                         <Text className="text-white text-base font-semibold">Continue</Text>
                     </TouchableOpacity>
                 </View>

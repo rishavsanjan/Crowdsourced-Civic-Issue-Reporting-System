@@ -3,10 +3,9 @@ import { Stack } from "expo-router";
 import ToastManager from 'toastify-react-native';
 import { AuthProvider } from "./context/auth-context";
 
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
-  const queryClient = new QueryClient();
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
@@ -14,6 +13,5 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }} />
       </QueryClientProvider>
     </AuthProvider>
-
   );
 }

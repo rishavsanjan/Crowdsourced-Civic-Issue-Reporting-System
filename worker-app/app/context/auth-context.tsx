@@ -11,6 +11,7 @@ export type Worker = {
 
 type AuthContextType = {
     worker: Worker | null
+    loading: boolean
     login: (token: string) => void;
     logout: () => void;
     getUser: () => void;
@@ -19,39 +20,48 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [worker, setUser] = useState<Worker | null>(null);
-
+    const [worker, setWorker] = useState<Worker | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
     const getUser = async () => {
-        const token = await AsyncStorage.getItem("citytoken");
-        const response = await axios({
-            url: `${API_BASE_URL}/api/worker/isValid`,
-            headers: {
-                Authorization: `Bearer ${token}`,
+        try {
+            const token = await AsyncStorage.getItem("workercitytoken");
+            const response = await axios({
+                url: `${API_BASE_URL}/api/worker/isValid`,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            })
+            console.log(response.data)
+            if (response.data.success) {
+                setWorker(response.data.user)
+            } else {
+                setWorker(null)
             }
-        })
-        if (response.data.success) {
-            setUser(response.data.worker)
-        } else {
-            setUser(null)
+        } catch (error) {
+            setWorker(null)
+        } finally {
+            setLoading(false)
         }
+
+
     }
 
     useEffect(() => {
         getUser();
     }, [])
 
-    const login = async(token: string) => {
-       await AsyncStorage.setItem("citytoken", token);
+    const login = async (token: string) => {
+        await AsyncStorage.setItem("workercitytoken", token);
         getUser();
 
     };
 
     const logout = () => {
-        AsyncStorage.removeItem("citytoken");
+        AsyncStorage.removeItem("workercitytoken");
     }
 
     return (
-        <AuthContext.Provider value={{ worker, login, logout, getUser }}>
+        <AuthContext.Provider value={{ worker, login, logout, getUser, loading }}>
             {children}
         </AuthContext.Provider>
     );

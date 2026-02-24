@@ -3,7 +3,7 @@ export default function TabLayout() {
   return (
     <Tabs screenOptions={{ headerShown: false }}>
       <Tabs.Screen 
-        name="HomeScreen" 
+        name="index" 
         options={{ title: 'WorkerHomeScreen' }} 
       />
       <Tabs.Screen 
