@@ -75,6 +75,9 @@ workerRoute.get('/get-jobs', authMid, async (req, res) => {
                 where: {
                     workerId: userId,
                 },
+                include: {
+                    workAssigneds: true
+                }
             }),
             prisma.complaint.count({
                 where: {
@@ -101,6 +104,31 @@ workerRoute.get('/get-jobs', authMid, async (req, res) => {
     }
 });
 
+workerRoute.get('/job', authMid, async (req, res) => {
+    try {
+        //@ts-ignore
+        const userId = req.user.user_id;
+        const id = Number(req.query.id);
+
+        const job = await prisma.workAssigned.findUnique({
+            where: {
+                id
+            },
+            include: {
+                worker: true,
+                complaint: true
+            }
+        })
+
+        return res.status(200).json({
+            job, success: true
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(403).json({ error: "Server Problem!", success: false })
+    }
+})
+
 workerRoute.post('/update-work', authMid, async (req, res) => {
     try {
         //@ts-ignore
@@ -120,6 +148,30 @@ workerRoute.post('/update-work', authMid, async (req, res) => {
         return res.status(403).json({ error: "Server Problem!", success: false })
     }
 })
+
+workerRoute.post('/update-instructions', async (req, res) => {
+    try {
+
+        let { instructions, workId } = req.body;
+        workId = Number(workId);
+        const updateWork = await prisma.workAssigned.update({
+            where: {
+                id: workId
+            },
+            data: {
+                instructions
+            }
+        })
+        return res.status(200).json({ success: true, updateWork })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(403).json({ error: "Server Problemo!", success: false })
+    }
+})
+
+
+
 
 
 export default workerRoute

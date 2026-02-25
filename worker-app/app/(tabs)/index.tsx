@@ -17,6 +17,7 @@ import axios from 'axios';
 import API_BASE_URL from '@/config/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TaskCard from '../components/TaskCard';
+import { useRouter } from 'expo-router';
 
 
 interface Jobs {
@@ -29,6 +30,10 @@ interface Jobs {
     isPriority?: boolean;
     hasEvidence?: boolean;
     teamMember?: string;
+    workAssigneds : {
+        id : number,
+        status : 'in-progress' | 'pending' | 'completed'
+    }[]
 }
 
 
@@ -38,7 +43,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "HomeScreen">;
 
 const WorkerHomeScreen: React.FC<Props> = () => {
     const [activeTab, setActiveTab] = useState<'tasks' | 'map' | 'history' | 'settings'>('tasks');
-
+    
+    const router = useRouter();
     const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
         queryKey: ['jobs'],
         queryFn: async ({ pageParam = 1 }) => {
@@ -63,7 +69,7 @@ const WorkerHomeScreen: React.FC<Props> = () => {
 
     const jobs: Jobs[] = data?.pages.flatMap(page => page.jobs) ?? [];
 
-    
+
 
 
     return (
@@ -108,7 +114,14 @@ const WorkerHomeScreen: React.FC<Props> = () => {
                 <FlatList
                     data={jobs}
                     keyExtractor={(item) => item.complaint_id.toString()}
-                    renderItem={({ item }) => <TaskCard task={item} />}
+                    renderItem={({ item }) => <TaskCard
+                        task={item}
+                        onPress={() =>
+                            router.push({
+                                pathname: "/job/[id]",
+                                params: { id: item.workAssigneds[0].id.toString() },
+                            })}
+                    />}
                     onEndReached={() => {
                         if (hasNextPage && !isFetchingNextPage) {
                             fetchNextPage()

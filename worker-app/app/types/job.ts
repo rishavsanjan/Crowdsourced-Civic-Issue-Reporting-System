@@ -9,3 +9,29 @@ export interface Jobs {
     hasEvidence?: boolean;
     teamMember?: string;
 }
+
+export interface Complaint {
+    address: string,
+    complaint_id: number,
+    createdAt: string,
+    description: string,
+    latitude: number,
+    longitude: number,
+    status: "pending" | "in_progress" | "resolved" | undefined,
+    title: string,
+    updatedAt: string,
+    user_id: number,
+    media: {
+        media_id: number;
+        file_url: string;
+        file_type: 'image' | 'video';
+    }[];
+    worker: Worker
+
+};
+
+
+export interface Worker {
+    id: number
+    name: string
+}

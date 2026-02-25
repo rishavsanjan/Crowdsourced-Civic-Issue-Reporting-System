@@ -6,13 +6,17 @@ import { getStatusBadge } from '../utils/StatusBadge';
 
 interface Props {
     task: Jobs
+    onPress: () => void;
+
 }
-const TaskCard: React.FC<Props> = ({ task }) => {
+const TaskCard: React.FC<Props> = ({ task, onPress }) => {
     const isCompleted = task.status === 'completed';
     const isInProgress = task.status === 'in-progress';
 
     return (
         <TouchableOpacity
+            onPress={onPress}
+
             key={task.complaint_id}
             className={`rounded-xl p-4 shadow-sm mb-4 active:scale-[0.98] ${isCompleted
                 ? 'bg-white/60 light:bg-slate-900/60 border border-slate-100 light:border-slate-800 opacity-75'

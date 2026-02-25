@@ -11,6 +11,7 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <ToastManager />
         <Stack screenOptions={{ headerShown: false }} />
+        
       </QueryClientProvider>
     </AuthProvider>
   );

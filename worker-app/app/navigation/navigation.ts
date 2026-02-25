@@ -1,4 +1,7 @@
 export type RootStackParamList = {
-    AuthScreen : undefined
-    HomeScreen : undefined
+    AuthScreen: undefined
+    HomeScreen: undefined
+    JobDetails: {
+        jobId: number;
+    };
 }
