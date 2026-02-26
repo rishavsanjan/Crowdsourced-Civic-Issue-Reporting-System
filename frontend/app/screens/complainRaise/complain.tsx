@@ -268,8 +268,6 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                 }
             }
 
-            console.log(uploadedMediaUrls)
-            console.log('hello')
             const token = await AsyncStorage.getItem('citytoken');
             const response = await axios({
                 url: `${API_BASE_IP}/api/user/addcomplain`,

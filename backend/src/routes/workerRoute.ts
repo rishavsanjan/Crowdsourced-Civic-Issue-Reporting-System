@@ -129,20 +129,36 @@ workerRoute.get('/job', authMid, async (req, res) => {
     }
 })
 
-workerRoute.post('/update-work', authMid, async (req, res) => {
+workerRoute.post('/upload-job', authMid, async (req, res) => {
     try {
         //@ts-ignore
         const userId = req.user.user_id;
-        const { workId } = req.body();
+        const { jobId, media } = req.body;
 
-        const updateWork = await prisma.workAssigned.update({
-            where: {
-                id: workId
-            },
-            data: {
-                status: 'completed'
+        const result = await prisma.$transaction(async (tx) => {
+            await tx.workAssigned.update({
+                where: {
+                    id: jobId
+                },
+                data: {
+                    status: 'completed',
+                }
+            })
+            if (media && media.length > 0) {
+                const mediaData = media.map((item: any) => ({
+                    workId: jobId,
+                    file_url: item.url,
+                    file_type: item.type === 'photo' ? 'image' : 'video'
+                }));
+
+                await tx.jobEvidence.create({
+                    data: mediaData
+                })
             }
+
+
         })
+        return res.status(200).json({ success: true, result })
     } catch (error) {
         console.log(error)
         return res.status(403).json({ error: "Server Problem!", success: false })

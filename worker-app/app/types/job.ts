@@ -35,3 +35,15 @@ export interface Worker {
     id: number
     name: string
 }
+
+export interface JobDetails {
+    complaint: Complaint
+
+    complaint_id: number
+    createdAt: string
+    id: number
+    status: 'in-progress' | 'pending' | 'completed',
+    worker_id: number
+    instructions: string[]
+    worker: Worker
+}

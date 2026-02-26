@@ -5,26 +5,26 @@ import {
     TouchableOpacity,
     ScrollView,
     StatusBar,
-    Image,
-    Alert,
+    ActivityIndicator,
 } from 'react-native';
 import Icon from '@react-native-vector-icons/ionicons';
 import { RootStackParamList } from '../navigation/navigation';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useLocalSearchParams } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import API_BASE_URL from '@/config/api';
 import { Complaint } from '../types/job';
 import { formatISTDateTime } from '../utils/date';
-import { MediaItem, pickImage, pickVideo, removeMediaItem, takePhoto } from '../utils/image';
+import { MediaItem } from '../utils/image';
+import AdminInstructions from '../components/AdminInstructions';
+import MediaUpload from '../components/MediaUpload';
+import WorkLocation from '../components/WorkLocation';
+import { uploadToCloudinary } from '../utils/cloudinary';
+import { Toast } from 'toastify-react-native';
 
-interface PhotoEvidence {
-    id: string;
-    uri: string;
-    alt: string;
-}
+
 
 
 type Props = NativeStackScreenProps<RootStackParamList, "JobDetails">;
@@ -41,12 +41,19 @@ interface JobDetails {
     worker: Worker
 }
 
+interface MediaType {
+    media_id: number;
+    file_url: string;
+    file_type: "video" | "image";
+}
+
 
 const JobDetail: React.FC<Props> = () => {
     const { id } = useLocalSearchParams();
     const jobId = Number(id);
     const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
-    console.log(mediaItems)
+    const [mediaUrls, setMediaUrls] = useState<MediaType[]>([]);
+    const queryClient = useQueryClient();
 
     const { data } = useQuery({
         queryKey: ['job', jobId],
@@ -64,19 +71,69 @@ const JobDetail: React.FC<Props> = () => {
         }
     })
 
+    const uploadWorkMutation = useMutation({
+        mutationKey: ['job', jobId],
+        mutationFn: async () => {
+            const uploadedMediaUrls = [];
+            for (const mediaItem of mediaItems) {
+                try {
+                    const cloudinaryUrl = await uploadToCloudinary(
+                        mediaItem.uri,
+                        mediaItem.type === 'photo' ? 'image' : 'video'
+                    );
+                    console.log(cloudinaryUrl)
+                    uploadedMediaUrls.push({
+                        file_type: mediaItem.type,
+                        file_url: cloudinaryUrl,
+                    });
+                    const file = {
+                        file_type: mediaItem.type,
+                        file_url: cloudinaryUrl
+                    }
+                    setMediaUrls(prev => ({ ...prev, file }))
+                } catch (uploadError) {
+                    console.error(`Failed to upload ${mediaItem.type}:`, uploadError);
+                    Toast.error(`Failed to upload ${mediaItem.type}`);
+                }
+            }
+            const token = await AsyncStorage.getItem('workercitytoken');
+            const response = await axios({
+                url: `${API_BASE_URL}/api/worker/upload-job`,
+                method: 'POST',
+                data: {
+                    jobId: jobId,
+                    media: uploadedMediaUrls,
+                },
+                headers: {
+                    'Authorization': "Bearer " + token
+                }
+            });
 
-    // Show photo options
-    const showPhotoOptions = () => {
-        Alert.alert(
-            "Add Photo",
-            "Choose an option",
-            [
-                { text: "Camera", onPress: takePhoto },
-                { text: "Gallery", onPress: pickImage(setMediaItems) },
-                { text: "Cancel", style: "cancel" }
-            ]
-        );
-    };
+            return response.data
+        },
+        onMutate: async () => {
+            await queryClient.cancelQueries({ queryKey: ['job', jobId] });
+
+            const previousData = queryClient.getQueryData<JobDetails>(['job', jobId]);
+
+            queryClient.setQueryData<JobDetails>(['job', jobId], (old) =>
+                old ? { ...old, status: 'completed', complaint: { ...old.complaint, media: mediaUrls } } : old
+            )
+
+            return { previousData };
+        },
+        onError: (_err, _vars, context) => {
+            if (context?.previousData) {
+                queryClient.setQueryData(['job', jobId], context.previousData);
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['job', jobId] });
+        },
+        onSuccess: () => {
+            Toast.success("Uploaded successfully!")
+        }
+    })
 
 
 
@@ -176,124 +233,32 @@ const JobDetail: React.FC<Props> = () => {
                 </View>
 
                 {/* Admin Instructions Card */}
-                <View className="bg-primary/5 light:bg-primary/10 rounded-xl p-4 border border-primary/20 mb-6">
-                    <View className="flex-row items-center gap-2 mb-3">
-                        <Icon name="clipboard-outline" size={20} color="#136dec" />
-                        <Text className="text-sm font-bold text-primary uppercase tracking-widest">
-                            Admin Instructions
-                        </Text>
-                    </View>
-                    <View className="space-y-3">
-                        {data.instructions.map((instruction, index) => (
-                            <View key={index} className="flex-row gap-3 mb-3">
-                                <Text className="text-primary font-bold">{index + 1}.</Text>
-                                <Text className="text-slate-700 light:text-slate-300 flex-1">
-                                    {instruction}
-                                </Text>
-                            </View>
-                        ))}
-                    </View>
-                </View>
+                <AdminInstructions instructions={data.instructions} />
 
-                {/* Photo Evidence Gallery */}
-                <View className="mb-6">
-                    <View className="flex-row items-center justify-between mb-4">
-                        <Text className="text-sm font-bold text-slate-400 uppercase tracking-widest">
-                            Work Evidence
-                        </Text>
-                        <Text className="text-xs text-slate-500">
-                            {mediaItems.length} / 5 Uploaded
-                        </Text>
-                    </View>
-                    <View className="flex-row flex-wrap gap-3">
-                        {/* Uploaded Photos */}
-                        {mediaItems.map((photo) => (
-                            <View
-                                key={photo.id}
-                                className="w-[31%] aspect-square rounded-lg overflow-hidden relative"
-                            >
-                                <Image
-                                    source={{ uri: photo.uri }}
-                                    className="w-full h-full"
-                                    resizeMode="cover"
-                                />
-                                <View className="absolute inset-0 bg-black/20 flex items-start justify-end p-1">
-                                    <TouchableOpacity
-                                        className="bg-white/90 light:bg-slate-800/90 rounded-full p-1 shadow-sm"
-                                        onPress={() => removeMediaItem(photo.id, setMediaItems)}
-                                    >
-                                        <Icon name="close" size={12} color="#ef4444" />
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        ))}
 
-                        {/* Add Photo Button */}
-                        {mediaItems.length < 5 && (
-                            <TouchableOpacity
-                                className="w-[31%] aspect-square rounded-lg border-2 border-dashed border-slate-300 light:border-slate-700 flex flex-col items-center justify-center bg-slate-50 light:bg-slate-800/50"
-                                onPress={showPhotoOptions}
-                                activeOpacity={0.7}
-                            >
-                                <Icon name="camera-outline" size={24} color="#94a3b8" />
-                                <Text className="text-[10px] font-medium text-slate-500 uppercase mt-1">
-                                    Add
-                                </Text>
-                            </TouchableOpacity>
-                        )}
-                    </View>
-                </View>
-                
 
-                {/*Add media */}
-                <View className="flex flex-col gap-2 mb-4">
-                    <Text className="text-[#96A4B1] font-medium">Add Media</Text>
-                    <View className="flex flex-row gap-2 justify-between w-full">
+                <MediaUpload mediaItems={mediaItems} setMediaItems={setMediaItems} />
 
-                        <TouchableOpacity
-                            className="bg-red-500 rounded-lg p-4 flex-1 items-center"
-                            onPress={showPhotoOptions}
-                        >
-                            <View className="flex flex-row items-center gap-2">
-                                <Image
-                                    style={{ width: 20, height: 20 }}
-                                    source={{
-                                        uri: "https://img.icons8.com/?size=100&id=MKHxHdHEYEfC&format=png&color=1173D4",
-                                    }}
-                                />
-                                <Text className="text-[#1173D4] font-semibold">Add Photo</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            className="bg-[#DFE9F4] rounded-lg p-4 flex-1 items-center"
-                            onPress={ () => {pickVideo(setMediaItems)}}
-                        >
-                            <View className="flex flex-row items-center gap-2">
-                                <Image
-                                    style={{ width: 20, height: 20 }}
-                                    source={{
-                                        uri: "https://img.icons8.com/?size=100&id=alybng0KUhxp&format=png&color=1173D4",
-                                    }}
-                                />
-                                <Text className="text-[#1173D4] font-semibold">Add Video</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View>
 
                 {/* Location Info */}
-                <View className="bg-white light:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200 light:border-slate-800">
-                    <View className="flex-row items-center gap-3">
-                        <View className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <Icon name="location" size={20} color="#136dec" />
-                        </View>
-                        <View className="flex-1">
-                            <Text className="font-semibold light:text-white">
-                                {data.complaint.address}
-                            </Text>
+                <WorkLocation address={data.complaint.address} />
 
-                        </View>
-                    </View>
+                {/* Submit */}
+                <View className="mt-4">
+                    <TouchableOpacity
+
+                        className={`p-3 items-center rounded-xl bg-blue-500 disabled:opacity-75`}
+                        onPress={() => { uploadWorkMutation.mutate() }}
+                        disabled={uploadWorkMutation.isPending || mediaItems.length === 0}
+                    >
+                        {
+                            uploadWorkMutation.isPending ?
+                                <ActivityIndicator color={'white'} />
+                                :
+                                <Text className="text-white font-medium">Upload Proof</Text>
+                        }
+
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
         </View>
