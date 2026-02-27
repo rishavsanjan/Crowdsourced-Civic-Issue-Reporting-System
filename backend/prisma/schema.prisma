@@ -33,15 +33,16 @@ model Worker {
 }
 
 model WorkAssigned {
-  id           Int           @id @default(autoincrement())
-  status       WorkStatus
-  worker_id    Int
-  worker       Worker        @relation(fields: [worker_id], references: [id])
-  complaint_id Int
-  complaint    Complaint     @relation(fields: [complaint_id], references: [complaint_id])
-  createdAt    DateTime      @default(now())
-  instructions String[]      @default([])
-  media        JobEvidence[]
+  id            Int           @id @default(autoincrement())
+  status        WorkStatus
+  worker_id     Int
+  worker        Worker        @relation(fields: [worker_id], references: [id])
+  complaint_id  Int
+  complaint     Complaint     @relation(fields: [complaint_id], references: [complaint_id])
+  createdAt     DateTime      @default(now())
+  instructions  String[]      @default([])
+  workerComment String?
+  media         JobEvidence[]
 
   @@unique([worker_id, complaint_id])
 }

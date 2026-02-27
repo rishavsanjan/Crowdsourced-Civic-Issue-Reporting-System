@@ -7,6 +7,7 @@ export default function TabLayout() {
         options={{ title: 'WorkerHomeScreen' }} 
       />
       <Tabs.Screen 
+        
         name="profile" 
         options={{ title: 'Profile' }} 
       />

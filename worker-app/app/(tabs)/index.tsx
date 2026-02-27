@@ -3,7 +3,6 @@ import {
     View,
     Text,
     TouchableOpacity,
-    ScrollView,
     StatusBar,
     Image,
     FlatList,
@@ -42,7 +41,6 @@ type Props = NativeStackScreenProps<RootStackParamList, "HomeScreen">;
 
 
 const WorkerHomeScreen: React.FC<Props> = () => {
-    const [activeTab, setActiveTab] = useState<'tasks' | 'map' | 'history' | 'settings'>('tasks');
     
     const router = useRouter();
     const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({

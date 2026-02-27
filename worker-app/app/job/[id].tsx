@@ -96,6 +96,8 @@ const JobDetail: React.FC<Props> = () => {
                     Toast.error(`Failed to upload ${mediaItem.type}`);
                 }
             }
+            console.log(uploadedMediaUrls)
+            
             const token = await AsyncStorage.getItem('workercitytoken');
             const response = await axios({
                 url: `${API_BASE_URL}/api/worker/upload-job`,

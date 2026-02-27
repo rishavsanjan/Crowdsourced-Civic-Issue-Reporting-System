@@ -147,11 +147,11 @@ workerRoute.post('/upload-job', authMid, async (req, res) => {
             if (media && media.length > 0) {
                 const mediaData = media.map((item: any) => ({
                     workId: jobId,
-                    file_url: item.url,
-                    file_type: item.type === 'photo' ? 'image' : 'video'
+                    file_url: item.file_url,
+                    file_type: item.file_type === 'photo' ? 'image' : 'video'
                 }));
 
-                await tx.jobEvidence.create({
+                await tx.jobEvidence.createMany({
                     data: mediaData
                 })
             }
