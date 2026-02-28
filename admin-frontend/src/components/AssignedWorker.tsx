@@ -2,11 +2,11 @@ import type { Complaint } from "../types/complaint";
 import { formatDate } from "../utils/helper";
 
 interface Props {
-  complaint : Complaint
+  complaint: Complaint
 }
 
 export default function AssignedWorker({ complaint }: Props) {
- 
+
   return (
     <section className="bg-white light:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 light:border-slate-700">
       {/* Header */}
@@ -15,7 +15,7 @@ export default function AssignedWorker({ complaint }: Props) {
           Assigned Worker
         </h2>
         <span className="text-xs font-semibold tracking-wide bg-slate-100 light:bg-slate-700 text-slate-600 light:text-slate-300 px-2.5 py-1 rounded-full uppercase">
-          {complaint.workAssigneds[0].status}
+          {complaint?.workAssigneds?.status || 'pending'}
         </span>
       </div>
 
@@ -28,12 +28,12 @@ export default function AssignedWorker({ complaint }: Props) {
               className="w-12 h-12 rounded-full object-cover"
             />
           ) : ( */}
-            <div className="w-12 h-12 rounded-full bg-slate-200 light:bg-slate-600 flex items-center justify-center text-slate-500 light:text-slate-300 text-lg font-semibold">
-              {complaint.worker.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </div>
+          <div className="w-12 h-12 rounded-full bg-slate-200 light:bg-slate-600 flex items-center justify-center text-slate-500 light:text-slate-300 text-lg font-semibold">
+            {complaint.worker.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")}
+          </div>
           {/* )} */}
           {/* Online dot */}
           <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white light:border-slate-800 rounded-full" />
@@ -44,7 +44,7 @@ export default function AssignedWorker({ complaint }: Props) {
             {complaint.worker.name}
           </p>
           <p className="text-sm text-green-500 flex items-center gap-1 mt-0.5">
-            {complaint.workAssigneds[0].status}
+            {complaint?.workAssigneds?.status || 'pending'}
           </p>
         </div>
       </div>
@@ -54,18 +54,18 @@ export default function AssignedWorker({ complaint }: Props) {
 
       {/* Meta */}
       <div className="grid grid-cols-2 gap-4 mb-5">
-        
+
         <div>
           <p className="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-1">
             Assigned
           </p>
           <p className="text-sm text-slate-700 light:text-slate-300">
-            {formatDate(String(complaint.workAssigneds[0].createdAt))}
+             {formatDate(String(complaint?.workAssigneds?.createdAt || Date.now()))} 
           </p>
         </div>
       </div>
 
-    
+
     </section>
   );
 }

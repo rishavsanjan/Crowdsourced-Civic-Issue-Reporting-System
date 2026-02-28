@@ -25,3 +25,12 @@ export function formatISTDateTime(dateString: string) {
 
     return `${day} ${monthName} ${year}, ${hours}:${minutes} `;
 }
+
+export function formatToMonthYear(isoString: string): string {
+  const date = new Date(isoString);
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long", // "October"
+    year: "numeric", // "2025"
+  }).format(date);
+}

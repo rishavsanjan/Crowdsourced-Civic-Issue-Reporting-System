@@ -23,13 +23,13 @@ export interface Complaint {
     worker: Worker
     availableWorker: Worker[]
     workerId: number | null
-    workAssigneds: Array<{
+    workAssigneds: {
         id: number,
         status: string,
         worker_id: number,
         complaint_id: number,
         createdAt: Date
-    }>
+    }
 };
 
 

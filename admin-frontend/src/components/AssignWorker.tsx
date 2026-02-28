@@ -15,6 +15,7 @@ interface Props {
 
 
 
+
 const AssignWorker: React.FC<Props> = ({ worker, complaint_id }) => {
     const [selectedWorker, setSelectedWorker] = useState<Worker>();
     const queryClient = useQueryClient();
@@ -37,6 +38,7 @@ const AssignWorker: React.FC<Props> = ({ worker, complaint_id }) => {
             return response.data.worker as Worker;
         },
         onMutate: async ({ worker, workerId }) => {
+
             await queryClient.cancelQueries({ queryKey: ['complaint', complaint_id] });
 
             const previousData = queryClient.getQueryData<Complaint>(['complaint', complaint_id]);

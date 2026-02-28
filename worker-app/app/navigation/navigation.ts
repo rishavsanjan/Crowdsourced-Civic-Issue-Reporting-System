@@ -5,4 +5,5 @@ export type RootStackParamList = {
         jobId: number;
     };
     ProfileScreen : undefined
+    HistoryScreen : undefined
 }

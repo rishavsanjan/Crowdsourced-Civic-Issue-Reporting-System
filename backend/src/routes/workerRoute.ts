@@ -104,6 +104,40 @@ workerRoute.get('/get-jobs', authMid, async (req, res) => {
     }
 });
 
+workerRoute.get('/profile', authMid, async (req, res) => {
+    try {
+        //@ts-ignore
+        const userId = req.user.user_id;
+
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+
+        const totalWorks = await prisma.workAssigned.count({
+            where: {
+                worker_id: userId
+            }
+        })
+
+        const successWork = await prisma.workAssigned.count({
+            where: {
+                status: 'completed',
+                worker_id: userId
+            }
+        })
+
+        const final = { ...user, totalTasks: totalWorks, successRate: successWork }
+
+        return res.status(200).json({ success: true, final })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(403).json({ error: "Server Problem!", success: false })
+    }
+})
+
 workerRoute.get('/job', authMid, async (req, res) => {
     try {
         //@ts-ignore
@@ -186,6 +220,25 @@ workerRoute.post('/update-instructions', async (req, res) => {
     }
 })
 
+workerRoute.post('/history', authMid, async (req, res) => {
+    try {
+        //@ts-ignore
+        const userId = req.user.user_id;
+
+        const history = await prisma.workAssigned.findMany({
+            where:{
+                worker_id:userId,
+                status:'completed'
+            }
+        })
+        
+        return res.status(200).json({ success: true, history })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(403).json({ error: "Server Problemo!", success: false })
+    }
+})
 
 
 

@@ -28,12 +28,13 @@ const ReportDetail: React.FC = () => {
                 method: 'get'
             });
             setStatus(response.data.complaint.status)
-            console.log(response.data)
             const res = { ...response.data.complaint, availableWorker: response.data.availableWorker }
             console.log(res)
             return res as Complaint;
         }
     })
+
+    console.log(data)
 
     if (!complaint_id || !data) return;
     return (
