@@ -54,8 +54,9 @@ const JobDetail: React.FC<Props> = () => {
     const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
     const [mediaUrls, setMediaUrls] = useState<MediaType[]>([]);
     const queryClient = useQueryClient();
-
-    const { data } = useQuery({
+    console.log(id)
+    
+    const { data, isLoading } = useQuery({
         queryKey: ['job', jobId],
         queryFn: async () => {
             const token = await AsyncStorage.getItem("workercitytoken");
@@ -144,10 +145,19 @@ const JobDetail: React.FC<Props> = () => {
         // Implement navigation back logic here
     };
 
+    if(isLoading){
+        return(
+            <View className='h-screen items-center flex flex-row justify-center'>
+                <ActivityIndicator color={'blue'} size={50}/>
+            </View>
+        )
+    }
 
     if (!data) {
         return;
     }
+
+    
 
 
     const getStatusBadge = () => {

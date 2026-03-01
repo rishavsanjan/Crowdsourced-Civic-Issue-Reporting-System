@@ -32,7 +32,7 @@ interface Jobs {
     workAssigneds : {
         id : number,
         status : 'in-progress' | 'pending' | 'completed'
-    }[]
+    }
 }
 
 
@@ -117,7 +117,7 @@ const WorkerHomeScreen: React.FC<Props> = () => {
                         onPress={() =>
                             router.push({
                                 pathname: "/job/[id]",
-                                params: { id: item.workAssigneds[0].id.toString() },
+                                params: { id: item.workAssigneds.id.toString() },
                             })}
                     />}
                     onEndReached={() => {

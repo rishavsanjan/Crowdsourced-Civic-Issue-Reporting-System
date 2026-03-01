@@ -220,19 +220,69 @@ workerRoute.post('/update-instructions', async (req, res) => {
     }
 })
 
-workerRoute.post('/history', authMid, async (req, res) => {
+workerRoute.get('/history', authMid, async (req, res) => {
     try {
         //@ts-ignore
         const userId = req.user.user_id;
 
-        const history = await prisma.workAssigned.findMany({
-            where:{
-                worker_id:userId,
-                status:'completed'
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 5;
+
+        const skip = (page - 1) * limit;
+
+        const [history, total] = await Promise.all([
+            prisma.complaint.findMany({
+                skip,
+                take: limit,
+                orderBy: {
+                    createdAt: 'desc',
+                },
+                where: {
+                    workerId: userId,
+                    workAssigneds: {
+                        status: 'completed'
+                    }
+                },
+                include: {
+                    workAssigneds: {
+                        include: {
+                            media: true
+                        }
+                    }
+                }
+            }),
+            prisma.workAssigned.count({
+                where: {
+                    worker_id: userId,
+                    status: 'completed'
+                },
+            }),
+        ]);
+
+        const h = history.map((job) => {
+            if (job.workAssigneds!.media.length > 0) {
+                return {
+
+                    ...job, hasEvidence: true,
+                    completedAt: job.workAssigneds?.updatedAt
+                }
+            } else {
+                return {
+                    ...job, hasEvidence: true
+                }
             }
         })
-        
-        return res.status(200).json({ success: true, history })
+
+
+
+        const nextPage = skip + limit < total ? page + 1 : null;
+
+        return res.status(200).json({
+            success: true,
+            history: h,
+            nextPage,
+            total,
+        });
 
     } catch (error) {
         console.log(error)

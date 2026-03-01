@@ -4,22 +4,22 @@ import { MediaItem, pickImage, pickVideo, removeMediaItem, takePhoto } from '../
 import Icon from '@react-native-vector-icons/ionicons';
 
 interface Props {
-    mediaItems : MediaItem[]
-    setMediaItems : React.Dispatch<SetStateAction<MediaItem[]>>
+    mediaItems: MediaItem[]
+    setMediaItems: React.Dispatch<SetStateAction<MediaItem[]>>
 }
 
-const MediaUpload:React.FC<Props> = ({mediaItems, setMediaItems}) => {
-     const showPhotoOptions = () => {
-            Alert.alert(
-                "Add Photo",
-                "Choose an option",
-                [
-                    { text: "Camera", onPress: takePhoto },
-                    { text: "Gallery", onPress: pickImage(setMediaItems) },
-                    { text: "Cancel", style: "cancel" }
-                ]
-            );
-        };
+const MediaUpload: React.FC<Props> = ({ mediaItems, setMediaItems }) => {
+    const showPhotoOptions = () => {
+        Alert.alert(
+            "Add Photo",
+            "Choose an option",
+            [
+                { text: "Camera", onPress: () => takePhoto(setMediaItems) },
+                { text: "Gallery", onPress: () => pickImage(setMediaItems) },
+                { text: "Cancel", style: "cancel" }
+            ]
+        );
+    };
     return (
         <View>
             {/*Add media */}
