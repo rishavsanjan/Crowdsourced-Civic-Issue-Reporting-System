@@ -67,6 +67,8 @@ const WorkerHomeScreen: React.FC<Props> = () => {
 
     const jobs: Jobs[] = data?.pages.flatMap(page => page.jobs) ?? [];
 
+    console.log(data)
+
 
 
 
@@ -104,7 +106,7 @@ const WorkerHomeScreen: React.FC<Props> = () => {
                         Dashboard
                     </Text>
                     <Text className="text-slate-500 light:text-slate-400 text-sm mt-1">
-                        You have 5 tasks remaining today
+                        You have {data?.pages[0].total} tasks remaining 
                     </Text>
                 </View>
 
@@ -130,18 +132,6 @@ const WorkerHomeScreen: React.FC<Props> = () => {
                         isFetchingNextPage ? <ActivityIndicator /> : null
                     }
                 />
-
-                {/* Floating Action Button */}
-                <View className="absolute bottom-24 right-5">
-                    <TouchableOpacity
-                        className="w-14 h-14 bg-primary rounded-full shadow-lg flex items-center justify-center active:scale-95"
-                        activeOpacity={0.9}
-                    >
-                        <Icon name="qr-code-outline" size={28} color="#ffffff" />
-                    </TouchableOpacity>
-                </View>
-
-
 
                 {/* Home Indicator (iOS Style) */}
                 <View className="absolute bottom-1.5 left-1/2 w-32 h-1.5 bg-slate-200 light:bg-slate-800 rounded-full" style={{ transform: [{ translateX: -64 }] }} />

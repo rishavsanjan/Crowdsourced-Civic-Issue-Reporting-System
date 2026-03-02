@@ -34,3 +34,30 @@ export function formatToMonthYear(isoString: string): string {
     year: "numeric", // "2025"
   }).format(date);
 }
+
+export function formatTo12Hour(timeIso: string): string {
+  const date = new Date(timeIso); // e.g. "2026-02-28T16:01:34.502Z"
+
+  // Use Intl for proper 12-hour formatting with leading zeros and AM/PM
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date);
+}
+
+
+export function formatDate(iso: string): string {
+  const date = new Date(iso);
+
+  return new Intl.DateTimeFormat("en-US", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
+// Example:
+console.log(formatDate("2026-02-28T16:01:34.502Z")); // "Feb 28, 2026"
+
+

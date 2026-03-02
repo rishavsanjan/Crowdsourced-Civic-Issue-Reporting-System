@@ -264,7 +264,10 @@ workerRoute.get('/history', authMid, async (req, res) => {
                 return {
 
                     ...job, hasEvidence: true,
-                    completedAt: job.workAssigneds?.updatedAt
+                    completedAt: job.workAssigneds?.updatedAt,
+                    workerWorkStatus : job.workAssigneds?.status,
+                    evidenceUrl : job.workAssigneds?.media[0],
+                    workId: job.workAssigneds?.id
                 }
             } else {
                 return {

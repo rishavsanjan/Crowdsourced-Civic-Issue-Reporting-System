@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     View,
     Text,
     TouchableOpacity,
-    ScrollView,
     StatusBar,
-    Image,
     FlatList,
     ActivityIndicator,
 } from 'react-native';
 import Icon from '@react-native-vector-icons/ionicons';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import API_BASE_URL from '@/config/api';
@@ -19,21 +17,22 @@ import { useRouter } from 'expo-router';
 
 interface HistoryTask {
     id: string;
-    name: string;
-    status: 'completed' | 'pending' | 'failed';
+    title: string;
+    workerWorkStatus: 'completed' | 'pending';
     completedAt: string;
     image: string;
     hasEvidence: boolean;
     workAssigneds: {
         id: string
     }
-    complaint_id:number
+    complaint_id: number,
+    evidenceUrl: {
+        file_type: 'image' | 'video',
+        file_url: string
+    }
+    workId: number
 }
 
-interface TaskGroup {
-    monthYear: string;
-    tasks: HistoryTask[];
-}
 
 const History = () => {
     const router = useRouter();
@@ -63,23 +62,6 @@ const History = () => {
 
     const jobs: HistoryTask[] = data?.pages.flatMap(page => page.history) ?? [];
 
-    console.log(jobs)
-
-
-    
-    const handleGoBack = () => {
-        console.log('Go back pressed');
-        // Implement navigation back logic here
-    };
-
-    const handleSearch = () => {
-        console.log('Search pressed');
-        // Implement search logic here
-    };
-
-    
-
-    
 
     return (
         <View className="flex-1 bg-white light:bg-background-light">
@@ -88,29 +70,25 @@ const History = () => {
             {/* Header */}
             <View className="bg-white/80 light:bg-background-light/80 border-b border-slate-200 light:border-slate-800">
                 <View className="flex-row items-center p-4 justify-between">
-                    <TouchableOpacity
+                    <View
                         className="flex w-10 h-10 items-center justify-center rounded-full"
-                        onPress={handleGoBack}
                     >
-                        <Icon name="arrow-back" size={24} color="#000000" />
-                    </TouchableOpacity>
+                    </View>
                     <Text className="text-slate-900 light:text-slate-100 text-lg font-bold flex-1 text-center">
                         Task History
                     </Text>
                     <View className="flex w-10 items-center justify-end">
-                        <TouchableOpacity
+                        <View
                             className="flex w-10 h-10 items-center justify-center rounded-full"
-                            onPress={handleSearch}
                         >
-                            <Icon name="search-outline" size={24} color="#000000" />
-                        </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
 
             </View>
 
             {/* Main Content */}
-             <FlatList
+            <FlatList
                 data={jobs}
                 keyExtractor={(item) => item.complaint_id.toString()}
                 renderItem={({ item }) => <HistoryTaskCard
@@ -130,7 +108,7 @@ const History = () => {
                 ListFooterComponent={
                     isFetchingNextPage ? <ActivityIndicator /> : null
                 }
-            /> 
+            />
 
             {/* Bottom Navigation */}
 

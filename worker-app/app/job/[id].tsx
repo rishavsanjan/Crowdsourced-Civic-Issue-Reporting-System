@@ -10,7 +10,7 @@ import {
 import Icon from '@react-native-vector-icons/ionicons';
 import { RootStackParamList } from '../navigation/navigation';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -54,7 +54,7 @@ const JobDetail: React.FC<Props> = () => {
     const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
     const [mediaUrls, setMediaUrls] = useState<MediaType[]>([]);
     const queryClient = useQueryClient();
-    console.log(id)
+    const router = useRouter();
     
     const { data, isLoading } = useQuery({
         queryKey: ['job', jobId],
@@ -139,12 +139,6 @@ const JobDetail: React.FC<Props> = () => {
     })
 
 
-
-    const handleGoBack = () => {
-        console.log('Go back pressed');
-        // Implement navigation back logic here
-    };
-
     if(isLoading){
         return(
             <View className='h-screen items-center flex flex-row justify-center'>
@@ -198,9 +192,10 @@ const JobDetail: React.FC<Props> = () => {
 
             {/* Navigation Bar */}
             <View className="bg-background-light/80 light:bg-background-light/80 px-4 py-3 border-b border-slate-200 light:border-slate-800 flex-row items-center justify-between">
-                <TouchableOpacity className="flex-row items-center" onPress={handleGoBack}>
+                <TouchableOpacity className="flex-row items-center"
+                 onPress={() => router.back()}>
                     <Icon name="chevron-back" size={20} color="#136dec" />
-                    <Text className="font-medium text-primary ml-1">Tasks</Text>
+                    <Text className="font-medium text-primary ml-1">Back</Text>
                 </TouchableOpacity>
                 <View className="absolute left-1/2" style={{ transform: [{ translateX: -50 }] }}>
                     <Text className="text-lg font-semibold light:text-white">Task Details</Text>
