@@ -100,8 +100,8 @@ const HistoryTaskCard: React.FC<Props> = ({ task, onPress }) => {
                     className="flex-1 flex items-center justify-center rounded-lg h-10 border border-slate-200 light:border-slate-700"
                     onPress={() =>
                         router.push({
-                            pathname: "/job/[id]",
-                            params: { id: task.workId.toString() },
+                            pathname: "/completed/[id]",
+                            params: { id: task.complaint_id.toString() },
                         })}
                     activeOpacity={0.7}
                 >

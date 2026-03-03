@@ -61,7 +61,7 @@ const History = () => {
 
 
     const jobs: HistoryTask[] = data?.pages.flatMap(page => page.history) ?? [];
-
+    console.log(jobs)
 
     return (
         <View className="flex-1 bg-white light:bg-background-light">
@@ -95,8 +95,8 @@ const History = () => {
                     task={item}
                     onPress={() =>
                         router.push({
-                            pathname: "/job/[id]",
-                            params: { id: item.workAssigneds.id.toString() },
+                            pathname: "/completed/[id]",
+                            params: { id: item.complaint_id },
                         })}
                 />}
                 onEndReached={() => {

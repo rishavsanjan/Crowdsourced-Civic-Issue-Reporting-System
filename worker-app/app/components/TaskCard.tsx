@@ -1,8 +1,9 @@
 import React from 'react'
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import Icon from '@react-native-vector-icons/ionicons';
 import { Jobs } from '../types/job';
 import { getStatusBadge } from '../utils/StatusBadge';
+import { formatDate } from '../utils/date';
 
 interface Props {
     task: Jobs
@@ -10,8 +11,8 @@ interface Props {
 
 }
 const TaskCard: React.FC<Props> = ({ task, onPress }) => {
-    const isCompleted = task.status === 'completed';
-    const isInProgress = task.status === 'in-progress';
+    const isCompleted = task.workerWorkStatus === 'completed';
+    const isPending = task.workerWorkStatus === 'pending';
 
     return (
         <TouchableOpacity
@@ -35,7 +36,7 @@ const TaskCard: React.FC<Props> = ({ task, onPress }) => {
                 >
                     {task.title}
                 </Text>
-                {getStatusBadge(task.status)}
+                {getStatusBadge(task.workerWorkStatus)}
             </View>
 
             {/* Description */}
@@ -49,14 +50,14 @@ const TaskCard: React.FC<Props> = ({ task, onPress }) => {
                 {task.description}
             </Text>
 
-            {/* Location and Time (not shown for completed) */}
+            {/* Location and Time  */}
             {!isCompleted && (
                 <View className="flex-col gap-2 mb-0">
                     <View className="flex-row items-center">
                         <Icon
                             name="location-outline"
                             size={16}
-                            color={isInProgress ? '#136dec' : '#cbd5e1'}
+                            color={isPending ? '#136dec' : '#cbd5e1'}
                         />
                         <Text className="text-slate-400 light:text-slate-500 text-xs font-medium ml-1.5">
                             {task.address}
@@ -66,45 +67,15 @@ const TaskCard: React.FC<Props> = ({ task, onPress }) => {
                         <Icon
                             name="time-outline"
                             size={16}
-                            color={isInProgress ? '#136dec' : '#cbd5e1'}
+                            color={isPending ? '#136dec' : '#cbd5e1'}
                         />
                         <Text className="text-slate-400 light:text-slate-500 text-xs font-medium ml-1.5">
-                            Due: {task.dueTime}
+                            Assigned at: {formatDate(task.workAssignedAt)}
                         </Text>
                     </View>
                 </View>
             )}
 
-            {/* Completed Evidence Badge */}
-            {isCompleted && task.hasEvidence && (
-                <View className="flex-row items-center">
-                    <Icon name="checkmark-circle" size={16} color="#10b981" />
-                    <Text className="text-emerald-500 light:text-emerald-400 text-xs font-bold ml-1.5">
-                        Evidence Uploaded
-                    </Text>
-                </View>
-            )}
-
-            {/* In Progress Footer */}
-            {isInProgress && (
-                <View className="mt-4 pt-4 border-t border-slate-50 light:border-slate-800 flex-row justify-between items-center">
-                    <View className="flex-row -space-x-2">
-                        {task.teamMember && (
-                            <View className="w-6 h-6 rounded-full bg-slate-200 border-2 border-white light:border-slate-900 overflow-hidden">
-                                <Image
-                                    source={{ uri: task.teamMember }}
-                                    className="w-full h-full"
-                                    resizeMode="cover"
-                                />
-                            </View>
-                        )}
-                    </View>
-                    <TouchableOpacity className="bg-primary py-2 px-4 rounded-lg flex-row items-center gap-2">
-                        <Icon name="camera-outline" size={16} color="#ffffff" />
-                        <Text className="text-white text-xs font-bold">Evidence</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
         </TouchableOpacity>
     )
 }

@@ -17,23 +17,9 @@ import API_BASE_URL from '@/config/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TaskCard from '../components/TaskCard';
 import { useRouter } from 'expo-router';
+import { Jobs } from '../types/job';
 
 
-interface Jobs {
-    complaint_id: number;
-    title: string;
-    description: string;
-    status: 'in-progress' | 'pending' | 'completed';
-    address: string;
-    dueTime?: string;
-    isPriority?: boolean;
-    hasEvidence?: boolean;
-    teamMember?: string;
-    workAssigneds : {
-        id : number,
-        status : 'in-progress' | 'pending' | 'completed'
-    }
-}
 
 
 
@@ -53,8 +39,7 @@ const WorkerHomeScreen: React.FC<Props> = () => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
-            })
-            console.log(res.data)
+            });
             return res.data;
         },
         initialPageParam: 1,
@@ -67,10 +52,7 @@ const WorkerHomeScreen: React.FC<Props> = () => {
 
     const jobs: Jobs[] = data?.pages.flatMap(page => page.jobs) ?? [];
 
-    console.log(data)
-
-
-
+    console.log(jobs)
 
     return (
         <View className="flex-1 bg-background-light light:bg-background-light">

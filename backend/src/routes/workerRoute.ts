@@ -74,23 +74,43 @@ workerRoute.get('/get-jobs', authMid, async (req, res) => {
                 },
                 where: {
                     workerId: userId,
+                    workAssigneds: {
+                        status: 'pending'
+                    }
                 },
                 include: {
-                    workAssigneds: true
+                    workAssigneds: {
+                        include: {
+                            media: true
+                        }
+                    }
                 }
             }),
             prisma.complaint.count({
                 where: {
                     workerId: userId,
+                    workAssigneds: {
+                        status: 'pending'
+                    },
+
                 },
             }),
         ]);
+
+        const final = jobs.map((job) => {
+            return {
+                ...job,
+                workerWorkStatus: job.workAssigneds?.status,
+                workAssignedAt: job.workAssigneds?.createdAt,
+                hasEvidence: job.workAssigneds!.media.length > 0 ? true : false
+            }
+        })
 
         const nextPage = skip + limit < total ? page + 1 : null;
 
         return res.status(200).json({
             success: true,
-            jobs,
+            jobs: final,
             nextPage,
             total,
         });
@@ -265,8 +285,8 @@ workerRoute.get('/history', authMid, async (req, res) => {
 
                     ...job, hasEvidence: true,
                     completedAt: job.workAssigneds?.updatedAt,
-                    workerWorkStatus : job.workAssigneds?.status,
-                    evidenceUrl : job.workAssigneds?.media[0],
+                    workerWorkStatus: job.workAssigneds?.status,
+                    evidenceUrl: job.workAssigneds?.media[0],
                     workId: job.workAssigneds?.id
                 }
             } else {
@@ -290,6 +310,47 @@ workerRoute.get('/history', authMid, async (req, res) => {
     } catch (error) {
         console.log(error)
         return res.status(403).json({ error: "Server Problemo!", success: false })
+    }
+})
+
+workerRoute.get('/summary', authMid, async (req, res) => {
+    try {
+        //@ts-ignore
+        const userId = req.user.user_id;
+        const id = Number(req.query.id);
+        console.log(id)
+        const job = await prisma.complaint.findUnique({
+            where: {
+                complaint_id: id
+            },
+            include: {
+                workAssigneds: {
+                    select: {
+                        updatedAt: true,
+                        workerComment: true,
+                        media: true
+                    }
+                }
+            }
+        })
+
+        const final = {
+            id: job?.complaint_id,
+            title: job?.title,
+            department: job?.category,
+            completionDate: job?.updated_at,
+            workerComments: job?.workAssigneds?.workerComment,
+            location: job?.address,
+            evidence: job?.workAssigneds?.media || []
+
+        }
+
+        return res.status(200).json({
+            summary:final, success: true
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(403).json({ error: "Server Problem!", success: false })
     }
 })
 

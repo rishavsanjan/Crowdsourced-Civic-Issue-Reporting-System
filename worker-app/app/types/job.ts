@@ -2,12 +2,14 @@ export interface Jobs {
     complaint_id: number;
     title: string;
     description: string;
-    status: 'in-progress' | 'pending' | 'completed';
+    workerWorkStatus: 'pending' | 'completed';
     address: string;
-    dueTime?: string;
-    isPriority?: boolean;
     hasEvidence?: boolean;
-    teamMember?: string;
+    workAssignedAt: string
+    workAssigneds: {
+        id: number,
+        status: 'pending' | 'completed'
+    }
 }
 
 export interface Complaint {
@@ -46,4 +48,18 @@ export interface JobDetails {
     worker_id: number
     instructions: string[]
     worker: Worker
+}
+
+export interface JobSummary {
+    id: number,
+    title: string,
+    category: string,
+    completionDate: string,
+    workerComments: string,
+    location: string,
+    evidence: {
+        file_type :'image' | 'video'
+        file_url : string
+    }[]
+
 }
