@@ -23,6 +23,7 @@ import MediaUpload from '../components/MediaUpload';
 import WorkLocation from '../components/WorkLocation';
 import { uploadToCloudinary } from '../utils/cloudinary';
 import { Toast } from 'toastify-react-native';
+import WorkerCommentsInput from '../components/WorkerCommentInput';
 
 
 
@@ -53,9 +54,10 @@ const JobDetail: React.FC<Props> = () => {
     const jobId = Number(id);
     const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
     const [mediaUrls, setMediaUrls] = useState<MediaType[]>([]);
+    const [comment, setComment] = useState('');
     const queryClient = useQueryClient();
     const router = useRouter();
-    
+
     const { data, isLoading } = useQuery({
         queryKey: ['job', jobId],
         queryFn: async () => {
@@ -98,7 +100,7 @@ const JobDetail: React.FC<Props> = () => {
                 }
             }
             console.log(uploadedMediaUrls)
-            
+
             const token = await AsyncStorage.getItem('workercitytoken');
             const response = await axios({
                 url: `${API_BASE_URL}/api/worker/upload-job`,
@@ -106,6 +108,7 @@ const JobDetail: React.FC<Props> = () => {
                 data: {
                     jobId: jobId,
                     media: uploadedMediaUrls,
+                    comment : comment.trim()
                 },
                 headers: {
                     'Authorization': "Bearer " + token
@@ -139,10 +142,10 @@ const JobDetail: React.FC<Props> = () => {
     })
 
 
-    if(isLoading){
-        return(
+    if (isLoading) {
+        return (
             <View className='h-screen items-center flex flex-row justify-center'>
-                <ActivityIndicator color={'blue'} size={50}/>
+                <ActivityIndicator color={'blue'} size={50} />
             </View>
         )
     }
@@ -151,7 +154,7 @@ const JobDetail: React.FC<Props> = () => {
         return;
     }
 
-    
+
 
 
     const getStatusBadge = () => {
@@ -193,7 +196,8 @@ const JobDetail: React.FC<Props> = () => {
             {/* Navigation Bar */}
             <View className="bg-background-light/80 light:bg-background-light/80 px-4 py-3 border-b border-slate-200 light:border-slate-800 flex-row items-center justify-between">
                 <TouchableOpacity className="flex-row items-center"
-                 onPress={() => router.back()}>
+                    onPress={() => router.back()}
+                >
                     <Icon name="chevron-back" size={20} color="#136dec" />
                     <Text className="font-medium text-primary ml-1">Back</Text>
                 </TouchableOpacity>
@@ -242,21 +246,26 @@ const JobDetail: React.FC<Props> = () => {
                 {/* Admin Instructions Card */}
                 <AdminInstructions instructions={data.instructions} />
 
+                {/* Location Info */}
+                <WorkLocation address={data.complaint.address} />
 
 
                 <MediaUpload mediaItems={mediaItems} setMediaItems={setMediaItems} />
 
+                <WorkerCommentsInput
+                    comment={comment}
+                    setComment={setComment}
+                />
 
-                {/* Location Info */}
-                <WorkLocation address={data.complaint.address} />
+
 
                 {/* Submit */}
-                <View className="mt-4">
+                <View className="mt-1">
                     <TouchableOpacity
 
                         className={`p-3 items-center rounded-xl bg-blue-500 disabled:opacity-75`}
                         onPress={() => { uploadWorkMutation.mutate() }}
-                        disabled={uploadWorkMutation.isPending || mediaItems.length === 0}
+                        disabled={uploadWorkMutation.isPending || mediaItems.length === 0 || comment.trim().length < 10}
                     >
                         {
                             uploadWorkMutation.isPending ?

@@ -2,18 +2,18 @@ import React from 'react';
 import {
     View,
     Text,
-    TouchableOpacity,
     StatusBar,
     FlatList,
     ActivityIndicator,
 } from 'react-native';
-import Icon from '@react-native-vector-icons/ionicons';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import API_BASE_URL from '@/config/api';
 import HistoryTaskCard from '../components/HistoryTaskCard';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 interface HistoryTask {
     id: string;
@@ -64,12 +64,13 @@ const History = () => {
     console.log(jobs)
 
     return (
-        <View className="flex-1 bg-white light:bg-background-light">
+        <SafeAreaView
+            className="flex-1 bg-white light:bg-background-light">
             <StatusBar barStyle="light-content" />
 
             {/* Header */}
             <View className="bg-white/80 light:bg-background-light/80 border-b border-slate-200 light:border-slate-800">
-                <View className="flex-row items-center p-4 justify-between">
+                <View className="flex-row items-center p-2 justify-between">
                     <View
                         className="flex w-10 h-10 items-center justify-center rounded-full"
                     >
@@ -112,7 +113,7 @@ const History = () => {
 
             {/* Bottom Navigation */}
 
-        </View>
+        </SafeAreaView>
     );
 }
 

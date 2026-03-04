@@ -59,8 +59,8 @@ const MediaUpload: React.FC<Props> = ({ mediaItems, setMediaItems }) => {
             </View>
 
             {/* Photo Evidence Gallery */}
-            <View className="mb-6">
-                <View className="flex-row items-center justify-between mb-4">
+            <View className="">
+                <View className="flex-row items-center justify-between mb-2">
                     <Text className="text-sm font-bold text-slate-400 uppercase tracking-widest">
                         Work Evidence
                     </Text>

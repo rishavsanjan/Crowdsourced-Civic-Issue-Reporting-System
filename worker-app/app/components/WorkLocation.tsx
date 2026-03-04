@@ -8,7 +8,7 @@ interface Props{
 
 const WorkLocation:React.FC<Props> = ({address}) => {
     return (
-        <View className="bg-white light:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200 light:border-slate-800">
+        <View className="bg-white mb-4 light:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200 light:border-slate-800">
             <View className="flex-row items-center gap-3">
                 <View className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                     <Icon name="location" size={20} color="#136dec" />

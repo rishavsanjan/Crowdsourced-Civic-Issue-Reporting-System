@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     View,
     Text,
     TouchableOpacity,
     ScrollView,
     StatusBar,
-    Image,
 } from 'react-native';
-import Icon from '@react-native-vector-icons/ionicons';
 import { RootStackParamList } from '../navigation/navigation';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import API_BASE_URL from '@/config/api';
-import { formatToMonthYear } from '../utils/date';
 import ProfileIdenity from '../components/ProfileIdenity';
 import ProfileStats from '../components/ProfileStats';
 import InformationList from '../components/InformationList';
+import { SafeAreaView } from "react-native-safe-area-context";
+
 
 interface WorkerProfile {
     id: string;
@@ -71,15 +70,13 @@ const Profile: React.FC<Props> = () => {
     }
 
     return (
-        <View className="flex-1 bg-background-light light:bg-background-light">
+        <SafeAreaView
+         className="flex-1 bg-background-light light:bg-background-light">
             <StatusBar barStyle="light-content" />
 
             {/* Header Navigation */}
-            <View className="px-4 py-2 flex-row items-center justify-between bg-background-light/80 light:bg-background-light/80 mt-8">
-                <TouchableOpacity className="flex-row items-center" onPress={handleGoBack}>
-                    <Icon name="chevron-back" size={24} color="#136dec" />
-                    <Text className="font-medium text-primary">Tasks</Text>
-                </TouchableOpacity>
+            <View className="px-4 py-2 flex-row items-center justify-between bg-background-light/80 light:bg-background-light/80">
+                <View></View>
                 <Text className="text-lg font-bold light:text-white">Profile</Text>
                 <View></View>
             </View>
@@ -125,7 +122,7 @@ const Profile: React.FC<Props> = () => {
 
             {/*Home Indicator */}
             <View className="h-1.5 w-32 bg-slate-300 light:bg-slate-700 rounded-full mx-auto mb-2 mt-4 opacity-50" />
-        </View>
+        </SafeAreaView>
     );
 }
 

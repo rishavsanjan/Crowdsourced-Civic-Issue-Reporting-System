@@ -18,16 +18,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import TaskCard from '../components/TaskCard';
 import { useRouter } from 'expo-router';
 import { Jobs } from '../types/job';
-
-
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 type Props = NativeStackScreenProps<RootStackParamList, "HomeScreen">;
 
 
 const WorkerHomeScreen: React.FC<Props> = () => {
-    
+
     const router = useRouter();
     const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
         queryKey: ['jobs'],
@@ -55,7 +53,8 @@ const WorkerHomeScreen: React.FC<Props> = () => {
     console.log(jobs)
 
     return (
-        <View className="flex-1 bg-background-light light:bg-background-light">
+        <SafeAreaView
+            className="flex-1 bg-background-light light:bg-background-light">
             <StatusBar barStyle="light-content" />
 
             {/* Phone Container */}
@@ -88,7 +87,7 @@ const WorkerHomeScreen: React.FC<Props> = () => {
                         Dashboard
                     </Text>
                     <Text className="text-slate-500 light:text-slate-400 text-sm mt-1">
-                        You have {data?.pages[0].total} tasks remaining 
+                        You have {data?.pages[0].total} tasks remaining
                     </Text>
                 </View>
 
@@ -118,7 +117,7 @@ const WorkerHomeScreen: React.FC<Props> = () => {
                 {/* Home Indicator (iOS Style) */}
                 <View className="absolute bottom-1.5 left-1/2 w-32 h-1.5 bg-slate-200 light:bg-slate-800 rounded-full" style={{ transform: [{ translateX: -64 }] }} />
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
 

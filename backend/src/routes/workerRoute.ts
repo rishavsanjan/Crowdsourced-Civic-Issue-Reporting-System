@@ -187,7 +187,7 @@ workerRoute.post('/upload-job', authMid, async (req, res) => {
     try {
         //@ts-ignore
         const userId = req.user.user_id;
-        const { jobId, media } = req.body;
+        const { jobId, media, comment } = req.body;
 
         const result = await prisma.$transaction(async (tx) => {
             await tx.workAssigned.update({
@@ -196,6 +196,7 @@ workerRoute.post('/upload-job', authMid, async (req, res) => {
                 },
                 data: {
                     status: 'completed',
+                    workerComment: comment
                 }
             })
             if (media && media.length > 0) {
@@ -343,10 +344,11 @@ workerRoute.get('/summary', authMid, async (req, res) => {
             location: job?.address,
             evidence: job?.workAssigneds?.media || []
 
+
         }
 
         return res.status(200).json({
-            summary:final, success: true
+            summary: final, success: true
         })
     } catch (error) {
         console.log(error)
