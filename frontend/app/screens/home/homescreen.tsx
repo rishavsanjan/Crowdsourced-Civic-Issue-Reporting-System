@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from 'react';
 import {
     View,
     Text,
-    TouchableOpacity,
     ScrollView,
     Image,
     RefreshControl,
@@ -19,7 +18,6 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchHomePosts } from '@/app/util/posts';
 import StatusFilterTab from './components/StatusFilterTab';
 import ComplainCard from './components/ComplainCard';
-import { Button } from '@react-navigation/elements';
 import { useAuth } from '@/app/context/auth-context';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
@@ -33,13 +31,13 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         lat: 0.0,
         long: 0.0
     });
-    const {user} = useAuth();
-    
-     if(!user){
+    const { user } = useAuth();
+
+    if (!user) {
         console.log("user not available")
         navigation.navigate('WelcomeLoginScreen')
     }
-    
+
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
             setIsConnected(state.isConnected ?? false);
@@ -47,6 +45,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
         return () => unsubscribe();
     }, []);
+
+
 
     const getLoc = async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
@@ -64,7 +64,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     useEffect(() => {
         getLoc();
     }, []);
-
     const { data, fetchNextPage, isFetchingNextPage, isLoading, hasNextPage, refetch, isRefetching } = useInfiniteQuery({
         queryKey: ['home-posts', selectedStatus, distance, coordinates.lat, coordinates.long],
         //@ts-ignore
@@ -89,6 +88,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
 
     console.log(data)
+    console.log(distance, coordinates)
 
     const onRefresh = async () => {
         await refetch();
@@ -109,7 +109,23 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         );
     }
 
-   
+    if (isLoading) {
+        return (
+            <View className="flex-1 justify-center items-center">
+                <View className="flex-1 justify-center items-center ">
+                    <LottieView
+                        source={require('../../../assets/loading_animations/loader.json')}
+                        autoPlay
+                        loop
+                        speed={2}
+                        style={{ width: 50, height: 50 }}
+                    />
+                </View>
+            </View>
+        )
+
+    }
+
 
 
     const handleScroll = (event: any) => {
@@ -125,7 +141,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     };
 
     return (
-        <View className="flex-1 bg-[#F6F7F8]">
+        <View className="flex-1 bg-[#F6F7F8] dark:bg-[#101922]">
             {/* Header */}
             <View className="bg-white px-4 py-3 border-b border-gray-200">
                 <View className=" items-center justify-between">
@@ -136,7 +152,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             {/* Status Filter Tabs */}
             <StatusFilterTab selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus} />
 
-            <View className="bg-indigo-600  py-2 items-center mb-2 shadow-lg">
+            <View className="bg-indigo-600  py-2 items-center mb-2 shadow-lg ">
                 <Text className="text-lg font-medium text-indigo-200">
                     Filter by distance
                 </Text>
@@ -161,69 +177,58 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             />
 
             {/* Complaints Feed */}
-            {isLoading ? (
-                <View className="flex-1 justify-center items-center">
-                    <View className="flex-1 justify-center items-center ">
+
+            <ScrollView
+                className="flex-1 px-2"
+                onScroll={handleScroll}
+                scrollEventThrottle={400}
+                refreshControl={
+                    <RefreshControl refreshing={isRefetching} onRefresh={onRefresh} />
+                }
+                showsVerticalScrollIndicator={false}
+            >
+                {filteredComplaints.length === 0 ? (
+                    <View className="flex-1 justify-center items-center mt-20">
+                        <Text className="text-gray-500 text-lg">No complaints found</Text>
+                        <Text className="text-gray-400 mt-2">Try changing the filter or pull to refresh</Text>
+                    </View>
+                ) : (
+                    filteredComplaints.map((complaint) => (
+                        <View key={complaint.complaint_id}>
+                            <ComplainCard key={complaint.complaint_id} navigation={navigation} selectedStatus={selectedStatus} complaint={complaint} distance={distance} latitude={coordinates.lat} longitute={coordinates.long} />
+                        </View>
+
+                    ))
+                )}
+
+                {/* Loading more indicator */}
+                {isFetchingNextPage && (
+                    <View className="py-4">
                         <LottieView
                             source={require('../../../assets/loading_animations/loader.json')}
                             autoPlay
                             loop
                             speed={2}
-                            style={{ width: 50, height: 50 }}
+                            style={{ width: 50, height: 50, alignSelf: 'center' }}
                         />
                     </View>
-                </View>
-            ) : (
-                <ScrollView
-                    className="flex-1 px-2"
-                    onScroll={handleScroll}
-                    scrollEventThrottle={400}
-                    refreshControl={
-                        <RefreshControl refreshing={isRefetching} onRefresh={onRefresh} />
-                    }
-                    showsVerticalScrollIndicator={false}
-                >
-                    {filteredComplaints.length === 0 ? (
-                        <View className="flex-1 justify-center items-center mt-20">
-                            <Text className="text-gray-500 text-lg">No complaints found</Text>
-                            <Text className="text-gray-400 mt-2">Try changing the filter or pull to refresh</Text>
-                        </View>
-                    ) : (
-                        filteredComplaints.map((complaint) => (
-                            <View key={complaint.complaint_id}>
-                                <ComplainCard key={complaint.complaint_id} navigation={navigation} selectedStatus={selectedStatus} complaint={complaint} distance={distance} latitude={coordinates.lat} longitute={coordinates.long} />
-                            </View>
+                )}
 
-                        ))
-                    )}
+                {/* End of list indicator */}
+                {!hasNextPage && filteredComplaints.length > 0 && (
+                    <View className='flex justify-center py-4'>
+                        <Text className='text-black text-center text-xl'>No more reports!</Text>
+                    </View>
+                )}
 
-                    {/* Loading more indicator */}
-                    {isFetchingNextPage && (
-                        <View className="py-4">
-                            <LottieView
-                                source={require('../../../assets/loading_animations/loader.json')}
-                                autoPlay
-                                loop
-                                speed={2}
-                                style={{ width: 50, height: 50, alignSelf: 'center' }}
-                            />
-                        </View>
-                    )}
+                <View className="h-20" />
+            </ScrollView>
 
-                    {/* End of list indicator */}
-                    {!hasNextPage && filteredComplaints.length > 0 && (
-                        <View className='flex justify-center py-4'>
-                            <Text className='text-black text-center text-xl'>No more reports!</Text>
-                        </View>
-                    )}
-
-                    <View className="h-20" />
-                </ScrollView>
-            )}
-            <TouchableWithoutFeedback 
-            onPress={() => { 
-                console.log('hello')
-                navigation.navigate('WelcomeChatbot') }}>
+            <TouchableWithoutFeedback
+                onPress={() => {
+                    console.log('hello')
+                    navigation.navigate('WelcomeChatbot')
+                }}>
                 <Image style={{ width: 70, height: 70, bottom: 17, position: 'absolute', right: 20 }} src='https://img.icons8.com/?size=100&id=9Otd0Js4uSYi&format=png&color=000000' />
             </TouchableWithoutFeedback>
         </View>

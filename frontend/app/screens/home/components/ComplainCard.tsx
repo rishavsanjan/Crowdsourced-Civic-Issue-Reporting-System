@@ -112,7 +112,7 @@ const ComplainCard: React.FC<Props> = ({ complaint, navigation, selectedStatus, 
         onError: (err, variables, context) => {
             // Rollback on error
             if (context?.previousData) {
-                queryClient.setQueryData(['home-posts', selectedStatus, distance, latitude,longitute], context.previousData);
+                queryClient.setQueryData(['home-posts', selectedStatus, distance, latitude, longitute], context.previousData);
             }
             Toast.error('Failed to update vote');
         },
@@ -133,15 +133,15 @@ const ComplainCard: React.FC<Props> = ({ complaint, navigation, selectedStatus, 
     return (
         <TouchableOpacity
             key={complaint.complaint_id}
-            className="bg-white rounded-lg mb-4 overflow-hidden shadow-sm"
+            className="bg-white rounded-lg mb-4 overflow-hidden shadow-sm dark:bg-[#101922]"
             onPress={() => {
                 navigation.navigate('ComplainDetails', { complaintId: complaint.complaint_id });
             }}
         >
             {/* Complaint Image */}
-            {complaint.media && complaint.media.file_type === 'image' ? (
+            {complaint.media && complaint.media[0].file_type === 'image' ? (
                 <Image
-                    source={{ uri:complaint.media.file_url }}
+                    source={{ uri: complaint.media[0].file_url }}
                     className="w-full h-48"
                     resizeMode="cover"
                 />
@@ -178,22 +178,22 @@ const ComplainCard: React.FC<Props> = ({ complaint, navigation, selectedStatus, 
                 </View>
 
                 {/* Title */}
-                <Text className="text-lg font-bold mb-1 px-4">{complaint.title}</Text>
+                <Text className="text-lg font-bold mb-1 px-4 dark:text-white">{complaint.title}</Text>
 
                 {/* Location */}
                 <View className="flex-row items-center mb-3 px-4">
                     <Image style={{ width: 15, height: 15 }} source={{ uri: 'https://img.icons8.com/?size=100&id=85049&format=png&color=737373' }} />
-                    <Text className="text-gray-600 text-sm font-medium flex-1">
+                    <Text className="text-gray-600 text-sm font-medium flex-1 dark:text-white">
                         {truncateText(complaint.address || 'Location not specified', 40)}
                     </Text>
                 </View>
-            
+
                 {/* Bottom Actions */}
                 <View className='border-gray-200 border-b -px-8 my-2'></View>
                 <View className="flex-row justify-between items-center px-4 py-2 self-end">
                     <View className='flex flex-row  gap-4'>
                         <View className="flex-row items-center space-x-4">
-                        
+
                             <View className="flex-row items-center">
                                 {
                                     complaint.votes.userReaction === 'like' ?
@@ -220,7 +220,9 @@ const ComplainCard: React.FC<Props> = ({ complaint, navigation, selectedStatus, 
                                         <Entypo name='arrow-down' color={'blue'} className='' size={25} />
                                     </TouchableOpacity>
                                     :
-                                    <TouchableOpacity onPress={() => { addVote(complaint.complaint_id, 'dislike', complaint.votes.userReaction) }}>
+                                    <TouchableOpacity
+                                        onPress={() => { addVote(complaint.complaint_id, 'dislike', complaint.votes.userReaction) }}
+                                    >
                                         <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=70731&format=png&color=1A1A1A' }} />
                                     </TouchableOpacity>
                             }

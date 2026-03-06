@@ -19,19 +19,20 @@ export const fetchHomePosts = async ({
     const [, selectedStatus, distance, lattitude, longitude] = queryKey
 
     const token = await AsyncStorage.getItem('citytoken');
-
     const response = await axios<ComplaintResposne>({
         url: `${API_BASE_URL}/api/complain/test?page=${pageParam}`,
         method: 'POST',
         data: {
-            filter: selectedStatus
+            filter: selectedStatus,
+            userLat:lattitude,
+            userLng:longitude
         },
         headers:{
             Authorization:'Bearer ' + token
         }
     })
    
-
+    console.log(response.data.posts);
     return {
         posts: response.data.posts,
         nextPage: response.data.posts.length > 0 ? pageParam + 1 : undefined,

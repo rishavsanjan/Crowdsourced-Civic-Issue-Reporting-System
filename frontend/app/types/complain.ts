@@ -16,7 +16,7 @@ export interface Complaint {
     media_id: number;
     file_url: string;
     file_type: 'image' | 'video';
-  };
+  }[];
   votes: {
     like: number;
     dislike: number;

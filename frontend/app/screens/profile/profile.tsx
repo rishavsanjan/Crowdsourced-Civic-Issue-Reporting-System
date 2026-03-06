@@ -54,10 +54,10 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     );
   }
   return (
-    <ScrollView className="flex-1 bg-gray-50 dark:bg-slate-900/70 ">
+    <ScrollView className="flex-1 bg-gray-50  dark:bg-[#101922]">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-slate-900/70 border-b-2 border-gray-200">
-        
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-[#101922] border-b-2 border-gray-200">
+        <View></View>
         <Text className="text-2xl font-semibold dark:text-slate-200">Profile</Text>
         <TouchableOpacity onPress={() => { navigation.navigate('Settings') }}>
           <Image className='' style={{ width: 25, height: 25 }} source={{ uri: 'https://img.icons8.com/?size=100&id=82535&format=png&color=000000' }} />

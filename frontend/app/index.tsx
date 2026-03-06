@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import ToastManager from 'toastify-react-native';
 import { useTranslation } from 'react-i18next';
+import { useColorScheme } from "nativewind";
 
 // Screens
 import { RootStackParamList } from './navigation/navigation';
@@ -37,19 +38,21 @@ const Tab = createBottomTabNavigator();
 
 function BottomTabs() {
   const { t } = useTranslation();
+  const { mode } = useTheme();
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#ffffff',
+          backgroundColor: mode === 'dark' ? '#000' : '#fff',
           height: 70,
           paddingBottom: 10,
           paddingTop: 5,
+          borderTopColor: mode === 'dark' ? '#27272a' : '#e5e7eb',
         },
         tabBarActiveTintColor: '#1173D4',
-        tabBarInactiveTintColor: '#A1A1AA',
+        tabBarInactiveTintColor: mode === 'dark' ? '#71717a' : '#A1A1AA',
         tabBarLabelStyle: {
           fontSize: 10,
           fontWeight: '600',
@@ -113,6 +116,7 @@ function BottomTabs() {
                 width: 24,
                 height: 24,
                 tintColor: focused ? '#1173D4' : '#A1A1AA',
+
               }}
               source={{
                 uri: `https://img.icons8.com/?size=100&id=7819&format=png&color=${focused ? '1173D4' : 'A1A1AA'}`,
@@ -128,7 +132,12 @@ function BottomTabs() {
 
 function RootLayout() {
   const { mode } = useTheme();
-  console.log(mode)
+  const { setColorScheme } = useColorScheme();
+
+  useEffect(() => {
+    setColorScheme(mode);
+  }, [mode])
+
   return (
     <View className={`flex-1 ${mode === 'dark' ? 'dark' : ''}`}>
       <SafeAreaProvider>
@@ -147,7 +156,7 @@ function RootLayout() {
             <Stack.Screen name="Chatbot" component={Chatbot} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
           </Stack.Navigator>
-        
+
         </SafeAreaView>
       </SafeAreaProvider>
     </View>
@@ -182,10 +191,10 @@ export default function Index() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <ToastManager/>
-          <ThemeProvider>
-            <RootLayout />
-          </ThemeProvider>
+        <ToastManager />
+        <ThemeProvider>
+          <RootLayout />
+        </ThemeProvider>
       </QueryClientProvider>
     </AuthProvider>
   );

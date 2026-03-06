@@ -9,8 +9,8 @@ interface Props {
 const UserStats: React.FC<Props> = ({ data }) => {
     const { t } = useTranslation();
     return (
-        <View className="bg-white dark:bg-slate-900/70 mx-4 rounded-lg p-4 mb-4 shadow-sm">
-            <View className="flex-row justify-around">
+        <View className="bg-white dark:border-blue-300 border mx-4 rounded-lg p-4 mb-4 shadow-sm  dark:bg-[#101922]">
+            <View className="flex-row justify-around ">
                 <View className="items-center flex">
                     <Text className="text-2xl font-bold dark:text-slate-200">{data?.user?.Complaint.length || 0}</Text>
                     <Text className="text-gray-500 text-base dark:text-slate-200">{t('submitted')}</Text>

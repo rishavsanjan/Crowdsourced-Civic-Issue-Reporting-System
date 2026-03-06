@@ -102,9 +102,7 @@ userRoute.post('/signup-final', async (req, res) => {
 });
 
 userRoute.post('/login-password', async (req, res) => {
-    console.log('i m hit')
     const p = validateUserSchema.safeParse(req.body);
-    console.log(p)
     if (!p.success) {
         return res.status(400).json({ "msg": "Invalid format or less info", "success": false })
     }
@@ -231,8 +229,6 @@ userRoute.get('/isValid', authMid, async (req, res) => {
             phonenumber: true
         }
     })
-    console.log('i m here')
-    console.log(user)
     return res.status(200).json({ msg: 'success', success: true, user: user })
 
 })
@@ -261,8 +257,6 @@ userRoute.get('/profile', authMid, async (req, res) => {
                 status: 'resolved'
             }
         })
-
-        console.log(resolvedReports)
 
         return res.status(200).json({ msg: 'success', success: true, user: user, resolvedReports: resolvedReports })
     } catch (error) {
@@ -326,13 +320,8 @@ userRoute.get('/badges', authMid, async (req, res) => {
     }
 });
 
-
-
-
-// In your complaint creation route (e.g., /api/user/addcomplain)
 userRoute.post('/addcomplain', authMid, async (req, res) => {
     try {
-        console.log(req.body)
         const {
             category,
             title,
@@ -352,15 +341,12 @@ userRoute.post('/addcomplain', authMid, async (req, res) => {
             }
         })
 
-        console.log(response.data)
 
         checkActiveReporterBadge(userId);
         const formattedDepartment = await response.data.predicted_department.toUpperCase().replace(/\s+/g, "_");
 
 
-        // Create complaint with media in a transaction
         const result = await prisma.$transaction(async (prisma) => {
-            // Create the complaint first
             const complaint = await prisma.complaint.create({
                 data: {
                     user_id: userId,
@@ -374,7 +360,6 @@ userRoute.post('/addcomplain', authMid, async (req, res) => {
                 }
             });
 
-            // Create media entries if any media was uploaded
             if (media && media.length > 0) {//@ts-ignore
                 const mediaData = media.map(item => ({
                     complaint_id: complaint.complaint_id,
@@ -429,7 +414,6 @@ userRoute.get('/allcomplain', authMid, async (req, res) => {
 
 
 userRoute.post('/chatbot-message', authMid, async (req, res) => {
-    console.log('i m hit')
     try {
         //@ts-ignore
         const userId = req.user.user_id;

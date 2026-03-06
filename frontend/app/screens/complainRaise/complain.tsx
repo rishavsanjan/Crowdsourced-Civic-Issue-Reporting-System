@@ -5,14 +5,11 @@ import {
     TextInput,
     TouchableOpacity,
     Image,
-    Platform,
     Alert,
     ScrollView,
     ActivityIndicator
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import MapView, { Marker } from "react-native-maps";
-import * as Location from "expo-location";
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from "react-i18next";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -141,20 +138,23 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
 
 
     return (
-        <ScrollView className="flex-1 bg-[#F6F7F8]">
+        <ScrollView className="flex-1 bg-[#F6F7F8] dark:bg-[#101922]">
             {/* Header */}
-            <View className="flex flex-row items-center justify-center w-full px-4 p-4 border-b border-gray-300">
+            <View className="flex flex-row items-center justify-center w-full px-4 p-4 border-b dark:border-blue-300 border-gray-300">
 
-                <Text className="font-bold text-xl">{t('reportIssue')}</Text>
+                <Text className="font-bold text-xl dark:text-white">{t('reportIssue')}</Text>
             </View>
 
             {/* Form */}
             <View className="p-4 flex-1">
                 {/* Title */}
                 <View className="flex flex-col gap-2 mb-4">
-                    <Text className="text-[#96A4B1] font-medium">{t('title')}</Text>
+                    <Text className="text-[#96A4B1] font-medium dark:text-white">{t('title')}</Text>
                     <TextInput
-                        className="w-full bg-white p-4 rounded-lg border border-blue-300"
+                        className="w-full bg-white p-4 rounded-lg border border-blue-300
+                        dark:text-white dark:bg-[#101922] 
+                        placeholder:dark:text-white
+                        "
                         placeholder={t('title')}
                         value={title}
                         onChangeText={setTitle}
@@ -167,7 +167,9 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                 <View className="flex flex-col gap-2 mb-4">
                     <Text className="text-[#96A4B1] font-medium">{t('description')}</Text>
                     <TextInput
-                        className="w-full bg-white p-4 rounded-lg border border-blue-300"
+                        className="w-full bg-white p-4 rounded-lg border border-blue-300 dark:text-white dark:bg-[#101922] 
+                        placeholder:dark:text-white
+                        "
                         placeholder={t('describeIssue')}
                         value={description}
                         onChangeText={setDescription}
@@ -180,7 +182,10 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                 <View className="flex flex-col gap-2 mb-4">
                     <Text className="text-[#96A4B1] font-medium">{t('location')}</Text>
                     <TextInput
-                        className="w-full bg-white p-4 rounded-lg border border-blue-300"
+                        className="w-full bg-white p-4 rounded-lg border border-blue-300
+                        dark:text-white dark:bg-[#101922] 
+                        placeholder:dark:text-white
+                        "
                         placeholder={t('fetchingLocation')}
                         value={address}
                         onFocus={getLocation}

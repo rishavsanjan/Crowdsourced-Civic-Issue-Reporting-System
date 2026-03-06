@@ -18,7 +18,7 @@ const UserReports: React.FC<Props> = ({ data, navigation }) => {
     console.log(data)
     const { t } = useTranslation();
     return (
-        <View className="bg-white mx-4 rounded-lg p-4 mb-4 shadow-sm dark:bg-slate-900/70">
+        <View className="bg-white mx-4 rounded-lg p-4 mb-4 shadow-sm dark:bg-slate-900/70 dark:border-blue-300 border">
             <View className='flex flex-row justify-between'>
                 <Text className="text-lg font-semibold mb-4 w-32 dark:text-slate-200">{t('myReports')}</Text>
                 <TouchableOpacity onPress={() => { navigation.navigate('AllComplaints') }}>

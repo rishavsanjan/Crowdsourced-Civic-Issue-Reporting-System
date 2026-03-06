@@ -35,7 +35,6 @@ const Settings: React.FC<Props> = ({ navigation }) => {
     return (
         <View className="flex-1 bg-[#f6f7f8] dark:bg-[#101922]">
             {/* Header */}
-            <View className="h-20 bg-white dark:bg-black" />
 
             <View className="border-b border-slate-200 dark:border-slate-800 bg-[#f6f7f8] dark:bg-[#101922] p-4 flex-row items-center justify-between">
                 <TouchableOpacity onPress={() => navigation.goBack()}>

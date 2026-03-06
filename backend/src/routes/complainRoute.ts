@@ -2,6 +2,7 @@ import express from 'express';
 import prisma from '../config/db';
 import authMid from '../middlewares/userAuth';
 import { success } from 'zod';
+import { Complaint } from '@prisma/client';
 
 const complainRoute = express.Router();
 
@@ -186,104 +187,116 @@ complainRoute.get('/complainDetail/:complaintId', authMid, async (req, res) => {
 });
 
 complainRoute.post('/test', authMid, async (req, res) => {
-  try {
-    // @ts-ignore
-    const userId = req.user.user_id;
-
-    const page = Number(req.query.page) || 1;
-    const limit = 5;
-    const offset = (page - 1) * limit;
-
-    const { filter } = req.body;
-
-    // fetch complaints
-    const complaints = await prisma.complaint.findMany({
-      skip: offset,
-      take: limit,
-      where: filter === 'all' ? {} : { status: filter },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    const complaintIds = complaints.map(c => c.complaint_id);
-
-    // Fetch votes
-    const votes = await prisma.vote.findMany({
-      where: { complaint_id: { in: complaintIds } },
-      select: {
-        complaint_id: true,
-        vote_type: true,
-        user_id: true
-      }
-    });
-
-    const voteMap: {
-      [complaintId: number]: {
-        like: number;
-        dislike: number;
-        userReaction: 'like' | 'dislike' | null;
-      };
-    } = {};
-
-    for (const c of complaints) {
-      voteMap[c.complaint_id] = { like: 0, dislike: 0, userReaction: null };
+    type ComplaintWithMedia = Complaint & {
+        media: any[]
+        distance: number
     }
 
-    for (const v of votes) {
-      if (v.vote_type === 'like') voteMap[v.complaint_id].like++;
-      if (v.vote_type === 'dislike') voteMap[v.complaint_id].dislike++;
-      if (v.user_id === userId) voteMap[v.complaint_id].userReaction = v.vote_type;
+    try {
+        // @ts-ignore
+        const userId = req.user.user_id;
+
+        const page = Number(req.query.page) || 1;
+        const limit = 5;
+        const offset = (page - 1) * limit;
+
+        const { userLat, userLng, filter } = req.body;
+
+        const complaints = await prisma.$queryRaw<ComplaintWithMedia[]>`
+        SELECT c.*, 
+
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'media_id', m.media_id,
+              'file_url', m.file_url,
+              'file_type', m.file_type
+            )
+          ) FILTER (WHERE m.media_id IS NOT NULL),
+          '[]'
+        ) AS media,
+
+        (6371 * ACOS(
+          COS(RADIANS(${userLat}::double precision)) *
+          COS(RADIANS(c.latitude::double precision)) *
+          COS(RADIANS(c.longitude::double precision) - RADIANS(${userLng}::double precision)) +
+          SIN(RADIANS(${userLat}::double precision)) *
+          SIN(RADIANS(c.latitude::double precision))
+        )) AS distance
+
+        FROM "Complaint" c
+        LEFT JOIN "Media" m ON c.complaint_id = m.complaint_id
+
+        WHERE c.latitude IS NOT NULL
+        AND c.longitude IS NOT NULL
+        AND (${filter} = 'all' OR c.status = ${filter}::"Status")
+
+        GROUP BY c.complaint_id
+
+        HAVING (6371 * ACOS(
+          COS(RADIANS(${userLat}::double precision)) *
+          COS(RADIANS(c.latitude::double precision)) *
+          COS(RADIANS(c.longitude::double precision) - RADIANS(${userLng}::double precision)) +
+          SIN(RADIANS(${userLat}::double precision)) *
+          SIN(RADIANS(c.latitude::double precision))
+        )) BETWEEN ${0} AND ${2}
+
+        ORDER BY distance
+        LIMIT ${limit}
+        OFFSET ${offset};
+        `;
+
+        const complaintIds = complaints.map(c => c.complaint_id);
+
+        // Fetch votes
+        const votes = await prisma.vote.findMany({
+            where: { complaint_id: { in: complaintIds } },
+            select: {
+                complaint_id: true,
+                vote_type: true,
+                user_id: true
+            }
+        });
+
+        const voteMap: any = {};
+
+        for (const c of complaints) {
+            voteMap[c.complaint_id] = {
+                like: 0,
+                dislike: 0,
+                userReaction: null
+            };
+        }
+
+        for (const v of votes) {
+            if (v.vote_type === 'like') voteMap[v.complaint_id].like++;
+            if (v.vote_type === 'dislike') voteMap[v.complaint_id].dislike++;
+
+            if (v.user_id === userId) {
+                voteMap[v.complaint_id].userReaction = v.vote_type;
+            }
+        }
+
+        // Final response
+        const response = complaints.map(complaint => ({
+            ...complaint,
+            votes: voteMap[complaint.complaint_id],
+            media: complaint.media
+        }));
+
+        return res.status(200).json({
+            success: true,
+            msg: "success",
+            posts: response
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal server error"
+        });
     }
-
-    // Fetch media 
-    const media = await prisma.media.findMany({
-      where: {
-        complaint_id: { in: complaintIds }
-      },
-      select: {
-        complaint_id: true,
-        file_type: true,
-        file_url: true
-      }
-    });
-
-    const mediaMap: {
-      [complaintId: number]: {
-        file_type: string | null;
-        file_url: string | null;
-      };
-    } = {};
-
-    for (const c of complaints) {
-      mediaMap[c.complaint_id] = { file_type: null, file_url: null };
-    }
-
-    for (const m of media) {
-      mediaMap[m.complaint_id] = {
-        file_type: m.file_type,
-        file_url: m.file_url
-      };
-    }
-
-    // Final respones
-    const response = complaints.map(complaint => ({
-      ...complaint,
-      votes: voteMap[complaint.complaint_id],
-      media: mediaMap[complaint.complaint_id]
-    }));
-
-    return res.status(200).json({
-      msg: 'success',
-      success: true,
-      posts: response
-    });
-
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      msg: 'Internal server error'
-    });
-  }
 });
 
 

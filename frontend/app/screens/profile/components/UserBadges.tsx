@@ -14,7 +14,7 @@ interface Props {
 const UserBadges: React.FC<Props> = ({ data, navigation }) => {
     const { t } = useTranslation();
     return (
-        <View className="bg-white mx-4 rounded-lg p-4 mb-4 shadow-sm dark:bg-slate-900/70">
+        <View className="dark:border-blue-300 border bg-white mx-4 rounded-lg p-4 mb-4 shadow-sm dark:bg-slate-900/70">
             <View className='flex flex-row justify-between'>
                 <Text className="text-lg font-semibold mb-4 w-32 dark:text-slate-200">{t('myBadges')}</Text>
                 <TouchableOpacity onPress={() => { navigation.navigate('Badges') }}>
