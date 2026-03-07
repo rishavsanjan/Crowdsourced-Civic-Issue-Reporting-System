@@ -1,4 +1,4 @@
-import React, {  useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     View,
     Text,
@@ -22,6 +22,8 @@ import Constants from 'expo-constants'
 import { WebView } from "react-native-webview";
 import Status from './components/Status';
 import { useQuery } from '@tanstack/react-query';
+import Header from '../components/Header';
+import Loading from '../components/Loading';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ComplainDetails'>;
 
@@ -111,9 +113,6 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
         }
     }
 
-    console.log(data)
-
-
     function formatDate(isoString: string) {
         const date = new Date(isoString);
         return date.toLocaleString("en-GB");
@@ -121,17 +120,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
 
     if (isLoading) {
         return (
-            <View className="flex-1 justify-center items-center">
-                <View className="flex-1 justify-center items-center ">
-                    <LottieView
-                        source={require('../../../assets/loading_animations/loader.json')}
-                        autoPlay
-                        loop
-                        speed={2}
-                        style={{ width: 50, height: 50 }}
-                    />
-                </View>
-            </View>
+            <Loading/>
         )
     }
 
@@ -172,16 +161,9 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <SafeAreaView className="flex-1 bg-white dark:bg-[#101922]">
             {/* Header */}
-            <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200">
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="arrow-back" size={24} color="#000" />
-                </TouchableOpacity>
-                <Text className="text-lg font-semibold">Issue Details</Text>
-                <Text className="text-lg font-semibold"></Text>
-
-            </View>
+            <Header tabName='Details' goBack={true} />
 
             <ScrollView className="flex-1">
                 {/* Media Carousel */}
@@ -200,7 +182,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
 
                 {/* Issue Title and Reporter */}
                 <View className="px-4 py-4">
-                    <Text className="text-2xl font-bold text-gray-900 mb-2">
+                    <Text className="text-2xl font-bold text-gray-900 mb-2 dark:text-white">
                         {data?.title}
                     </Text>
                     <Text className="text-sm text-gray-500">
@@ -208,20 +190,10 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                     </Text>
                 </View>
 
-                {/* Action Buttons */}
-                <View className="flex-row px-4 pb-4 gap-3">
-                    <TouchableOpacity className="flex-1 flex-row items-center justify-center bg-blue-50 py-3 rounded-lg">
-                        <Image style={{ width: 20, height: 20 }} source={{ uri: 'https://img.icons8.com/?size=100&id=96384&format=png&color=000000' }} />
-                        <Text className="text-blue-600 font-semibold ml-2">Upvote (125)</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="flex-1 flex-row items-center justify-center bg-gray-100 py-3 rounded-lg">
-                        <Text className="text-gray-700 font-semibold ml-2">Follow Issue</Text>
-                    </TouchableOpacity>
-                </View>
 
                 {/* Description */}
                 <View className="px-4 pb-4">
-                    <Text className="text-gray-700 leading-6">
+                    <Text className="text-gray-700 leading-6 dark:text-white">
                         {data?.description}
                     </Text>
                 </View>
@@ -248,20 +220,22 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                     {/* Update 1 */}
                     {
                         data.AdminstrativeComments.map((item) => (
-                            <View key={item.id}>
+                            <View
+                                className='mb-2'
+                                key={item.id}>
                                 <View className='flex flex-row justify-between'>
-                                    <Text className='font-bold text-xl '>Admin</Text>
-                                    <Text className='text-gray-600'>{formatDate(item.createdAt)}</Text>
+                                    <Text className='font-bold text-xl  dark:text-white'>Admin</Text>
+                                    <Text className='text-gray-600 dark:text-white'>{formatDate(item.createdAt)}</Text>
                                 </View>
 
-                                <Text>{item.comment}</Text>
+                                <Text className='dark:text-white'>{item.comment}</Text>
                             </View>
                         ))
                     }
                     {
                         data.AdminstrativeComments.length === 0 &&
                         <View>
-                            <Text className='text-center'>Officals have made no comment on this yet!</Text>
+                            <Text className='text-center dark:text-white'>Officals have made no comment on this yet!</Text>
                         </View>
                     }
                 </View>

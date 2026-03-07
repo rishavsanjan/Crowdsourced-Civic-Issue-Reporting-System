@@ -18,15 +18,15 @@ const WelcomeLoginScreen: React.FC<Props> = ({ navigation }) => {
     }, [])
 
     return (
-        <View className="flex flex-col justify-between h-full bg-[#F6F7F8]">
+        <View className="flex flex-col justify-between h-full bg-[#F6F7F8] dark:bg-[#101922]">
             <View>
                 <View className=''>
                     <Image className=' aspect-[2/1]' style={{ width: 'auto', height: 300 }}
                         resizeMode="cover" source={require('../../../assets/images/welcomelogin.png')} />
                 </View>
                 <View className='flex flex-col gap-4 m-4'>
-                    <Text className='text-3xl text-center font-bold'>Report Issues, Improve Your City</Text>
-                    <Text className='text-center text-gray-500 font-normal text-sm'>Join your community in making our city a better place. Report issues, track progress and see real change</Text>
+                    <Text className='text-3xl text-center font-bold dark:text-white'>Report Issues, Improve Your City</Text>
+                    <Text className='text-center text-gray-500 font-normal text-sm dark:text-gray-200'>Join your community in making our city a better place. Report issues, track progress and see real change</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('OTPLogin')} className='items-center bg-[#1173D4] p-3 rounded-lg'>
                         <Text className='text-white font-medium  text-lg'>Log In</Text>
                     </TouchableOpacity>
@@ -38,7 +38,7 @@ const WelcomeLoginScreen: React.FC<Props> = ({ navigation }) => {
             </View>
 
             <View className='m-4'>
-                <Text className='text-center'>By continuing, you agree to our <Text className='text-[#1173D4] font-medium'>Terms of Service</Text> and <Text className='text-[#1173D4] font-medium'>Privacy Policy.</Text></Text>
+                <Text className='text-center dark:text-white'>By continuing, you agree to our <Text className='text-[#1173D4] font-medium'>Terms of Service</Text> and <Text className='text-[#1173D4] font-medium'>Privacy Policy.</Text></Text>
             </View>
         </View>
     );

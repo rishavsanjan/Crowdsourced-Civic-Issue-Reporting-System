@@ -8,13 +8,14 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n/i18n';
 import { saveLanguage, getSavedLanguage } from '@/app/i18n/language_storage';
 import { useTheme } from '@/app/context/theme-context';
+import Header from '../components/Header';
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
 const Settings: React.FC<Props> = ({ navigation }) => {
     const [pushNotifications, setPushNotifications] = useState(true);
     const [selectedLanguage, setSelectedLanguage] = useState('english');
     const { t } = useTranslation();
-    const {setTheme, mode} = useTheme();
+    const { setTheme, mode } = useTheme();
 
     const getLang = async () => {
         const lang = await getSavedLanguage();
@@ -36,13 +37,8 @@ const Settings: React.FC<Props> = ({ navigation }) => {
         <View className="flex-1 bg-[#f6f7f8] dark:bg-[#101922]">
             {/* Header */}
 
-            <View className="border-b border-slate-200 dark:border-slate-800 bg-[#f6f7f8] dark:bg-[#101922] p-4 flex-row items-center justify-between">
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="arrow-back" size={24} color="#000" />
-                </TouchableOpacity>
-                <Text className="text-lg font-bold text-slate-800 dark:text-slate-200">Settings</Text>
-                <View className="w-10" />
-            </View>
+            <Header goBack tabName='Settings' />
+
 
             {/* Main Content */}
             <ScrollView className="flex-1 p-4">
@@ -156,40 +152,7 @@ const Settings: React.FC<Props> = ({ navigation }) => {
                         </View>
                     </View>
 
-                    {/* Privacy & Account Section */}
-                    <View>
-                        <Text className="mb-2 text-sm font-bold uppercase text-slate-500 dark:text-slate-400">
-                            Privacy & Account
-                        </Text>
-                        <View className="rounded-lg bg-white dark:bg-slate-900/70 shadow-sm">
-                            <TouchableOpacity className="flex-row items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
-                                <View className="flex-1">
-                                    <Text className="font-medium text-slate-800 dark:text-slate-200">
-                                        Privacy Settings
-                                    </Text>
-                                    <Text className="text-sm text-slate-500 dark:text-slate-400">
-                                        Control who can see your profile.
-                                    </Text>
-                                </View>
-                                <TouchableOpacity onPress={() => navigation.goBack()}>
-                                    <Ionicons name="arrow-forward-outline" size={24} color="#000" />
-                                </TouchableOpacity>
-                            </TouchableOpacity>
-                            <TouchableOpacity className="flex-row items-center justify-between p-4">
-                                <View className="flex-1">
-                                    <Text className="font-medium text-slate-800 dark:text-slate-200">
-                                        Account Management
-                                    </Text>
-                                    <Text className="text-sm text-slate-500 dark:text-slate-400">
-                                        Manage your account details.
-                                    </Text>
-                                </View>
-                                <TouchableOpacity onPress={() => navigation.goBack()}>
-                                    <Ionicons name="arrow-forward-outline" size={24} color="#000" />
-                                </TouchableOpacity>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                    
                 </View>
             </ScrollView>
 

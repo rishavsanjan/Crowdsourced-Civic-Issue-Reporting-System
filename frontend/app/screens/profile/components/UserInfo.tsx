@@ -1,4 +1,5 @@
 import { useAuth } from '@/app/context/auth-context';
+import { useTheme } from '@/app/context/theme-context';
 import { RootStackParamList } from '@/app/navigation/navigation';
 import { ProfileData } from '@/app/types/profileData';
 import { formatMonthYear } from '@/app/util/date';
@@ -12,21 +13,22 @@ type P = NativeStackScreenProps<RootStackParamList, 'ProfileScreen'>;
 
 interface Props {
     data: ProfileData | undefined
-    navigation :  P['navigation'];
+    navigation: P['navigation'];
 }
 
-const UserInfo: React.FC<Props> = ({ data,navigation }) => {
+const UserInfo: React.FC<Props> = ({ data, navigation }) => {
     const { t } = useTranslation();
     const { logout, user } = useAuth();
-    
+    const {mode} = useTheme();
     return (
         <View className="bg-white px-6 py-8 items-center relative dark:bg-slate-900/70">
-            <View className='flex self-end absolute right-12 top-4'>
+            <View className='flex self-end absolute right-12 top-8'>
                 <TouchableOpacity onPress={() => {
-                     logout()
+                    logout()
                     navigation.navigate('WelcomeLoginScreen')
                 }}>
-                    <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=vGj0AluRnTSa&format=png&color=000000' }} />
+                    <Ionicons name="log-out-outline" color={`${mode === 'light' ? 'black' : 'white'}`} size={25} />
+
                 </TouchableOpacity>
             </View>
             <View className="relative">

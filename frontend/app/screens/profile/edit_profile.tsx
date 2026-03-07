@@ -18,6 +18,7 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import Header from '../components/Header';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'EditProfile'>;
 
@@ -49,7 +50,7 @@ const EditProfile: React.FC<Props> = () => {
         mutationFn: async () => {
             const token = await AsyncStorage.getItem('citytoken');
             const res = await axios({
-                method:'post',
+                method: 'post',
                 url: `${API_BASE_URL}/api/user/update-profile`,
                 data: {
                     name
@@ -77,16 +78,8 @@ const EditProfile: React.FC<Props> = () => {
             <StatusBar barStyle="light-content" />
 
             {/* Header */}
-            <View className="bg-[#f6f7f8] light:bg-[#101922] px-4 py-3 border-b border-[#1173d4]/20 light:border-[#1173d4]/30">
-                <View className="flex-row items-center">
-                    <TouchableOpacity>
-                        <BackIcon color="#1e293b" />
-                    </TouchableOpacity>
-                    <Text className="text-lg font-bold text-slate-900 light:text-slate-50 flex-1 text-center pr-6">
-                        Edit Profile
-                    </Text>
-                </View>
-            </View>
+            <Header goBack tabName='Edit Profile' />
+
 
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
                 <View className="p-4">

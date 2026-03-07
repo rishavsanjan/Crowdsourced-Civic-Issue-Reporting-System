@@ -25,6 +25,7 @@ import { pickImage, pickVideo, takePhoto } from "@/app/util/image";
 import { fetchAddress } from "@/app/util/address";
 import { getLocation } from "@/app/util/get-location";
 import { useMutation } from "@tanstack/react-query";
+import Header from "../components/Header";
 type Props = NativeStackScreenProps<RootStackParamList, "RaiseComplainScreen">;
 
 interface MediaItem {
@@ -140,10 +141,7 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
     return (
         <ScrollView className="flex-1 bg-[#F6F7F8] dark:bg-[#101922]">
             {/* Header */}
-            <View className="flex flex-row items-center justify-center w-full px-4 p-4 border-b dark:border-blue-300 border-gray-300">
-
-                <Text className="font-bold text-xl dark:text-white">{t('reportIssue')}</Text>
-            </View>
+            <Header tabName={t('reportIssue')}/>
 
             {/* Form */}
             <View className="p-4 flex-1">

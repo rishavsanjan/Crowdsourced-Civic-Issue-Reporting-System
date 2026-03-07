@@ -19,6 +19,8 @@ import { fetchHomePosts } from '@/app/util/posts';
 import StatusFilterTab from './components/StatusFilterTab';
 import ComplainCard from './components/ComplainCard';
 import { useAuth } from '@/app/context/auth-context';
+import Header from '../components/Header';
+import Loading from '../components/Loading';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
@@ -111,17 +113,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
     if (isLoading) {
         return (
-            <View className="flex-1 justify-center items-center">
-                <View className="flex-1 justify-center items-center ">
-                    <LottieView
-                        source={require('../../../assets/loading_animations/loader.json')}
-                        autoPlay
-                        loop
-                        speed={2}
-                        style={{ width: 50, height: 50 }}
-                    />
-                </View>
-            </View>
+            <Loading/>
         )
 
     }
@@ -143,11 +135,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     return (
         <View className="flex-1 bg-[#F6F7F8] dark:bg-[#101922]">
             {/* Header */}
-            <View className="bg-white px-4 py-3 border-b border-gray-200">
-                <View className=" items-center justify-between">
-                    <Text className="text-lg font-bold text-center">FixMyCity</Text>
-                </View>
-            </View>
+            <Header tabName='Fix My City'/>
 
             {/* Status Filter Tabs */}
             <StatusFilterTab selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus} />

@@ -24,6 +24,7 @@ import WorkLocation from '../components/WorkLocation';
 import { uploadToCloudinary } from '../utils/cloudinary';
 import { Toast } from 'toastify-react-native';
 import WorkerCommentsInput from '../components/WorkerCommentInput';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 
@@ -187,11 +188,9 @@ const JobDetail: React.FC<Props> = () => {
     };
 
     return (
-        <View className="flex-1 bg-background-light light:bg-background-light">
+        <SafeAreaView className="flex-1 bg-background-light light:bg-background-light">
             <StatusBar barStyle="light-content" />
 
-            <View className="h-8 w-full bg-background-light light:bg-background-light flex-row items-center justify-between px-6">
-            </View>
 
             {/* Navigation Bar */}
             <View className="bg-background-light/80 light:bg-background-light/80 px-4 py-3 border-b border-slate-200 light:border-slate-800 flex-row items-center justify-between">
@@ -277,7 +276,7 @@ const JobDetail: React.FC<Props> = () => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 }
 

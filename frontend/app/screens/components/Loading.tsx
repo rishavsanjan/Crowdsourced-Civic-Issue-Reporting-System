@@ -4,9 +4,9 @@ import { View } from 'react-native'
 
 const Loading = () => {
     return (
-        <View className="flex-1 justify-center items-center ">
+        <View className="flex-1 justify-center items-center dark:bg-[#101922]">
             <LottieView
-                source={require('../../../../assets/loading_animations/loader.json')}
+                source={require('../../../../frontend/assets/loading_animations/loader.json')}
                 autoPlay
                 loop
                 speed={2}

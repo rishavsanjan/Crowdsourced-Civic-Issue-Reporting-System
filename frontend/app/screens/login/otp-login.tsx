@@ -28,7 +28,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'OTPLogin'>;
 
 
 const OTPLogin: React.FC<Props> = ({ navigation }) => {
-    const [loginMethod, setLoginMethod] = useState('password'); 
+    const [loginMethod, setLoginMethod] = useState('password');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -39,7 +39,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
-    const {login} = useAuth();
+    const { login } = useAuth();
 
     const otpInputs = useRef([]);
     useEffect(() => {
@@ -196,16 +196,16 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
 
     if (success) {
         return (
-            <SafeAreaView className="flex-1 bg-gray-50">
+            <SafeAreaView className="flex-1 bg-gray-50 dark:bg-[#101922]">
                 <StatusBar barStyle="dark-content" />
                 <View className="flex-1 justify-center items-center px-6">
                     <View className="w-20 h-20 rounded-full bg-green-500 justify-center items-center mb-6">
                         <Text className="text-4xl text-white font-bold">✓</Text>
                     </View>
-                    <Text className="text-3xl font-bold text-gray-900 mb-3">
+                    <Text className="text-3xl font-bold text-gray-900 mb-3 dark:text-white">
                         Welcome Back!
                     </Text>
-                    <Text className="text-base text-gray-600 text-center mb-8 leading-6">
+                    <Text className="text-base text-gray-600 text-center mb-8 leading-6 dark:text-white">
                         You have successfully logged in to your account.
                     </Text>
                     <TouchableOpacity onPress={() => { navigation.navigate('HomeScreen') }} className="w-full bg-[#1173D4] rounded-xl py-4 items-center">
@@ -217,7 +217,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-50">
+        <SafeAreaView className="flex-1 bg-gray-50 dark:bg-[#101922]">
             <StatusBar barStyle="dark-content" />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -229,36 +229,36 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                     showsVerticalScrollIndicator={false}
                 >
                     <View className="flex-1">
-                        <Text className="text-4xl font-bold text-gray-900 mb-2 text-center">
+                        <Text className="text-4xl font-bold text-gray-900 mb-2 text-center dark:text-white">
                             Welcome Back
                         </Text>
-                        <Text className="text-base text-gray-600 mb-8 leading-6 text-center">
+                        <Text className="text-base text-gray-600 mb-8 leading-6 text-center dark:text-gray-400">
                             Login to your account to continue
                         </Text>
 
                         {/* Login Method Toggle */}
-                        <View className="flex-row bg-gray-200 rounded-xl p-1 mb-6">
+                        <View className="flex-row bg-gray-200 rounded-xl p-1 mb-6 dark:bg-[#2e3945]">
                             <TouchableOpacity
-                                className={`flex-1 py-3 rounded-lg ${loginMethod === 'password' ? 'bg-white' : 'bg-transparent'
+                                className={`flex-1 py-3 rounded-lg ${loginMethod === 'password' ? 'bg-white dark:bg-gray-600' : 'bg-transparent'
                                     }`}
                                 onPress={() => handleLoginMethodChange('password')}
                                 activeOpacity={0.7}
                             >
                                 <Text
-                                    className={`text-center text-sm font-semibold ${loginMethod === 'password' ? 'text-gray-900' : 'text-gray-600'
+                                    className={`text-center text-sm dark:text-white font-semibold ${loginMethod === 'password' ? 'text-gray-900' : 'text-gray-600'
                                         }`}
                                 >
                                     Password
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                className={`flex-1 py-3 rounded-lg ${loginMethod === 'otp' ? 'bg-white' : 'bg-transparent'
+                                className={`flex-1 py-3 rounded-lg dark:text-white ${loginMethod === 'otp' ? 'bg-white dark:bg-gray-600' : 'bg-transparent'
                                     }`}
                                 onPress={() => handleLoginMethodChange('otp')}
                                 activeOpacity={0.7}
                             >
                                 <Text
-                                    className={`text-center text-sm font-semibold ${loginMethod === 'otp' ? 'text-gray-900' : 'text-gray-600'
+                                    className={`text-center text-sm font-semibold dark:text-white ${loginMethod === 'otp' ? 'text-gray-900' : 'text-gray-600'
                                         }`}
                                 >
                                     OTP
@@ -268,11 +268,11 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
 
                         {/* Phone Number Input */}
                         <View className="mb-5">
-                            <Text className="text-sm font-semibold text-gray-700 mb-2">
+                            <Text className="text-sm font-semibold text-gray-700 mb-2 dark:text-white">
                                 Phone Number
                             </Text>
                             <TextInput
-                                className="bg-white border-2 border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900"
+                                className="bg-white border-2 dark:text-white border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900  dark:bg-[#101922]"
                                 value={phone}
                                 onChangeText={(text) => setPhone(text.replace(/\D/g, ''))}
                                 placeholder="+91 9876543210"
@@ -284,7 +284,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
 
                         {/* Password Login */}
                         <Animated.View
-                            key={loginMethod} // IMPORTANT: tells reanimated to re-render with animation when key changes
+                            key={loginMethod} 
                             entering={SlideInDown.duration(250)}
                             exiting={SlideOutDown.duration(150)}
                             layout={Layout.springify()}
@@ -292,11 +292,11 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                             {loginMethod === 'password' ?
                                 <>
                                     <View className="mb-5">
-                                        <Text className="text-sm font-semibold text-gray-700 mb-2">
+                                        <Text className="text-sm font-semibold text-gray-700 mb-2 dark:text-white">
                                             Password
                                         </Text>
                                         <TextInput
-                                            className="bg-white border-2 border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900"
+                                            className="bg-white border-2 dark:text-white border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900 dark:bg-[#101922]"
                                             value={password}
                                             onChangeText={setPassword}
                                             placeholder="Enter your password"
@@ -309,7 +309,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                         className="self-end mb-6"
                                         activeOpacity={0.7}
                                     >
-                                        <Text className="text-sm text-gray-600">
+                                        <Text className="text-sm text-gray-600 dark:text-white">
                                             Forgot Password?
                                         </Text>
                                     </TouchableOpacity>
@@ -377,7 +377,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                                         key={index}
                                                         //@ts-ignore
                                                         ref={el => otpInputs.current[index] = el}
-                                                        className="w-12 h-14 bg-white border-2 border-gray-200 rounded-xl text-2xl font-semibold text-center text-gray-900"
+                                                        className="w-12 h-14 bg-white border-2 dark:text-white border-gray-200 rounded-xl text-2xl font-semibold text-center text-gray-900"
                                                         value={digit}
                                                         onChangeText={(value) => handleOtpChange(index, value)}
                                                         onKeyPress={({ nativeEvent: { key } }) =>
@@ -447,11 +447,11 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
 
                         {/* Sign Up Link */}
                         <View className="flex-row justify-center items-center mt-6">
-                            <Text className="text-gray-600 text-sm">
+                            <Text className="text-gray-600 text-sm dark:text-gray-400">
                                 Dont have an account?{' '}
                             </Text>
                             <TouchableOpacity onPress={() => { navigation.navigate('OTPSignUp') }} activeOpacity={0.7}>
-                                <Text className="text-gray-900 text-sm font-semibold">
+                                <Text className="text-gray-900 text-sm font-semibold dark:text-white">
                                     Sign Up
                                 </Text>
                             </TouchableOpacity>

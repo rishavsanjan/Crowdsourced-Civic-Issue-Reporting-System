@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, StatusBar, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
@@ -9,8 +8,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getStatusColor, getStatusIcon, getStatusText } from '@/app/util/styles';
 import { useQuery } from '@tanstack/react-query';
-import LottieView from 'lottie-react-native';
-import Loading from './components/Loading';
+import Loading from '../components/Loading';
+import Header from '../components/Header';
+import { Ionicons } from '@expo/vector-icons';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AllComplaints'>;
 
@@ -34,14 +34,20 @@ interface Complaint {
 
 const ComplaintCard = ({ complaint }: { complaint: Complaint }) => {
     return (
-        <TouchableOpacity className="bg-white rounded-lg p-4 mb-4">
+        <TouchableOpacity className="bg-white rounded-lg p-4 mb-4 dark:bg-[#101922] dark:border dark:border-white">
             <View className="flex-row justify-between items-start gap-4">
                 <View className="flex-1">
-                    <Text className="font-bold text-black">{complaint?.title}</Text>
+                    <Text className="font-bold text-black dark:text-white">{complaint?.title}</Text>
                     <Text className="text-sm text-gray-500 mt-1">Submitted on {new Date(complaint?.createdAt).toLocaleDateString()}</Text>
                 </View>
-                <View style={{ backgroundColor: getStatusColor(complaint.status) + '20' }} className={`flex-row items-center gap-2 px-3 py-1 rounded-full `}>
-                    <Image style={{ width: 10, height: 10 }} source={{ uri: getStatusIcon(complaint.status) }} />
+                <View
+                    style={{ backgroundColor: getStatusColor(complaint.status) + '20' }}
+                    className={`flex-row items-center gap-2 px-3 py-1 rounded-full `}>
+                    <Ionicons
+                        name={getStatusIcon(complaint.status)}
+                        size={16}
+                        color={getStatusColor(complaint.status)}
+                    />
                     <Text style={{ color: getStatusColor(complaint.status) }} className="text-sm font-medium ">{getStatusText(complaint?.status)}</Text>
                 </View>
             </View>
@@ -77,21 +83,11 @@ const AllComplaints: React.FC<Props> = ({ navigation, route }) => {
 
 
     return (
-        <SafeAreaView className="flex-1 bg-[#F6F7F8]">
+        <SafeAreaView className="flex-1 bg-[#F6F7F8] dark:bg-[#101922]">
             <StatusBar barStyle="dark-content" />
 
             {/* Header */}
-            <View className="bg-[#F6F7F8] border-b border-gray-200">
-                <View className="flex-row items-center p-4">
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Ionicons name="arrow-back" size={24} color="#000" />
-                    </TouchableOpacity>
-                    <Text className="text-lg font-bold text-black text-center flex-1">
-                        My Complaints
-                    </Text>
-                    <View className="w-8" />
-                </View>
-            </View>
+            <Header goBack tabName='My Complaints' />
 
             {/* Main Content */}
             <ScrollView className="flex-1 p-4">

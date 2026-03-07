@@ -167,7 +167,7 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
 
     if (success) {
         return (
-            <SafeAreaView className="flex-1 bg-[#F6F7F8]">
+            <SafeAreaView className="flex-1 bg-[#F6F7F8] ">
                 <StatusBar barStyle="dark-content" />
                 <View className="flex-1 justify-center items-center px-6">
                     <View className="w-20 h-20 rounded-full bg-green-500 justify-center items-center mb-6">
@@ -188,7 +188,7 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-[#F6F7F8]">
+        <SafeAreaView className="flex-1 bg-[#F6F7F8] dark:bg-[#101922]">
             <StatusBar barStyle="dark-content" />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -211,19 +211,19 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
                     {/* Step 1: Phone Number */}
                     {step === 1 && (
                         <View className="flex-1">
-                            <Text className="text-4xl font-bold text-gray-900 mb-2 text-center">
+                            <Text className="text-4xl font-bold text-gray-900 mb-2 text-center dark:text-white">
                                 Sign Up
                             </Text>
-                            <Text className="text-base text-gray-600 mb-8 leading-6 text-center">
+                            <Text className="text-base text-gray-600 mb-8 leading-6 text-center dark:text-gray-400">
                                 Enter your phone number to get started
                             </Text>
 
                             <View className="mb-5">
-                                <Text className="text-sm font-semibold text-gray-700 mb-2">
+                                <Text className="text-sm font-semibold text-gray-700 mb-2 dark:text-white">
                                     Phone Number
                                 </Text>
                                 <TextInput
-                                    className="bg-white border-2 border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900"
+                                    className="bg-white border-2 border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900 dark:bg-[#101922] dark:text-white"
                                     value={phone}
                                     onChangeText={(text) => setPhone(text.replace(/\D/g, ''))}
                                     placeholder="+91 9876543210"
@@ -239,7 +239,7 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
 
                             <TouchableOpacity
                                 disabled={sendOtpMutation.isPending || phone.length < 10}
-                                className="bg-gray-900 rounded-xl py-4 items-center mb-4 disabled:cursor-not-allowed disabled:opacity-80"
+                                className="rounded-xl py-4 items-center mb-4 disabled:cursor-not-allowed disabled:opacity-80 bg-[#1173D4]"
                                 onPress={() => { sendOtpMutation.mutate() }}
                                 activeOpacity={0.8}
                             >
@@ -251,7 +251,7 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
                                         </View>
                                         :
 
-                                        <Text className="text-white text-base font-semibold">Send OTP</Text>
+                                        <Text className="text-white text-base font-semibold ">Send OTP</Text>
                                 }
 
                             </TouchableOpacity>
@@ -276,7 +276,7 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
                                         key={index}
                                         //@ts-ignore
                                         ref={el => otpInputs.current[index] = el}
-                                        className="w-12 h-14 bg-white border-2 border-gray-200 rounded-xl text-2xl font-semibold text-center text-gray-900"
+                                        className="w-12 h-14 bg-white border-2 border-gray-200 dark:text-white rounded-xl text-2xl font-semibold text-center dark:bg-[#101922] text-gray-900"
                                         value={digit}
                                         onChangeText={(value) => handleOtpChange(index, value)}
                                         onKeyPress={({ nativeEvent: { key } }) =>
@@ -308,7 +308,7 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
                             </View>
 
                             <TouchableOpacity
-                                className="bg-gray-900 rounded-xl py-4 items-center mb-4"
+                                className=" rounded-xl py-4 items-center mb-4 bg-[#1173D4]"
                                 onPress={() => verifyOtp()}
                                 activeOpacity={0.8}
                             >
@@ -316,7 +316,7 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
                             </TouchableOpacity>
 
                             <TouchableOpacity onPress={() => setStep(1)} activeOpacity={0.7}>
-                                <Text className="text-gray-500 text-sm text-center">
+                                <Text className="text-gray-500 text-sm text-center dark:text-white">
                                     Change phone number
                                 </Text>
                             </TouchableOpacity>
@@ -326,19 +326,19 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
                     {/* Step 3: Account Details */}
                     {step === 3 && (
                         <View className="flex-1">
-                            <Text className="text-4xl font-bold text-gray-900 mb-2 text-center">
+                            <Text className="text-4xl font-bold text-gray-900 mb-2 text-center dark:text-white">
                                 Create Account
                             </Text>
-                            <Text className="text-base text-gray-600 mb-8 leading-6 text-center">
+                            <Text className="text-base text-gray-600 mb-8 leading-6 text-center dark:text-gray-400">
                                 Complete your profile to finish
                             </Text>
 
                             <View className="mb-5">
-                                <Text className="text-sm font-semibold text-gray-700 mb-2">
+                                <Text className="text-sm font-semibold text-gray-700 mb-2 dark:text-white">
                                     Full Name
                                 </Text>
                                 <TextInput
-                                    className="bg-white border-2 border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900"
+                                    className="bg-white border-2 dark:text-white border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900 dark:bg-[#101922]"
                                     value={name}
                                     onChangeText={setName}
                                     placeholder="John Doe"
@@ -348,11 +348,11 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
                             </View>
 
                             <View className="mb-5">
-                                <Text className="text-sm font-semibold text-gray-700 mb-2">
+                                <Text className="text-sm font-semibold text-gray-700 mb-2 dark:text-white">
                                     Email (optional)
                                 </Text>
                                 <TextInput
-                                    className="bg-white border-2 border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900"
+                                    className="bg-white border-2 dark:text-white border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900 dark:bg-[#101922]"
                                     value={email}
                                     onChangeText={setEmail}
                                     placeholder="john@example.com"
@@ -363,11 +363,11 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
                             </View>
 
                             <View className="mb-5">
-                                <Text className="text-sm font-semibold text-gray-700 mb-2">
+                                <Text className="text-sm font-semibold text-gray-700 mb-2 dark:text-white">
                                     Password
                                 </Text>
                                 <TextInput
-                                    className="bg-white border-2 border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900"
+                                    className="bg-white border-2 dark:text-white border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900 dark:bg-[#101922]"
                                     value={password}
                                     onChangeText={setPassword}
                                     placeholder="Min. 8 characters"
@@ -377,11 +377,11 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
                             </View>
 
                             <View className="mb-5">
-                                <Text className="text-sm font-semibold text-gray-700 mb-2">
+                                <Text className="text-sm font-semibold text-gray-700 mb-2 dark:text-white">
                                     Confirm Password
                                 </Text>
                                 <TextInput
-                                    className="bg-white border-2 border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900"
+                                    className="bg-white border-2 dark:text-white border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900 dark:bg-[#101922]"
                                     value={confirmPassword}
                                     onChangeText={setConfirmPassword}
                                     placeholder="Passwords must match!"
@@ -395,11 +395,11 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
                             ) : null}
 
                             <TouchableOpacity
-                                className="bg-gray-900 rounded-xl py-4 items-center"
+                                className="bg-[#1173D4] rounded-xl py-4 items-center"
                                 onPress={createAccount}
                                 activeOpacity={0.8}
                             >
-                                <Text className="text-white text-base font-semibold">
+                                <Text className="text-white text-base font-semibold dark:text-white">
                                     Create Account
                                 </Text>
                             </TouchableOpacity>

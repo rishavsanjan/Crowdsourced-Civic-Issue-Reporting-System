@@ -53,16 +53,8 @@ const Profile: React.FC<Props> = () => {
         }
     })
 
-
-    const handleGoBack = () => {
-        console.log('Go back pressed');
-        // Implement navigation back logic here
-    };
-
-
     const handleLogout = () => {
         console.log('Logout pressed');
-        // Implement logout logic here
     };
 
     if (!data) {

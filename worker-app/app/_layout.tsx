@@ -10,8 +10,12 @@ export default function RootLayout() {
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <ToastManager />
-        <Stack screenOptions={{ headerShown: false }} />
-        
+        <Stack
+          screenOptions={{
+            gestureEnabled: true,
+            headerShown: false,
+            fullScreenGestureEnabled: true
+          }} />
       </QueryClientProvider>
     </AuthProvider>
   );
