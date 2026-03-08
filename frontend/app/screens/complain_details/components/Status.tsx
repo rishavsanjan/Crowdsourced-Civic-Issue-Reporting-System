@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Image, Text, View } from 'react-native'
 
 interface Props{
@@ -6,16 +7,17 @@ interface Props{
 }
 
 const Status:React.FC<Props> = ({status}) => {
+    const {t} = useTranslation();
     return (
         <View className="px-4 pb-4">
-            <Text className="text-lg font-bold text-gray-900 mb-3">Status</Text>
+            <Text className="text-lg font-bold text-gray-900 mb-3">{t('status')}</Text>
             <View className="flex-row items-center">
                 {/* Pending */}
                 <View className="flex-1 items-center">
                     <View>
                         <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=12582&format=png&color=228BE6' }} />
                     </View>
-                    <Text className="text-xs text-gray-600">Pending</Text>
+                    <Text className="text-xs text-gray-600">{t('pending')}</Text>
                 </View>
 
                 {/* Progress Line */}
@@ -26,7 +28,7 @@ const Status:React.FC<Props> = ({status}) => {
                     <View className=" mb-2">
                         <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=71202&format=png&color=228BE6' }} />
                     </View>
-                    <Text className="text-xs text-gray-600">In Progress</Text>
+                    <Text className="text-xs text-gray-600">{t('in_progress')}</Text>
                 </View>
 
                 {/* Progress Line */}
@@ -36,7 +38,7 @@ const Status:React.FC<Props> = ({status}) => {
                     <View className=" mb-2">
                         <Image style={{ width: 30, height: 30 }} source={{ uri: 'https://img.icons8.com/?size=100&id=gWpFZsHoozrx&format=png&color=40C057' }} />
                     </View>
-                    <Text className="text-xs text-gray-600">Resolved</Text>
+                    <Text className="text-xs text-gray-600">{t('resolved')}</Text>
                 </View>
             </View>
         </View>

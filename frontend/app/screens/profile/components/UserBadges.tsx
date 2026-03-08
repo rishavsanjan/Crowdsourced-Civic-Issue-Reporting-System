@@ -40,7 +40,7 @@ const UserBadges: React.FC<Props> = ({ data, navigation }) => {
 
                         <View className='flex flex-col items-center gap-4'>
                             <View>
-                                <Text className='dark:text-slate-200'>You have not earned any badges yet!</Text>
+                                <Text className='dark:text-slate-200'>{t('noBadge')}</Text>
                             </View>
                             <TouchableOpacity onPress={() => { navigation.navigate('Badges') }} className='bg-blue-600 rounded-lg p-4'>
                                 <Text className='text-white font-medium  dark:text-slate-200'>{t('viewProgress')}</Text>

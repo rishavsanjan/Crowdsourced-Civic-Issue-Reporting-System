@@ -12,18 +12,17 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Video } from 'expo-av';
 
-import { Ionicons } from '@expo/vector-icons';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
 import API_BASE_IP from '../../../config/api';
-import LottieView from 'lottie-react-native';
 import Constants from 'expo-constants'
 import { WebView } from "react-native-webview";
 import Status from './components/Status';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
+import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ComplainDetails'>;
 
@@ -57,11 +56,11 @@ interface Response {
 const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
     const { googleApiKey } = Constants.expoConfig?.extra || {};
     const { complaintId } = route.params;
-
+    const {t} = useTranslation();
     const flatListRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(0);
 
-
+    
     const { data, isLoading } = useQuery({
         queryKey: ['post-detail'],
         queryFn: async () => {
@@ -163,7 +162,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
     return (
         <SafeAreaView className="flex-1 bg-white dark:bg-[#101922]">
             {/* Header */}
-            <Header tabName='Details' goBack={true} />
+            <Header tabName={t('detail')} goBack={true} />
 
             <ScrollView className="flex-1">
                 {/* Media Carousel */}
@@ -203,7 +202,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
 
                 {/* Location */}
                 <View >
-                    <Text className="text-lg font-bold text-gray-900 mb-3 px-4 ">Location</Text>
+                    <Text className="text-lg font-bold text-gray-900 mb-3 px-4 ">{t('location')}</Text>
                     <View style={{ width: "100%", height: 200 }}>
                         <WebView
                             originWhitelist={['*']}
@@ -215,7 +214,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
 
                 {/* Updates */}
                 <View className="px-4 pb-6">
-                    <Text className="text-lg font-bold text-gray-900 mb-4">Updates</Text>
+                    <Text className="text-lg font-bold text-gray-900 mb-4">{t('updates')}</Text>
 
                     {/* Update 1 */}
                     {
@@ -224,7 +223,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                                 className='mb-2'
                                 key={item.id}>
                                 <View className='flex flex-row justify-between'>
-                                    <Text className='font-bold text-xl  dark:text-white'>Admin</Text>
+                                    <Text className='font-bold text-xl  dark:text-white'>{t('admin')}</Text>
                                     <Text className='text-gray-600 dark:text-white'>{formatDate(item.createdAt)}</Text>
                                 </View>
 
@@ -235,7 +234,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                     {
                         data.AdminstrativeComments.length === 0 &&
                         <View>
-                            <Text className='text-center dark:text-white'>Officals have made no comment on this yet!</Text>
+                            <Text className='text-center dark:text-white'>{t('Officals have made no comment on this yet!')}</Text>
                         </View>
                     }
                 </View>

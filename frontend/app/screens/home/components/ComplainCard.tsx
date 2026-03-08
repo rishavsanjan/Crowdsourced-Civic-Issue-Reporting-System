@@ -9,8 +9,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { Toast } from 'toastify-react-native';
-import { Entypo } from '@expo/vector-icons';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Entypo, Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 type P = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
@@ -27,6 +27,7 @@ interface Props {
 }
 
 const ComplainCard: React.FC<Props> = ({ complaint, navigation, selectedStatus, distance, latitude, longitute }) => {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     const getPriorityColor = (status: string) => {
         return '#FF4444';
@@ -167,12 +168,16 @@ const ComplainCard: React.FC<Props> = ({ complaint, navigation, selectedStatus, 
                         className="px-2 py-1 rounded-full flex flex-row items-center gap-1"
                         style={{ backgroundColor: getStatusColor(complaint.status) + '20' }}
                     >
-                        <Image style={{ width: 10, height: 10 }} source={{ uri: getStatusIcon(complaint.status) }} />
+                        <Ionicons
+                            name={getStatusIcon(complaint.status)}
+                            size={16}
+                            color={getStatusColor(complaint.status)}
+                        />
                         <Text
                             className="text-xs font-medium"
                             style={{ color: getStatusColor(complaint.status) }}
                         >
-                            {getStatusText(complaint.status)}
+                            {t(getStatusText(complaint.status))}
                         </Text>
                     </View>
                 </View>

@@ -51,7 +51,7 @@ const UserReports: React.FC<Props> = ({ data, navigation }) => {
                                         className="text-sm ml-1 font-medium"
                                         style={{ color: getStatusColor(complain.status) }}
                                     >
-                                        {getStatusText(complain.status)}
+                                        {t(getStatusText(complain.status))}
                                     </Text>
                                 </View>
                             </View>

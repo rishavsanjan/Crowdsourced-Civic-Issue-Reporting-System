@@ -12,7 +12,6 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
 import API_BASE_IP from '../../../config/api';
 import { useTranslation } from 'react-i18next';
-import LottieView from 'lottie-react-native';
 import { useQuery } from '@tanstack/react-query';
 import UserInfo from './components/UserInfo';
 import UserStats from './components/UserStats';

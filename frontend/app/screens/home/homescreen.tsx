@@ -21,6 +21,7 @@ import ComplainCard from './components/ComplainCard';
 import { useAuth } from '@/app/context/auth-context';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
+import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
@@ -34,6 +35,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         long: 0.0
     });
     const { user } = useAuth();
+    const {t} = useTranslation();
 
     if (!user) {
         console.log("user not available")
@@ -75,22 +77,16 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         enabled: coordinates.lat !== 0 && coordinates.long !== 0,
     });
 
-    // Flatten all pages into a single array
     const allComplaints = useMemo(() => {
         return data?.pages.flatMap(page => page.posts) ?? [];
     }, [data]);
 
-    // Filter by status
     const filteredComplaints = useMemo(() => {
         if (selectedStatus === 'all') {
             return allComplaints;
         }
         return allComplaints.filter(complaint => complaint.status === selectedStatus);
     }, [allComplaints, selectedStatus]);
-
-
-    console.log(data)
-    console.log(distance, coordinates)
 
     const onRefresh = async () => {
         await refetch();
@@ -135,7 +131,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     return (
         <View className="flex-1 bg-[#F6F7F8] dark:bg-[#101922]">
             {/* Header */}
-            <Header tabName='Fix My City'/>
+            <Header tabName={t('fixmycity')}/>
 
             {/* Status Filter Tabs */}
             <StatusFilterTab selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus} />

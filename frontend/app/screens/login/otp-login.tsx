@@ -24,6 +24,7 @@ import Animated, {
     Layout,
 } from 'react-native-reanimated';
 import { useAuth } from '@/app/context/auth-context';
+import { useTranslation } from 'react-i18next';
 type Props = NativeStackScreenProps<RootStackParamList, 'OTPLogin'>;
 
 
@@ -40,6 +41,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
+    const { t } = useTranslation();
 
     const otpInputs = useRef([]);
     useEffect(() => {
@@ -203,13 +205,13 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                         <Text className="text-4xl text-white font-bold">✓</Text>
                     </View>
                     <Text className="text-3xl font-bold text-gray-900 mb-3 dark:text-white">
-                        Welcome Back!
+                        {t('WelcomeBackMessage')}
                     </Text>
                     <Text className="text-base text-gray-600 text-center mb-8 leading-6 dark:text-white">
-                        You have successfully logged in to your account.
+                        {t('LoginSuccessMessage')}
                     </Text>
                     <TouchableOpacity onPress={() => { navigation.navigate('HomeScreen') }} className="w-full bg-[#1173D4] rounded-xl py-4 items-center">
-                        <Text className="text-white text-base font-semibold">Continue</Text>
+                        <Text className="text-white text-base font-semibold">{t('ContinueButton')}</Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
@@ -230,10 +232,11 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                 >
                     <View className="flex-1">
                         <Text className="text-4xl font-bold text-gray-900 mb-2 text-center dark:text-white">
-                            Welcome Back
+                            {t('Welcome Back')}
                         </Text>
                         <Text className="text-base text-gray-600 mb-8 leading-6 text-center dark:text-gray-400">
-                            Login to your account to continue
+                            {t('Login to your account to continue')}
+
                         </Text>
 
                         {/* Login Method Toggle */}
@@ -248,7 +251,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                     className={`text-center text-sm dark:text-white font-semibold ${loginMethod === 'password' ? 'text-gray-900' : 'text-gray-600'
                                         }`}
                                 >
-                                    Password
+                                    {t('Password')}
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -261,7 +264,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                     className={`text-center text-sm font-semibold dark:text-white ${loginMethod === 'otp' ? 'text-gray-900' : 'text-gray-600'
                                         }`}
                                 >
-                                    OTP
+                                    {t('OTP')}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -269,7 +272,8 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                         {/* Phone Number Input */}
                         <View className="mb-5">
                             <Text className="text-sm font-semibold text-gray-700 mb-2 dark:text-white">
-                                Phone Number
+                                {t('Phone Number')}
+
                             </Text>
                             <TextInput
                                 className="bg-white border-2 dark:text-white border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900  dark:bg-[#101922]"
@@ -284,7 +288,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
 
                         {/* Password Login */}
                         <Animated.View
-                            key={loginMethod} 
+                            key={loginMethod}
                             entering={SlideInDown.duration(250)}
                             exiting={SlideOutDown.duration(150)}
                             layout={Layout.springify()}
@@ -293,13 +297,13 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                 <>
                                     <View className="mb-5">
                                         <Text className="text-sm font-semibold text-gray-700 mb-2 dark:text-white">
-                                            Password
+                                            {t('Password')}
                                         </Text>
                                         <TextInput
                                             className="bg-white border-2 dark:text-white border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900 dark:bg-[#101922]"
                                             value={password}
                                             onChangeText={setPassword}
-                                            placeholder="Enter your password"
+                                            placeholder={t('EnterPassword')}
                                             placeholderTextColor="#9CA3AF"
                                             secureTextEntry
                                         />
@@ -310,7 +314,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                         activeOpacity={0.7}
                                     >
                                         <Text className="text-sm text-gray-600 dark:text-white">
-                                            Forgot Password?
+                                            {t('Forgot Password?')}
                                         </Text>
                                     </TouchableOpacity>
 
@@ -328,11 +332,11 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                             loading ?
                                                 <View className="flex-row items-center">
                                                     <ActivityIndicator color="white" size="small" />
-                                                    <Text className="text-white font-medium ml-2">Logging in...</Text>
+                                                    <Text className="text-white font-medium ml-2">{t('Logging in...')} </Text>
                                                 </View>
                                                 :
                                                 <Text className="text-white text-base font-semibold">
-                                                    Login
+                                                    {t('login')}
                                                 </Text>
                                         }
 
@@ -356,11 +360,11 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                                     loading ?
                                                         <View className="flex-row items-center">
                                                             <ActivityIndicator color="white" size="small" />
-                                                            <Text className="text-white font-medium ml-2">Sending OTP...</Text>
+                                                            <Text className="text-white font-medium ml-2">{t('Sending OTP...')} </Text>
                                                         </View>
                                                         :
                                                         <Text className="text-white text-base font-semibold">
-                                                            Send OTP
+                                                            {t('Send OTP')}
                                                         </Text>
                                                 }
                                             </TouchableOpacity>
@@ -368,7 +372,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                     ) : (
                                         <>
                                             <Text className="text-sm text-gray-600 mb-4 leading-5">
-                                                Enter the 6-digit code sent to +91 {phone}
+                                                {t(`Enter the 6-digit code sent to +91`)}{`${phone}`}
                                             </Text>
 
                                             <View className="flex-row justify-between mb-6">
@@ -400,12 +404,12 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                                 {canResend ? (
                                                     <TouchableOpacity onPress={resendOtp} activeOpacity={0.7}>
                                                         <Text className="text-gray-900 text-sm font-semibold">
-                                                            Resend OTP
+                                                            {t('Resend OTP')} 
                                                         </Text>
                                                     </TouchableOpacity>
                                                 ) : (
                                                     <Text className="text-gray-500 text-sm">
-                                                        Resend OTP in {timer}s
+                                                        {t('Resend OTP in')}{`${timer}`}
                                                     </Text>
                                                 )}
                                             </View>
@@ -424,7 +428,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                                         </View>
                                                         :
                                                         <Text className="text-white text-base font-semibold">
-                                                            Verify & Login
+                                                            {t('Verify & Login')} 
                                                         </Text>
                                                 }
                                             </TouchableOpacity>
@@ -434,7 +438,7 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                                 activeOpacity={0.7}
                                             >
                                                 <Text className="text-gray-500 text-sm text-center">
-                                                    Change phone number
+                                                    {t('Change phone number')}      
                                                 </Text>
                                             </TouchableOpacity>
                                         </>
@@ -448,11 +452,12 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                         {/* Sign Up Link */}
                         <View className="flex-row justify-center items-center mt-6">
                             <Text className="text-gray-600 text-sm dark:text-gray-400">
-                                Dont have an account?{' '}
+                                {t("Don't have an account?")}
+                                
                             </Text>
                             <TouchableOpacity onPress={() => { navigation.navigate('OTPSignUp') }} activeOpacity={0.7}>
                                 <Text className="text-gray-900 text-sm font-semibold dark:text-white">
-                                    Sign Up
+                                    {t('signup')}
                                 </Text>
                             </TouchableOpacity>
                         </View>
