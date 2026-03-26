@@ -18,7 +18,7 @@ const Sidebar = () => {
                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
                                 </svg>
-                                <span className="font-medium">Dashboard</span>
+                                <span className="font-medium">Analytics</span>
                             </Link>
                         </li>
                         <li>
@@ -35,7 +35,7 @@ const Sidebar = () => {
                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
                                 </svg>
-                                <span className="font-medium">Reports</span>
+                                <span className="font-medium">Dashboard</span>
                             </a>
                         </li>
                         <li>

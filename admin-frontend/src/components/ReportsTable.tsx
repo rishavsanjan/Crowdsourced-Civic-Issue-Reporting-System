@@ -105,7 +105,7 @@ const ReportsTable: React.FC<Props> = ({ searchQuery, setSearchQuery, statusFilt
                                     </svg>
                                 </div>
                             </div>
-                            <button className="flex items-center gap-2 px-4 py-2 rounded border border-gray-300 light:border-gray-600 bg-gray-50 light:bg-gray-900 text-gray-700 light:text-gray-300 hover:bg-gray-100 light:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            {/* <button className="flex items-center gap-2 px-4 py-2 rounded border border-gray-300 light:border-gray-600 bg-gray-50 light:bg-gray-900 text-gray-700 light:text-gray-300 hover:bg-gray-100 light:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" />
                                 </svg>
@@ -116,7 +116,7 @@ const ReportsTable: React.FC<Props> = ({ searchQuery, setSearchQuery, statusFilt
                                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                                 </svg>
                                 <span>Location</span>
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>

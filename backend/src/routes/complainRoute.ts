@@ -3,6 +3,7 @@ import prisma from '../config/db';
 import authMid from '../middlewares/userAuth';
 import { success } from 'zod';
 import { Complaint } from '@prisma/client';
+import { smartTranslate } from '../translate/translateService';
 
 const complainRoute = express.Router();
 
@@ -419,6 +420,19 @@ complainRoute.post('/updatevote', authMid, async (req, res) => {
             }
         })
         return res.status(200).json({ msg: "success", success: true, update: update })
+    } catch (error) {
+        console.log(error)
+        return res.status(403).json({ error: "Server Problem!", success: false })
+    }
+});
+
+complainRoute.post('/translate', async (req, res) => {
+    try {
+        const {text} = req.body;
+        const { complaint_id, vote_type } = req.body;
+        const result = await smartTranslate(text);
+
+        return res.status(200).json({ msg: "success", success: true, result: result })
     } catch (error) {
         console.log(error)
         return res.status(403).json({ error: "Server Problem!", success: false })
