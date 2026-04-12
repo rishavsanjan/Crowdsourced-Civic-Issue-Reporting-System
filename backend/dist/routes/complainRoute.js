@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const db_1 = __importDefault(require("../config/db"));
 const userAuth_1 = __importDefault(require("../middlewares/userAuth"));
+const translateService_1 = require("../translate/translateService");
 const complainRoute = express_1.default.Router();
 async function checkCommunityHeroBadge(userId) {
     const likeCount = await db_1.default.vote.count({
@@ -169,14 +170,50 @@ complainRoute.post('/test', userAuth_1.default, async (req, res) => {
         const page = Number(req.query.page) || 1;
         const limit = 5;
         const offset = (page - 1) * limit;
-        const { filter } = req.body;
-        // fetch complaints
-        const complaints = await db_1.default.complaint.findMany({
-            skip: offset,
-            take: limit,
-            where: filter === 'all' ? {} : { status: filter },
-            orderBy: { createdAt: 'desc' },
-        });
+        const { userLat, userLng, filter } = req.body;
+        const complaints = await db_1.default.$queryRaw `
+        SELECT c.*, 
+
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'media_id', m.media_id,
+              'file_url', m.file_url,
+              'file_type', m.file_type
+            )
+          ) FILTER (WHERE m.media_id IS NOT NULL),
+          '[]'
+        ) AS media,
+
+        (6371 * ACOS(
+          COS(RADIANS(${userLat}::double precision)) *
+          COS(RADIANS(c.latitude::double precision)) *
+          COS(RADIANS(c.longitude::double precision) - RADIANS(${userLng}::double precision)) +
+          SIN(RADIANS(${userLat}::double precision)) *
+          SIN(RADIANS(c.latitude::double precision))
+        )) AS distance
+
+        FROM "Complaint" c
+        LEFT JOIN "Media" m ON c.complaint_id = m.complaint_id
+
+        WHERE c.latitude IS NOT NULL
+        AND c.longitude IS NOT NULL
+        AND (${filter} = 'all' OR c.status = ${filter}::"Status")
+
+        GROUP BY c.complaint_id
+
+        HAVING (6371 * ACOS(
+          COS(RADIANS(${userLat}::double precision)) *
+          COS(RADIANS(c.latitude::double precision)) *
+          COS(RADIANS(c.longitude::double precision) - RADIANS(${userLng}::double precision)) +
+          SIN(RADIANS(${userLat}::double precision)) *
+          SIN(RADIANS(c.latitude::double precision))
+        )) BETWEEN ${0} AND ${2}
+
+        ORDER BY distance
+        LIMIT ${limit}
+        OFFSET ${offset};
+        `;
         const complaintIds = complaints.map(c => c.complaint_id);
         // Fetch votes
         const votes = await db_1.default.vote.findMany({
@@ -189,46 +226,30 @@ complainRoute.post('/test', userAuth_1.default, async (req, res) => {
         });
         const voteMap = {};
         for (const c of complaints) {
-            voteMap[c.complaint_id] = { like: 0, dislike: 0, userReaction: null };
+            voteMap[c.complaint_id] = {
+                like: 0,
+                dislike: 0,
+                userReaction: null
+            };
         }
         for (const v of votes) {
             if (v.vote_type === 'like')
                 voteMap[v.complaint_id].like++;
             if (v.vote_type === 'dislike')
                 voteMap[v.complaint_id].dislike++;
-            if (v.user_id === userId)
+            if (v.user_id === userId) {
                 voteMap[v.complaint_id].userReaction = v.vote_type;
-        }
-        // Fetch media 
-        const media = await db_1.default.media.findMany({
-            where: {
-                complaint_id: { in: complaintIds }
-            },
-            select: {
-                complaint_id: true,
-                file_type: true,
-                file_url: true
             }
-        });
-        const mediaMap = {};
-        for (const c of complaints) {
-            mediaMap[c.complaint_id] = { file_type: null, file_url: null };
         }
-        for (const m of media) {
-            mediaMap[m.complaint_id] = {
-                file_type: m.file_type,
-                file_url: m.file_url
-            };
-        }
-        // Final respones
+        // Final response
         const response = complaints.map(complaint => ({
             ...complaint,
             votes: voteMap[complaint.complaint_id],
-            media: mediaMap[complaint.complaint_id]
+            media: complaint.media
         }));
         return res.status(200).json({
-            msg: 'success',
             success: true,
+            msg: "success",
             posts: response
         });
     }
@@ -236,7 +257,7 @@ complainRoute.post('/test', userAuth_1.default, async (req, res) => {
         console.error(error);
         return res.status(500).json({
             success: false,
-            msg: 'Internal server error'
+            msg: "Internal server error"
         });
     }
 });
@@ -348,6 +369,18 @@ complainRoute.post('/updatevote', userAuth_1.default, async (req, res) => {
             }
         });
         return res.status(200).json({ msg: "success", success: true, update: update });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(403).json({ error: "Server Problem!", success: false });
+    }
+});
+complainRoute.post('/translate', async (req, res) => {
+    try {
+        const { text } = req.body;
+        const { complaint_id, vote_type } = req.body;
+        const result = await (0, translateService_1.smartTranslate)(text);
+        return res.status(200).json({ msg: "success", success: true, result: result });
     }
     catch (error) {
         console.log(error);

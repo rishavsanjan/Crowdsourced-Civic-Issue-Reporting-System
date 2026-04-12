@@ -10,11 +10,8 @@ const db_1 = __importDefault(require("../config/db"));
 const zodType_1 = require("../zodType");
 const userAuth_1 = __importDefault(require("../middlewares/userAuth"));
 const twilio_1 = require("twilio");
-const dotenv_1 = __importDefault(require("dotenv"));
 const axios_1 = __importDefault(require("axios"));
-dotenv_1.default.config();
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
+const translateService_1 = require("../translate/translateService");
 const client = new twilio_1.Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 const userRoute = express_1.default.Router();
 async function checkActiveReporterBadge(userId) {
@@ -86,9 +83,7 @@ userRoute.post('/signup-final', async (req, res) => {
     }
 });
 userRoute.post('/login-password', async (req, res) => {
-    console.log('i m hit');
     const p = zodType_1.validateUserSchema.safeParse(req.body);
-    console.log(p);
     if (!p.success) {
         return res.status(400).json({ "msg": "Invalid format or less info", "success": false });
     }
@@ -195,8 +190,6 @@ userRoute.get('/isValid', userAuth_1.default, async (req, res) => {
             phonenumber: true
         }
     });
-    console.log('i m here');
-    console.log(user);
     return res.status(200).json({ msg: 'success', success: true, user: user });
 });
 userRoute.get('/profile', userAuth_1.default, async (req, res) => {
@@ -221,7 +214,6 @@ userRoute.get('/profile', userAuth_1.default, async (req, res) => {
                 status: 'resolved'
             }
         });
-        console.log(resolvedReports);
         return res.status(200).json({ msg: 'success', success: true, user: user, resolvedReports: resolvedReports });
     }
     catch (error) {
@@ -275,39 +267,35 @@ userRoute.get('/badges', userAuth_1.default, async (req, res) => {
         return res.status(403).json({ error: "Server Problem!", success: false });
     }
 });
-// In your complaint creation route (e.g., /api/user/addcomplain)
 userRoute.post('/addcomplain', userAuth_1.default, async (req, res) => {
     try {
-        console.log(req.body);
         const { category, title, description, latitude, longitude, address, media } = req.body;
+        const translate = await (0, translateService_1.smartTranslate)(description);
         //@ts-ignore
         const userId = req.user.user_id;
         const response = await (0, axios_1.default)({
             url: `http://127.0.0.1:8000/predict`,
             method: 'post',
             data: {
-                complaint: description
+                complaint: translate.translatedText
             }
         });
-        console.log(response.data);
         checkActiveReporterBadge(userId);
         const formattedDepartment = await response.data.predicted_department.toUpperCase().replace(/\s+/g, "_");
-        // Create complaint with media in a transaction
         const result = await db_1.default.$transaction(async (prisma) => {
-            // Create the complaint first
             const complaint = await prisma.complaint.create({
                 data: {
                     user_id: userId,
                     category: formattedDepartment || 'N/A',
                     title: title,
-                    description: description,
+                    description: translate.originalText,
+                    translated_description: translate.translatedText,
                     latitude: latitude,
                     longitude: longitude,
                     address: address,
                     status: 'pending'
                 }
             });
-            // Create media entries if any media was uploaded
             if (media && media.length > 0) { //@ts-ignore
                 const mediaData = media.map(item => ({
                     complaint_id: complaint.complaint_id,
@@ -352,7 +340,6 @@ userRoute.get('/allcomplain', userAuth_1.default, async (req, res) => {
     }
 });
 userRoute.post('/chatbot-message', userAuth_1.default, async (req, res) => {
-    console.log('i m hit');
     try {
         //@ts-ignore
         const userId = req.user.user_id;

@@ -116,7 +116,7 @@ export default function AdminLogin() {
                                 >
                                     {
                                         loading ?
-                                            <ClipLoader />
+                                            <ClipLoader color='white' size={20}/>
                                             :
                                             <>
                                                 Submit

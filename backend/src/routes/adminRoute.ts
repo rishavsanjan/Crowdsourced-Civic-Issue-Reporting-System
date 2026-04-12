@@ -1,16 +1,11 @@
 import express from 'express';
-import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
 import prisma from '../config/db';
 import { validateAdminSchema } from '../zodType';
 import authMid from '../middlewares/userAuth';
-import { success } from 'zod';
 import { Twilio } from "twilio";
 import fetch from "node-fetch";
 
-import dotenv from 'dotenv';
-import workerRoute from './workerRoute';
-dotenv.config();
 
 const adminRoute = express.Router();
 
@@ -122,7 +117,7 @@ adminRoute.get('/details/:complaint_id', async (req, res) => {
                 user: true,
                 AdminstrativeComments: true,
                 worker: true,
-                workAssigneds:true
+                workAssigneds: true
             }
         })
 
@@ -243,6 +238,18 @@ adminRoute.get('/admin-dashboard', async (req, res) => {
             }
         })
 
+        const complaintsCountByGroup = await prisma.complaint.groupBy({
+            by: ['category'],
+            _count: {
+                category: true
+            }
+        });
+
+        const formattedByGroup = complaintsCountByGroup.reduce((acc, item) => {
+            acc[item.category.toUpperCase()] = item._count.category;
+            return acc;
+        }, {} as Record<string, number>);
+
         const countComplaints = {
             resloved: 0,
             pending: 0,
@@ -259,8 +266,6 @@ adminRoute.get('/admin-dashboard', async (req, res) => {
             }
         })
 
-        //line chart : complaints over time
-
         const result = await prisma.complaint.groupBy({
             by: 'createdAt',
             _count: { complaint_id: true }
@@ -275,7 +280,7 @@ adminRoute.get('/admin-dashboard', async (req, res) => {
             monthlyData[month] = (monthlyData[month] || 0) + item._count.complaint_id;
         });
 
-        return res.status(200).json({ success: true, complaints, countComplaints, monthlyData });
+        return res.status(200).json({ success: true, complaints, countComplaints, monthlyData, complaintsCountByGroup:formattedByGroup  });
 
     } catch (error) {
         console.log(error)
@@ -285,16 +290,19 @@ adminRoute.get('/admin-dashboard', async (req, res) => {
 
 adminRoute.post('/assign-worker', authMid, async (req, res) => {
     try {
-        const { workerId, complaint_id } = req.body;
+        const { workerId, complaint_id, instructions } = req.body;
+        console.log(instructions)
+
         const worker = await prisma.workAssigned.create({
             data: {
                 complaint_id: parseInt(complaint_id),
                 worker_id: workerId,
                 status: 'pending',
+                instructions
             },
         })
 
-        const update = await prisma.complaint.update({
+        await prisma.complaint.update({
             where: {
                 complaint_id: parseInt(complaint_id),
             },
@@ -306,6 +314,18 @@ adminRoute.post('/assign-worker', authMid, async (req, res) => {
 
 
         return res.status(200).json({ success: true, worker });
+
+    } catch (error) {
+        console.log(error)
+        return res.status(403).json({ error: "Server Problemd!", success: false })
+    }
+})
+
+adminRoute.get('/hello', async (req, res) => {
+    try {
+        return res.status(200).json({
+            success: true
+        })
 
     } catch (error) {
         console.log(error)

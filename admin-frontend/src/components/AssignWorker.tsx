@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import type { Complaint, Worker } from "../types/complaint";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
+import { Trash2, Check } from 'lucide-react';
 
 
 
@@ -18,19 +19,25 @@ interface Props {
 
 const AssignWorker: React.FC<Props> = ({ worker, complaint_id }) => {
     const [selectedWorker, setSelectedWorker] = useState<Worker>();
+    const [instructions, setInstructions] = useState<{ id: number, text: string }[]>([]);
+    const [currentInstruction, setCurrentInstruction] = useState("");
+
     const queryClient = useQueryClient();
     const assignWorkerMutation = useMutation({
         mutationKey: ['complaint', complaint_id],
         mutationFn: async ({ workerId }: { workerId: number; worker: Worker }) => {
             const token = localStorage.getItem('admincitytoken');
-            console.log(token)
+            const finalInstructions = instructions.map(i => i.text)
+
             const response = await axios(`http://localhost:3000/api/admin/assign-worker`, {
                 method: 'post',
                 headers: {
                     'Authorization': 'Bearer ' + token
                 },
                 data: {
-                    workerId, complaint_id
+                    workerId,
+                    complaint_id,
+                    instructions: finalInstructions
                 }
             })
             console.log(response.data)
@@ -91,6 +98,87 @@ const AssignWorker: React.FC<Props> = ({ worker, complaint_id }) => {
                                     </option>
                                 ))}
                             </select>
+                            {
+                                instructions.length > 0 &&
+                                <>
+                                    <label
+                                        className="block text-sm mt-4 font-medium text-slate-600 light:text-slate-400 mb-1"
+                                        htmlFor="worker-instructions"
+                                    >
+                                        Instructions for worker
+                                    </label>
+
+                                    <div id="worker-instructions space-y-8">
+                                        {
+                                            instructions.map((instruction, index) => (
+                                                <div className="flex flex-row justify-between">
+                                                    <div>
+                                                        <span className="font-bold">{index + 1}.{' '}</span>
+                                                        <span>{instruction.text}</span>
+                                                    </div>
+                                                    <button
+                                                        className="self-end cursor-pointer"
+                                                        onClick={() => {
+                                                            setInstructions(prev =>
+                                                                prev.filter(i => i.id !== instruction.id)
+                                                            )
+                                                        }}
+                                                    >
+                                                        <Trash2 />
+                                                    </button>
+
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                </>
+                            }
+
+
+
+                            <label
+                                className="block text-sm mt-4 font-medium text-slate-600 light:text-slate-400 mb-1"
+                                htmlFor="worker-instructions-create">
+                                Add instructions for worker
+                            </label>
+                            <div className="flex flex-row items-center">
+                                <input
+
+                                    className="border border-gray-300 bg-white w-full p-2"
+                                    placeholder="Enter instruction"
+                                    id="worker-instructions-create"
+                                    type="text"
+                                    value={currentInstruction}
+                                    onChange={(e) => {
+
+                                        setCurrentInstruction(e.target.value)
+
+                                    }}
+
+                                />
+                                <button onClick={() => { setCurrentInstruction("") }}>
+                                    <Trash2 />
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        if (currentInstruction.trim().length < 3) {
+                                            return;
+                                        }
+                                        const newInstruction = {
+                                            id: Math.floor(Math.random() * 1000) + 1,
+                                            text: currentInstruction
+                                        }
+                                        setInstructions(prev => ([...prev, newInstruction]))
+                                        setCurrentInstruction("")
+                                    }}
+                                >
+                                    <Check />
+                                </button>
+
+
+                            </div>
+
+
 
 
                         </div>

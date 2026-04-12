@@ -1,13 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import './App.css'
-import AdminHome from "./pages/homepage";
 import ReportDetail from "./pages/complaintdetails";
 import AdminLogin from "./pages/login";
 import AdminSignup from "./pages/signup";
 import MyMapAll from "./pages/alllocationsmap";
-import Dashboard from "./pages/dashboard";
+import Dashboard from "./pages/analytics";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import AdminHome from "./pages/homepage";
 
 function App() {
 

@@ -45,7 +45,6 @@ model WorkAssigned {
   updatedAt     DateTime   @updatedAt
 
   media JobEvidence[]
-
 }
 
 model JobEvidence {
@@ -65,25 +64,26 @@ enum WorkStatus {
 }
 
 model Complaint {
-  complaint_id          Int                     @id @default(autoincrement())
-  user_id               Int
-  category              Category
-  title                 String
-  description           String?
-  status                Status                  @default(pending)
-  latitude              Float?
-  longitude             Float?
-  address               String?
-  bert_category         String?
-  updated_at            DateTime                @updatedAt
-  createdAt             DateTime                @default(now())
-  AdminstrativeComments AdminstrativeComments[]
-  user                  User                    @relation(fields: [user_id], references: [id])
-  media                 Media[]
-  votes                 Vote[]
-  worker                Worker?                 @relation(fields: [workerId], references: [id])
-  workerId              Int?
-  workAssigneds         WorkAssigned?
+  complaint_id           Int                     @id @default(autoincrement())
+  user_id                Int
+  category               Category
+  title                  String
+  description            String?
+  translated_description String?
+  status                 Status                  @default(pending)
+  latitude               Float?
+  longitude              Float?
+  address                String?
+  bert_category          String?
+  updated_at             DateTime                @updatedAt
+  createdAt              DateTime                @default(now())
+  AdminstrativeComments  AdminstrativeComments[]
+  user                   User                    @relation(fields: [user_id], references: [id])
+  media                  Media[]
+  votes                  Vote[]
+  worker                 Worker?                 @relation(fields: [workerId], references: [id])
+  workerId               Int?
+  workAssigneds          WorkAssigned?
 }
 
 model Media {

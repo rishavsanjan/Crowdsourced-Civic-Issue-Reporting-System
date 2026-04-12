@@ -2,16 +2,12 @@ import express from 'express';
 import bcrypt, { compare } from 'bcryptjs';
 import jwt from "jsonwebtoken";
 import prisma from '../config/db';
-import { createUserSchema, vadlidateComplainSchema, validateUserSchema } from '../zodType';
+import { createUserSchema ,validateUserSchema } from '../zodType';
 import authMid from '../middlewares/userAuth';
-import { success } from 'zod';
 import { Twilio } from "twilio";
-import dotenv from 'dotenv';
 import axios from 'axios'
+import { smartTranslate } from '../translate/translateService';
 
-dotenv.config();
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = new Twilio(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!);
 
 
@@ -331,13 +327,15 @@ userRoute.post('/addcomplain', authMid, async (req, res) => {
             address,
             media
         } = req.body;
+
+        const translate = await smartTranslate(description);
         //@ts-ignore
         const userId = req.user.user_id;
         const response = await axios({
             url: `http://127.0.0.1:8000/predict`,
             method: 'post',
             data: {
-                complaint: description
+                complaint: translate.translatedText
             }
         })
 
@@ -352,7 +350,8 @@ userRoute.post('/addcomplain', authMid, async (req, res) => {
                     user_id: userId,
                     category: formattedDepartment || 'N/A',
                     title: title,
-                    description: description,
+                    description: translate.originalText,
+                    translated_description: translate.translatedText,
                     latitude: latitude,
                     longitude: longitude,
                     address: address,
