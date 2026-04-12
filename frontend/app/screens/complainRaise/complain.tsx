@@ -283,6 +283,7 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                     <TouchableOpacity
                         className={`p-3 items-center rounded-xl bg-[#1173D4] disabled:opacity-75`}
                         onPress={() => {
+                            
                             if (!isConnected) {
                                 Toast.error("You are not connected to the internet!")
                                 return;
@@ -291,7 +292,7 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                         }}
                         disabled={
                             uploadComplaintMutation.isPending
-                            || title.length < 10
+                            || title.length < 5
                             || description.length < 10
                             || mediaItems.length < 1
                         }

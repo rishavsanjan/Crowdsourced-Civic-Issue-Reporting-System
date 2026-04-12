@@ -250,7 +250,7 @@ adminRoute.get('/admin-dashboard', async (req, res) => {
             });
             monthlyData[month] = (monthlyData[month] || 0) + item._count.complaint_id;
         });
-        return res.status(200).json({ success: true, complaints, countComplaints, monthlyData, complaintsCountByGroup });
+        return res.status(200).json({ success: true, complaints, countComplaints, monthlyData, complaintsCountByGroup: formattedByGroup });
     }
     catch (error) {
         console.log(error);

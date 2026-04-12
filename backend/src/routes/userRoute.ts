@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt, { compare } from 'bcryptjs';
 import jwt from "jsonwebtoken";
 import prisma from '../config/db';
-import { createUserSchema ,validateUserSchema } from '../zodType';
+import { createUserSchema, validateUserSchema } from '../zodType';
 import authMid from '../middlewares/userAuth';
 import { Twilio } from "twilio";
 import axios from 'axios'
@@ -332,16 +332,12 @@ userRoute.post('/addcomplain', authMid, async (req, res) => {
         //@ts-ignore
         const userId = req.user.user_id;
         const response = await axios({
-            url: `http://127.0.0.1:8000/predict`,
-            method: 'post',
-            data: {
-                complaint: translate.translatedText
-            }
+            url: `http://127.0.0.1:8000/predict?text=${translate.translatedText}`,
+            method: 'get',
         })
 
-
         checkActiveReporterBadge(userId);
-        const formattedDepartment = await response.data.predicted_department.toUpperCase().replace(/\s+/g, "_");
+        const formattedDepartment = await response.data.full_label.toUpperCase().replace(/\s+/g, "_");
 
 
         const result = await prisma.$transaction(async (prisma) => {

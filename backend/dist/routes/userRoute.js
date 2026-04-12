@@ -274,11 +274,8 @@ userRoute.post('/addcomplain', userAuth_1.default, async (req, res) => {
         //@ts-ignore
         const userId = req.user.user_id;
         const response = await (0, axios_1.default)({
-            url: `http://127.0.0.1:8000/predict`,
-            method: 'post',
-            data: {
-                complaint: translate.translatedText
-            }
+            url: `http://127.0.0.1:8000/predict?text=${translate.translatedText}`,
+            method: 'get',
         });
         checkActiveReporterBadge(userId);
         const formattedDepartment = await response.data.predicted_department.toUpperCase().replace(/\s+/g, "_");
