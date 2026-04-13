@@ -58,9 +58,10 @@ complainRoute.post('/getHomeComplaints', userAuth_1.default, async (req, res) =>
                  COS(RADIANS(${userLat}::double precision)) * COS(RADIANS(c.latitude::double precision)) *
                  COS(RADIANS(c.longitude::double precision) - RADIANS(${userLng}::double precision)) +
                  SIN(RADIANS(${userLat}::double precision)) * SIN(RADIANS(c.latitude::double precision))
-               )) BETWEEN ${0} AND ${1000000000}
+               )) BETWEEN ${0} AND ${8}
         ORDER BY distance;
         `;
+        console.log(complaints);
         //@ts-ignore
         const complaintIds = complaints.map(c => c.complaint_id);
         const votes = await db_1.default.vote.findMany({

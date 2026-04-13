@@ -159,7 +159,6 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
         setTimer(30);
         setCanResend(false);
         setError('');
-        console.log('OTP resent:', newOtp);
     };
 
     const handlePasswordLogin = async () => {
@@ -181,7 +180,6 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                 password
             }
         })
-        console.log(response.data);
         if (response.data.error) {
             Toast.error(`${response.data.error}`);
             setLoading(false);

@@ -43,7 +43,6 @@ const EditProfile: React.FC<Props> = () => {
 
     const { user, getUser } = useAuth();
     const [name, setName] = useState(user?.name);
-    console.log(user)
 
     const updateProfileMutation = useMutation({
         mutationKey: ['user-profile'],
@@ -59,7 +58,6 @@ const EditProfile: React.FC<Props> = () => {
                     Authorization: 'Bearer ' + token
                 }
             })
-            console.log(res.data)
         },
         onSuccess: () => {
             getUser();
@@ -70,7 +68,6 @@ const EditProfile: React.FC<Props> = () => {
 
     const handleEditPhoto = () => {
         // Handle photo editing logic
-        console.log('Edit photo clicked');
     };
 
     return (

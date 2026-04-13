@@ -70,13 +70,11 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                         mediaItem.uri,
                         mediaItem.type === 'photo' ? 'image' : 'video'
                     );
-                    console.log(cloudinaryUrl)
                     uploadedMediaUrls.push({
                         type: mediaItem.type,
                         url: cloudinaryUrl
                     });
                 } catch (uploadError) {
-                    console.error(`Failed to upload ${mediaItem.type}:`, uploadError);
                     Toast.error(`Failed to upload ${mediaItem.type}`);
                 }
             }
@@ -98,7 +96,6 @@ const RaiseComplainScreen: React.FC<Props> = ({ navigation }) => {
                     'Authorization': "Bearer " + token
                 }
             });
-            console.log(response.data)
             return response.data;
         },
         onError: () => {

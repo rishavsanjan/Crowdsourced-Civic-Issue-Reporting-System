@@ -152,7 +152,6 @@ const Chatbot: React.FC<Props> = ({ navigation }) => {
                 setMessages(previousMessages => GiftedChat.append(previousMessages, [botReply]));
             }
         } catch (error) {
-            console.log('Chatbot error:', error);
             const errMsg: Message = {
                 _id: Math.random(),
                 text: '⚠️ Sorry, something went wrong. Please try again later.',

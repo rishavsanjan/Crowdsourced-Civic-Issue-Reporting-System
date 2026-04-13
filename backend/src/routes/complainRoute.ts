@@ -63,10 +63,10 @@ complainRoute.post('/getHomeComplaints', authMid, async (req, res) => {
                  COS(RADIANS(${userLat}::double precision)) * COS(RADIANS(c.latitude::double precision)) *
                  COS(RADIANS(c.longitude::double precision) - RADIANS(${userLng}::double precision)) +
                  SIN(RADIANS(${userLat}::double precision)) * SIN(RADIANS(c.latitude::double precision))
-               )) BETWEEN ${0} AND ${1000000000}
+               )) BETWEEN ${0} AND ${8}
         ORDER BY distance;
         `;
-
+    console.log(complaints)
         //@ts-ignore
         const complaintIds = complaints.map(c => c.complaint_id);
 
@@ -240,7 +240,7 @@ complainRoute.post('/test', authMid, async (req, res) => {
           COS(RADIANS(c.longitude::double precision) - RADIANS(${userLng}::double precision)) +
           SIN(RADIANS(${userLat}::double precision)) *
           SIN(RADIANS(c.latitude::double precision))
-        )) BETWEEN ${0} AND ${2}
+        )) BETWEEN ${0} AND ${8}
 
         ORDER BY distance
         LIMIT ${limit}

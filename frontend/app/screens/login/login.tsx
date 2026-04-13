@@ -42,7 +42,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                     password: loginForm.password
                 }
             });
-            console.log(response.data)
 
             if (response.data.error) {
                 setLoading(false);
@@ -69,7 +68,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             })
             setLoading(false);
         } catch (error) {
-            console.log(error);
             setLoading(false);
             Toast.error(`${error}`)
         }

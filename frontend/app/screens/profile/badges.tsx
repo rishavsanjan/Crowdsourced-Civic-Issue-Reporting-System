@@ -20,7 +20,6 @@ interface Props {
 
 const BadgeCard: React.FC<Props> = ({ badge, isLocked = false }) => {
     const progress = (badge.current / badge.goal) * 100;
-    console.log(badge.icon_url)
     return (
         <View className={`rounded-xl bg-white/50 p-4 mb-4 dark:border-white dark:border dark:bg-[#101922] ${isLocked ? 'opacity-60' : ''}`}>
             <View className="flex-row items-center gap-4">

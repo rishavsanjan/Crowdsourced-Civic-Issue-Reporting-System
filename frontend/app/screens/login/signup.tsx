@@ -24,7 +24,6 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const [errors, setErros] = useState([]);
 
-    console.log(signUpForm)
 
     useEffect(() => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -55,7 +54,6 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                 }
             });
             Toast.success('Signed up!')
-            console.log(response.data)
             if (response.data.error) {
                 setLoading(false);
                 Toast.error(`${response.data.error}`)
@@ -77,7 +75,6 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
             })
             setLoading(false);
         } catch (error) {
-            console.log(error);
             setLoading(false);
             Toast.error(`${error}`)
         }

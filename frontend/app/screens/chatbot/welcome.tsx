@@ -1,14 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-    View,
     Text,
-    TextInput,
     TouchableOpacity,
     SafeAreaView,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StatusBar,
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';

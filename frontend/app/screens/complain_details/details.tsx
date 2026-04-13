@@ -72,7 +72,6 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                     'Authorization': 'Bearer ' + token
                 }
             });
-            console.log(response)
             return response.data.response as Response
 
         }

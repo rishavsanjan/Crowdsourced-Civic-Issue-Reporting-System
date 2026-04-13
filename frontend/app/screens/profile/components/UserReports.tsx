@@ -15,7 +15,6 @@ interface Props {
 }
 
 const UserReports: React.FC<Props> = ({ data, navigation }) => {
-    console.log(data)
     const { t } = useTranslation();
     return (
         <View className="bg-white mx-4 rounded-lg p-4 mb-4 shadow-sm dark:bg-slate-900/70 dark:border-blue-300 border">

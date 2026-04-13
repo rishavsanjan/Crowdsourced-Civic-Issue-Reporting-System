@@ -71,7 +71,6 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
             setStep(2);
             setTimer(30);
             setCanResend(false);
-            console.log('OTP sent:', data.otp);
         },
         onError: (error: AxiosError<{ error?: string; message?: string }>) => {
             if (error.response) {
@@ -130,7 +129,6 @@ const OTPSignUp: React.FC<Props> = ({ navigation }) => {
         setTimer(30);
         setCanResend(false);
         setError('');
-        console.log('OTP resent:', newOtp);
     };
 
     const createAccount = async () => {

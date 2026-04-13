@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, ScrollView, Switch } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { RootStackParamList } from '../../navigation/navigation';
-import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n/i18n';
 import { saveLanguage, getSavedLanguage } from '@/app/i18n/language_storage';
@@ -19,7 +18,22 @@ const Settings: React.FC<Props> = ({ navigation }) => {
 
     const getLang = async () => {
         const lang = await getSavedLanguage();
-        lang === 'hi' ? setSelectedLanguage('hindi') : setSelectedLanguage('english');
+        if (lang === "hi") {
+            setSelectedLanguage('hindi')
+        } else if (lang === "mr") {
+            setSelectedLanguage("marathi")
+        } else if (lang === "ta") {
+            setSelectedLanguage("tamil")
+        } else if (lang === "pa") {
+            setSelectedLanguage("punjabi")
+        } else if (lang === "ur") {
+            setSelectedLanguage("urdu")
+        } else if (lang === "sa") {
+            setSelectedLanguage("sanskirit")
+        }else {
+            setSelectedLanguage('english')
+        }
+
     }
 
     useEffect(() => {
@@ -27,10 +41,10 @@ const Settings: React.FC<Props> = ({ navigation }) => {
     }, []);
 
 
-    const changeLanguage = async (lang: 'en' | 'hi') => {
-        i18n.changeLanguage(lang); // instantly changes language
-        await saveLanguage(lang);  // saves selection to AsyncStorage
-        setSelectedLanguage(lang === 'en' ? 'english' : 'hindi');
+    const changeLanguage = async (lang: 'en' | 'hi' | 'mr' | 'ta' | 'pa' | 'ur' | 'sa') => {
+        i18n.changeLanguage(lang);
+        await saveLanguage(lang);
+        //setSelectedLanguage(lang === 'en' ? 'english' : lang === 'ma' ? );
     };
 
     return (
@@ -92,7 +106,7 @@ const Settings: React.FC<Props> = ({ navigation }) => {
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                className="flex-row items-center justify-between p-4"
+                                className="flex-row items-center justify-between p-4 dark:border-slate-800 border-slate-200 border-b"
                                 onPress={() => {
                                     changeLanguage('hi');
                                     setSelectedLanguage('hindi')
@@ -104,6 +118,93 @@ const Settings: React.FC<Props> = ({ navigation }) => {
                                     : 'border-slate-300 dark:border-slate-600'
                                     }`}>
                                     {selectedLanguage === 'hindi' && (
+                                        <View className="h-3 w-3 rounded-full bg-[#1173d4]" />
+                                    )}
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className="flex-row items-center justify-between p-4 dark:border-slate-800 border-slate-200 border-b"
+                                onPress={() => {
+                                    changeLanguage('ta');
+                                    setSelectedLanguage('tamil')
+                                }}
+                            >
+                                <Text className="text-slate-800 dark:text-slate-200">தமிழ்</Text>
+                                <View className={`h-5 w-5 rounded-full border-2 items-center justify-center ${selectedLanguage === 'hindi'
+                                    ? 'border-[#1173d4]'
+                                    : 'border-slate-300 dark:border-slate-600'
+                                    }`}>
+                                    {selectedLanguage === 'tamil' && (
+                                        <View className="h-3 w-3 rounded-full bg-[#1173d4]" />
+                                    )}
+                                </View>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                className="flex-row items-center justify-between p-4 dark:border-slate-800 border-slate-200 border-b"
+                                onPress={() => {
+                                    changeLanguage('pa');
+                                    setSelectedLanguage('punjabi')
+                                }}
+                            >
+                                <Text className="text-slate-800 dark:text-slate-200">ਪੰਜਾਬੀ</Text>
+                                <View className={`h-5 w-5 rounded-full border-2 items-center justify-center ${selectedLanguage === 'hindi'
+                                    ? 'border-[#1173d4]'
+                                    : 'border-slate-300 dark:border-slate-600'
+                                    }`}>
+                                    {selectedLanguage === 'punjabi' && (
+                                        <View className="h-3 w-3 rounded-full bg-[#1173d4]" />
+                                    )}
+                                </View>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                className="flex-row items-center justify-between p-4 dark:border-slate-800 border-slate-200 border-b"
+                                onPress={() => {
+                                    changeLanguage('ur');
+                                    setSelectedLanguage('urdu')
+                                }}
+                            >
+                                <Text className="text-slate-800 dark:text-slate-200">اردو</Text>
+                                <View className={`h-5 w-5 rounded-full border-2 items-center justify-center ${selectedLanguage === 'hindi'
+                                    ? 'border-[#1173d4]'
+                                    : 'border-slate-300 dark:border-slate-600'
+                                    }`}>
+                                    {selectedLanguage === 'urdu' && (
+                                        <View className="h-3 w-3 rounded-full bg-[#1173d4]" />
+                                    )}
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className="flex-row items-center justify-between p-4 dark:border-slate-800 border-slate-200 border-b"
+                                onPress={() => {
+                                    changeLanguage('sa');
+                                    setSelectedLanguage('sanskirit')
+                                }}
+                            >
+                                <Text className="text-slate-800 dark:text-slate-200">संस्कृत</Text>
+                                <View className={`h-5 w-5 rounded-full border-2 items-center justify-center ${selectedLanguage === 'hindi'
+                                    ? 'border-[#1173d4]'
+                                    : 'border-slate-300 dark:border-slate-600'
+                                    }`}>
+                                    {selectedLanguage === 'sanskirit' && (
+                                        <View className="h-3 w-3 rounded-full bg-[#1173d4]" />
+                                    )}
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className="flex-row items-center justify-between p-4"
+                                onPress={() => {
+                                    changeLanguage('mr');
+                                    setSelectedLanguage('marathi')
+                                }}
+                            >
+                                <Text className="text-slate-800 dark:text-slate-200">मराठी</Text>
+                                <View className={`h-5 w-5 rounded-full border-2 items-center justify-center ${selectedLanguage === 'hindi'
+                                    ? 'border-[#1173d4]'
+                                    : 'border-slate-300 dark:border-slate-600'
+                                    }`}>
+                                    {selectedLanguage === 'marathi' && (
                                         <View className="h-3 w-3 rounded-full bg-[#1173d4]" />
                                     )}
                                 </View>
@@ -152,7 +253,7 @@ const Settings: React.FC<Props> = ({ navigation }) => {
                         </View>
                     </View>
 
-                    
+
                 </View>
             </ScrollView>
 

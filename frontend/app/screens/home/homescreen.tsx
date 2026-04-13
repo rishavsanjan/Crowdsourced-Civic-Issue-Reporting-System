@@ -38,7 +38,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     const {t} = useTranslation();
 
     if (!user) {
-        console.log("user not available")
         navigation.navigate('WelcomeLoginScreen')
     }
 
@@ -122,7 +121,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
         if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
             if (hasNextPage && !isFetchingNextPage) {
-                console.log('Loading next page...');
                 fetchNextPage();
             }
         }
@@ -210,7 +208,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
             <TouchableWithoutFeedback
                 onPress={() => {
-                    console.log('hello')
                     navigation.navigate('WelcomeChatbot')
                 }}>
                 <Image style={{ width: 70, height: 70, bottom: 17, position: 'absolute', right: 20 }} src='https://img.icons8.com/?size=100&id=9Otd0Js4uSYi&format=png&color=000000' />

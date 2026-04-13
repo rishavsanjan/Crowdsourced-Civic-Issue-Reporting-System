@@ -278,7 +278,7 @@ userRoute.post('/addcomplain', userAuth_1.default, async (req, res) => {
             method: 'get',
         });
         checkActiveReporterBadge(userId);
-        const formattedDepartment = await response.data.predicted_department.toUpperCase().replace(/\s+/g, "_");
+        const formattedDepartment = await response.data.full_label.toUpperCase().replace(/\s+/g, "_");
         const result = await db_1.default.$transaction(async (prisma) => {
             const complaint = await prisma.complaint.create({
                 data: {
