@@ -30,12 +30,20 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     const [selectedStatus, setSelectedStatus] = useState('all');
     const [isConnected, setIsConnected] = useState(true);
     const [distance, setDistance] = useState(8);
+    const [debouncedDistance, setDebouncedDistance] = useState<number>(distance);
     const [coordinates, setCoordinates] = useState({
         lat: 0.0,
         long: 0.0
     });
     const { user } = useAuth();
-    const {t} = useTranslation();
+    const { t } = useTranslation();
+
+
+    useEffect(() => {
+        setTimeout(() => {
+            setDebouncedDistance(distance)
+        }, 1000);
+    }, [distance])
 
     if (!user) {
         navigation.navigate('WelcomeLoginScreen')
@@ -68,7 +76,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         getLoc();
     }, []);
     const { data, fetchNextPage, isFetchingNextPage, isLoading, hasNextPage, refetch, isRefetching } = useInfiniteQuery({
-        queryKey: ['home-posts', selectedStatus, distance, coordinates.lat, coordinates.long],
+        queryKey: ['home-posts', selectedStatus, debouncedDistance, coordinates.lat, coordinates.long],
         //@ts-ignore
         queryFn: fetchHomePosts,
         initialPageParam: 1,
@@ -108,7 +116,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
     if (isLoading) {
         return (
-            <Loading/>
+            <Loading />
         )
 
     }
@@ -129,25 +137,24 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     return (
         <View className="flex-1 bg-[#F6F7F8] dark:bg-[#101922]">
             {/* Header */}
-            <Header tabName={t('fixmycity')}/>
+            <Header tabName={t('fixmycity')} />
 
             {/* Status Filter Tabs */}
             <StatusFilterTab selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus} />
 
-            <View className="bg-indigo-600  py-2 items-center mb-2 shadow-lg ">
-                <Text className="text-lg font-medium text-indigo-200">
-                    Filter by distance
-                </Text>
-                <Text className="text-3xl font-bold text-white ">
-                    {distance}
-                </Text>
-                <Text className="text-lg font-medium text-indigo-200">
-                    kilometers
-                </Text>
+            <View className="flex-row items-end justify-between mb-2 px-2">
+                <View>
+                    <Text className="text-xs text-gray-400 mb-0.5">Filter by distance</Text>
+                    <View className="flex-row items-baseline gap-1.5">
+                        <Text className="text-4xl font-medium text-gray-900 dark:text-white">{distance}</Text>
+                        <Text className="text-sm text-gray-400">km</Text>
+                    </View>
+                </View>
+                <Text className="text-xs text-gray-400">0 – 100 km</Text>
             </View>
 
             <Slider
-                style={{ width: '100%', height: 20 }}
+                style={{ width: '100%', height: 60 }}
                 minimumValue={0}
                 maximumValue={100}
                 step={1}
@@ -155,7 +162,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                 onValueChange={setDistance}
                 minimumTrackTintColor="#6366f1"
                 maximumTrackTintColor="#e5e7eb"
-                thumbTintColor="#8b5cf6"
+                thumbTintColor="#6366f1"
             />
 
             {/* Complaints Feed */}

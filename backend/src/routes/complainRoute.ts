@@ -201,7 +201,7 @@ complainRoute.post('/test', authMid, async (req, res) => {
         const limit = 5;
         const offset = (page - 1) * limit;
 
-        const { userLat, userLng, filter } = req.body;
+        const { userLat, userLng, filter, distance } = req.body;
 
         const complaints = await prisma.$queryRaw<ComplaintWithMedia[]>`
         SELECT c.*, 
@@ -240,7 +240,7 @@ complainRoute.post('/test', authMid, async (req, res) => {
           COS(RADIANS(c.longitude::double precision) - RADIANS(${userLng}::double precision)) +
           SIN(RADIANS(${userLat}::double precision)) *
           SIN(RADIANS(c.latitude::double precision))
-        )) BETWEEN ${0} AND ${8}
+        )) BETWEEN ${0} AND ${distance}
 
         ORDER BY distance
         LIMIT ${limit}

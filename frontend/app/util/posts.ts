@@ -11,12 +11,12 @@ interface ComplaintResposne {
 export const fetchHomePosts = async ({
     pageParam = 1,
     queryKey,
-    
+
 }: {
     pageParam?: number
     queryKey: string[]
 }): Promise<ComplaintResposne> => {
-    const [, selectedStatus, distance, lattitude, longitude] = queryKey
+    const [, selectedStatus, debouncedDistance, lattitude, longitude] = queryKey
 
     const token = await AsyncStorage.getItem('citytoken');
     const response = await axios<ComplaintResposne>({
@@ -24,14 +24,15 @@ export const fetchHomePosts = async ({
         method: 'POST',
         data: {
             filter: selectedStatus,
-            userLat:lattitude,
-            userLng:longitude
+            userLat: lattitude,
+            userLng: longitude,
+            distance: debouncedDistance
         },
-        headers:{
-            Authorization:'Bearer ' + token
+        headers: {
+            Authorization: 'Bearer ' + token
         }
     })
-   
+
     console.log(response.data.posts);
     return {
         posts: response.data.posts,

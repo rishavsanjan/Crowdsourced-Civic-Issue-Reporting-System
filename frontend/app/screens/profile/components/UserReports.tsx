@@ -15,6 +15,8 @@ interface Props {
 }
 
 const UserReports: React.FC<Props> = ({ data, navigation }) => {
+
+    console.log(data)
     const { t } = useTranslation();
     return (
         <View className="bg-white mx-4 rounded-lg p-4 mb-4 shadow-sm dark:bg-slate-900/70 dark:border-blue-300 border">
@@ -37,7 +39,7 @@ const UserReports: React.FC<Props> = ({ data, navigation }) => {
 
                                 <View className="flex-1">
                                     <Text className="font-medium dark:text-slate-200">{complain.title}</Text>
-                                    {/* <Text className="text-gray-500 text-sm">{report.category}</Text> */}
+                                   
                                 </View>
 
                                 <View className="flex-row items-center">
@@ -50,7 +52,8 @@ const UserReports: React.FC<Props> = ({ data, navigation }) => {
                                         className="text-sm ml-1 font-medium"
                                         style={{ color: getStatusColor(complain.status) }}
                                     >
-                                        {t(getStatusText(complain.status))}
+                                       
+                                        {t((complain.status))}
                                     </Text>
                                 </View>
                             </View>
