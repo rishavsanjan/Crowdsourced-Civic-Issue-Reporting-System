@@ -1,6 +1,13 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { GiftedChat, Bubble } from 'react-native-gifted-chat';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    Animated,
+    StatusBar,
+    Platform,
+} from 'react-native';
+import { GiftedChat, Bubble, InputToolbar, Send, Composer } from 'react-native-gifted-chat';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
 import axios from 'axios';
@@ -13,14 +20,10 @@ interface Message {
     _id: number;
     text: string;
     createdAt: Date;
-    user: {
-        _id: number;
-        name: string;
-        avatar: string;
-    };
+    user: { _id: number; name: string; avatar: string };
     isComplaintList?: boolean;
     complaints?: any[];
-    isRaiseComplaint?: boolean
+    isRaiseComplaint?: boolean;
 }
 
 interface Complaint {
@@ -32,301 +35,336 @@ interface Complaint {
     createdAt?: string;
 }
 
+const BOT_AVATAR = 'https://img.icons8.com/?size=100&id=OinpqSk7y90z&format=png&color=000000';
+
+const STATUS_CONFIG: Record<string, {
+    emoji: string;
+    borderClass: string;
+    badgeClass: string;
+    textClass: string;
+}> = {
+    Resolved: { emoji: '✅', borderClass: 'border-l-green-500', badgeClass: 'bg-green-50', textClass: 'text-green-600' },
+    'In Progress': { emoji: '🔄', borderClass: 'border-l-amber-400', badgeClass: 'bg-amber-50', textClass: 'text-amber-600' },
+    Pending: { emoji: '⏳', borderClass: 'border-l-indigo-500', badgeClass: 'bg-indigo-50', textClass: 'text-indigo-600' },
+    default: { emoji: '📌', borderClass: 'border-l-slate-400', badgeClass: 'bg-slate-100', textClass: 'text-slate-500' },
+};
+
+const getStatusCfg = (status: string) =>
+    STATUS_CONFIG[status] ?? STATUS_CONFIG.default;
+
+const QUICK_OPTIONS = [
+    { label: '📋 Complaint Status', value: 'Complaint Status' },
+    { label: '➕ Raise New Complaint', value: 'Raise New Complaint' },
+    { label: '🌟 Our Vision', value: 'What is our vision ?' },
+];
+
+// ─── Animated Chip ────────────────────────────────────────────────────────────
+const QuickChip: React.FC<{ label: string; onPress: () => void; delay: number }> = ({
+    label, onPress, delay,
+}) => {
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const slideAnim = useRef(new Animated.Value(10)).current;
+
+    useEffect(() => {
+        Animated.parallel([
+            Animated.timing(fadeAnim, { toValue: 1, duration: 380, delay, useNativeDriver: true }),
+            Animated.timing(slideAnim, { toValue: 0, duration: 380, delay, useNativeDriver: true }),
+        ]).start();
+    }, []);
+
+    return (
+        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
+            <TouchableOpacity
+                onPress={onPress}
+                activeOpacity={0.75}
+                className="bg-white rounded-full px-4 py-2 border border-blue-200"
+            >
+                <Text className="text-blue-900 text-[13px] font-semibold">{label}</Text>
+            </TouchableOpacity>
+        </Animated.View>
+    );
+};
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 const Chatbot: React.FC<Props> = ({ navigation }) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
-    const [complaints, setComplaints] = useState<Complaint[]>([]);
-
-    const quickOptions = ['Complaint Status', 'Raise New Complaint', 'What is our vision ?',];
+    const headerAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        setMessages([
-            {
-                _id: 1,
-                text: '👋 Greetings!! Please enter your query in the text field below or select an option.',
-                createdAt: new Date(),
-                user: {
-                    _id: 2,
-                    name: 'FixMyCity Bot',
-                    avatar: 'https://img.icons8.com/?size=100&id=OinpqSk7y90z&format=png&color=000000',
-                },
-            },
-        ]);
+        Animated.timing(headerAnim, { toValue: 1, duration: 550, useNativeDriver: true }).start();
+        setMessages([{
+            _id: 1,
+            text: "Hello! 👋 I'm your FixMyCity Assistant.\n\nHow can I help you today? Tap a quick option or type your query.",
+            createdAt: new Date(),
+            user: { _id: 2, name: 'FixMyCity Bot', avatar: BOT_AVATAR },
+        }]);
     }, []);
 
-    const onSend = useCallback(async (newMessages = []) => {
+    const appendBot = (partial: Partial<Message>) =>
+        setMessages(prev => GiftedChat.append(prev, [{
+            _id: Math.random(), text: '', createdAt: new Date(),
+            user: { _id: 2, name: 'FixMyCity Bot', avatar: BOT_AVATAR },
+            ...partial,
+        }]));
+
+    const onSend = useCallback(async (newMessages: Message[] = []) => {
         const token = await AsyncStorage.getItem('citytoken');
         const userMessage = newMessages[0];
-
-        setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages));
-
+        setMessages(prev => GiftedChat.append(prev, newMessages));
         try {
             setLoading(true);
             const response = await axios.post(
                 `${API_BASE_IP}/api/user/chatbot-message`,
-                //@ts-ignore
+                // @ts-ignore
                 { message: userMessage.text },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-
-            //@ts-ignore
-            if (userMessage.text === 'Complaint Status') {
-                const fetchedComplaints = response.data.complaint || [];
-                setComplaints(fetchedComplaints);
-
-                if (fetchedComplaints.length > 0) {
-                    const botReply: Message = {
-                        _id: Math.random(),
-                        text: '📋 Here are your complaints. Tap on any complaint to view its status:',
-                        createdAt: new Date(),
-                        user: {
-                            _id: 2,
-                            name: 'FixMyCity Bot',
-                            avatar: 'https://img.icons8.com/?size=100&id=OinpqSk7y90z&format=png&color=000000',
-                        },
-                        isComplaintList: true,
-                        complaints: fetchedComplaints,
-                    };
-                    setMessages(previousMessages => GiftedChat.append(previousMessages, [botReply]));
-                } else {
-                    const botReply: Message = {
-                        _id: Math.random(),
-                        text: '📭 You have no complaints registered yet.',
-                        createdAt: new Date(),
-                        user: {
-                            _id: 2,
-                            name: 'FixMyCity Bot',
-                            avatar: 'https://img.icons8.com/?size=100&id=OinpqSk7y90z&format=png&color=000000',
-                        },
-                    };
-                    setMessages(previousMessages => GiftedChat.append(previousMessages, [botReply]));
-                }
-
+            // @ts-ignore
+            const text: string = userMessage.text;
+            if (text === 'Complaint Status') {
+                const fetched: Complaint[] = response.data.complaint || [];
+                fetched.length > 0
+                    ? appendBot({ text: '📋 Here are your complaints. Tap one to view details:', isComplaintList: true, complaints: fetched })
+                    : appendBot({ text: '📭 You have no complaints registered yet.' });
+            } else if (text === 'Raise New Complaint') {
+                appendBot({ text: 'Sure! Tap below to file a new complaint:', isRaiseComplaint: true });
+            } else if (text === 'What is our vision ?') {
+                appendBot({ text: '🌟 Our mission is to make India a better civic society — one complaint at a time.' });
+            } else {
+                appendBot({ text: response.data.msg || "I'm sorry, I couldn't understand that." });
             }
-            //@ts-ignore
-            else if (userMessage.text === 'Raise New Complaint') {
-                const botReply: Message = {
-                    _id: Math.random(),
-                    text: 'Click on the button below to raise a new complaint :',
-                    createdAt: new Date(),
-                    user: {
-                        _id: 2,
-                        name: 'FixMyCity Bot',
-                        avatar: 'https://img.icons8.com/?size=100&id=OinpqSk7y90z&format=png&color=000000',
-                    },
-                    isRaiseComplaint: true
-                };
-
-                setMessages(previousMessages => GiftedChat.append(previousMessages, [botReply]));
-
-            } //@ts-ignore
-            else if (userMessage.text === 'What is our vision ?') {
-                const botReply: Message = {
-                    _id: Math.random(),
-                    text: 'Our mission is to make India a better civic society.',
-                    createdAt: new Date(),
-                    user: {
-                        _id: 2,
-                        name: 'FixMyCity Bot',
-                        avatar: 'https://img.icons8.com/?size=100&id=OinpqSk7y90z&format=png&color=000000',
-                    }
-                };
-
-                setMessages(previousMessages => GiftedChat.append(previousMessages, [botReply]));
-
-            }
-            else {
-                const botReplyText = response.data.msg || "I'm sorry, I couldn't understand that.";
-
-                const botReply: Message = {
-                    _id: Math.random(),
-                    text: botReplyText,
-                    createdAt: new Date(),
-                    user: {
-                        _id: 2,
-                        name: 'FixMyCity Bot',
-                        avatar: 'https://img.icons8.com/?size=100&id=OinpqSk7y90z&format=png&color=000000',
-                    },
-                };
-
-                setMessages(previousMessages => GiftedChat.append(previousMessages, [botReply]));
-            }
-        } catch (error) {
-            const errMsg: Message = {
-                _id: Math.random(),
-                text: '⚠️ Sorry, something went wrong. Please try again later.',
-                createdAt: new Date(),
-                user: {
-                    _id: 2,
-                    name: 'FixMyCity Bot',
-                    avatar: 'https://img.icons8.com/?size=100&id=OinpqSk7y90z&format=png&color=000000',
-                },
-            };
-            setMessages(previousMessages => GiftedChat.append(previousMessages, [errMsg]));
+        } catch {
+            appendBot({ text: '⚠️ Something went wrong. Please try again later.' });
         } finally {
             setLoading(false);
         }
     }, []);
 
-    const handleOptionPress = (option: string) => {
-        const newMessage = {
-            _id: Math.random(),
-            text: option,
-            createdAt: new Date(),
-            user: { _id: 1, name: 'You', avatar: '' },
-        };
-        //@ts-ignore
-        onSend([newMessage]);
-    };
+    const handleOptionPress = (value: string) =>
+        // @ts-ignore
+        onSend([{ _id: Math.random(), text: value, createdAt: new Date(), user: { _id: 1, name: 'You', avatar: '' } }]);
 
     const handleComplaintTap = (complaint: Complaint) => {
-        // User selects a complaint
-        const userMessage: Message = {
-            _id: Math.random(),
-            text: `📄 ${complaint.title}`,
-            createdAt: new Date(),
-            user: { _id: 1, name: 'You', avatar: '' },
+        const { emoji } = getStatusCfg(complaint.status);
+        const userMsg: Message = {
+            _id: Math.random(), text: `📄 ${complaint.title}`,
+            createdAt: new Date(), user: { _id: 1, name: 'You', avatar: '' },
         };
-
-        // Bot responds with complaint details
-        const statusEmoji =
-            complaint.status === 'Resolved' ? '✅' :
-                complaint.status === 'In Progress' ? '🔄' :
-                    complaint.status === 'Pending' ? '⏳' : '📌';
-
-        const botReply: Message = {
+        const botMsg: Message = {
             _id: Math.random(),
-            text: `${statusEmoji} Complaint Status\n\n` +
-                `Title: ${complaint.title}\n` +
-                `Status: ${complaint.status}\n` +
-                (complaint.category ? `Category: ${complaint.category}\n` : '') +
-                (complaint.description ? `Description: ${complaint.description}\n` : '') +
-                (complaint.createdAt ? `Created: ${new Date(complaint.createdAt).toLocaleDateString()}\n` : ''),
+            text:
+                `${emoji} ${complaint.status}\n\n${complaint.title}\n` +
+                (complaint.category ? `🏷 ${complaint.category}\n` : '') +
+                (complaint.description ? `📝 ${complaint.description}\n` : '') +
+                (complaint.createdAt ? `📅 Filed: ${new Date(complaint.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''),
             createdAt: new Date(),
-            user: {
-                _id: 2,
-                name: 'FixMyCity Bot',
-                avatar: 'https://img.icons8.com/?size=100&id=OinpqSk7y90z&format=png&color=000000',
-            },
+            user: { _id: 2, name: 'FixMyCity Bot', avatar: BOT_AVATAR },
         };
-
-        setMessages(previousMessages =>
-            GiftedChat.append(GiftedChat.append(previousMessages, [userMessage]), [botReply])
-        );
+        setMessages(prev => GiftedChat.append(GiftedChat.append(prev, [userMsg]), [botMsg]));
     };
 
+    // ── GiftedChat Bubble — must use its own wrapperStyle/textStyle API ───────
+    const renderBubble = (props: any) => (
+        <Bubble
+            {...props}
+            wrapperStyle={{
+                right: {
+                    backgroundColor: '#3B82F6',
+                    borderRadius: 18,
+                    borderBottomRightRadius: 4,
+                    elevation: 3,
+                    marginBottom: 2,
+                },
+                left: {
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: 18,
+                    borderBottomLeftRadius: 4,
+                    elevation: 2,
+                    marginBottom: 2,
+                },
+            }}
+            textStyle={{
+                right: { color: '#fff', fontSize: 14.5, lineHeight: 21 },
+                left: { color: '#1E293B', fontSize: 14.5, lineHeight: 21 },
+            }}
+            timeTextStyle={{
+                right: { color: 'rgba(255,255,255,0.6)', fontSize: 10.5 },
+                left: { color: '#94A3B8', fontSize: 10.5 },
+            }}
+        />
+    );
+
+    // ── Custom message renderer ───────────────────────────────────────────────
     const renderMessage = (props: any) => {
         const { currentMessage } = props;
 
-        // Render complaint list
+        // Complaint list
         if (currentMessage.isComplaintList && currentMessage.complaints) {
             return (
-                <View style={{ marginVertical: 0, marginHorizontal: 0 }}>
-                    <Bubble {...props} />
-                    <View style={{ marginTop: 8 }}>
-                        {currentMessage.complaints.map((complaint: Complaint, index: number) => (
-                            <TouchableOpacity
-                                key={complaint._id || index}
-                                onPress={() => handleComplaintTap(complaint)}
-                                style={{
-                                    backgroundColor: '#DDEFFF',
-                                    borderRadius: 12,
-                                    padding: 12,
-                                    marginBottom: 8,
-                                    borderLeftWidth: 4,
-                                    borderLeftColor: '#4A90E2',
-                                }}
-                            >
-                                <Text style={{
-                                    color: '#0B0B64',
-                                    fontWeight: '600',
-                                    fontSize: 15,
-                                    marginBottom: 4,
-                                }}>
-                                    {complaint.title}
-                                </Text>
-                                <Text style={{
-                                    color: '#666',
-                                    fontSize: 12,
-                                }}>
-                                    Status: {complaint.status}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
+                <View className="mx-2 mb-1">
+                    {renderBubble(props)}
+                    <View className="mt-2 gap-y-2">
+                        {currentMessage.complaints.map((c: Complaint, i: number) => {
+                            const cfg = getStatusCfg(c.status);
+                            return (
+                                <TouchableOpacity
+                                    key={c._id || i}
+                                    onPress={() => handleComplaintTap(c)}
+                                    activeOpacity={0.8}
+                                    className={`bg-white rounded-2xl px-4 py-3 border-l-4 flex-row items-center justify-between ${cfg.borderClass}`}
+                                >
+                                    <Text
+                                        className="flex-1 text-slate-800 font-semibold text-sm mr-3"
+                                        numberOfLines={1}
+                                    >
+                                        {c.title}
+                                    </Text>
+                                    <View className={`rounded-full px-3 py-1 ${cfg.badgeClass}`}>
+                                        <Text className={`text-xs font-bold ${cfg.textClass}`}>
+                                            {cfg.emoji} {c.status}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            );
+                        })}
                     </View>
                 </View>
             );
         }
 
-        //Raise a new complaint
+        // Raise complaint
         if (currentMessage.isRaiseComplaint) {
-
             return (
-                <View style={{ marginTop: 8 }}>
-                    <Bubble {...props} />
-                    <TouchableOpacity style={{
-                        backgroundColor: '#DDEFFF',
-                        borderRadius: 12,
-                        padding: 12,
-                        marginBottom: 8,
-                        borderLeftWidth: 4,
-                        borderLeftColor: '#4A90E2',
-                        width: 256
-                    }} onPress={() => {
-                        //@ts-ignore
-                        navigation.navigate('HomeScreen', { screen: 'UploadTab' });
-                    }} className='bg-white p-2 px-4'>
-                        <Text>Raise a new complaint</Text>
+                <View className="mx-2 mb-1">
+                    {renderBubble(props)}
+                    <TouchableOpacity
+                        activeOpacity={0.85}
+                        className="mt-3 bg-blue-900 rounded-2xl py-4 px-5 items-center"
+                        onPress={() =>
+                            // @ts-ignore
+                            navigation.navigate('HomeScreen', { screen: 'UploadTab' })
+                        }
+                    >
+                        <Text className="text-white text-[15px] font-bold tracking-wide">
+                            ➕  File a New Complaint
+                        </Text>
                     </TouchableOpacity>
                 </View>
-            )
+            );
         }
 
-        // Default bubble rendering
-        return <Bubble {...props} />;
+        return renderBubble(props);
     };
 
-    return (
-        <View style={{ flex: 1, backgroundColor: '#0B0B64' }}>
-            {/* Header */}
-            <View style={{ backgroundColor: '#4A90E2', padding: 12 }}>
-                <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
-                    Hi, I am your FixMyCity Assistant 👋
-                </Text>
-                <Text style={{ color: 'white', fontSize: 13 }}>
-                    How may I help you today?
-                </Text>
-            </View>
+    // ── GiftedChat toolbar/composer/send — their props require style objects ──
+    const renderInputToolbar = (props: any) => (
+        <InputToolbar
+            {...props}
+            containerStyle={{
+                backgroundColor: '#fff',
+                borderTopWidth: 0,
+                borderRadius: 20,
+                marginHorizontal: 10,
+                marginBottom: Platform.OS === 'ios' ? 24 : 10,
+                paddingHorizontal: 8,
+                paddingVertical: 6,
+                elevation: 6,
+                shadowColor: '#000',
+                shadowOpacity: 0.08,
+                shadowRadius: 10,
+                shadowOffset: { width: 0, height: -2 },
+            }}
+            primaryStyle={{ alignItems: 'center' }}
+        />
+    );
 
-            {/* Quick Options */}
-            <View style={{ padding: 10, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                {quickOptions.map((option, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        onPress={() => handleOptionPress(option)}
-                        style={{
-                            backgroundColor: '#8EC9FF',
-                            borderRadius: 20,
-                            paddingVertical: 8,
-                            paddingHorizontal: 16,
-                            margin: 4,
-                        }}
-                    >
-                        <Text style={{ color: '#0B0B64', fontWeight: '600' }}>{option}</Text>
-                    </TouchableOpacity>
+    const renderComposer = (props: any) => (
+        <Composer
+            {...props}
+            textInputStyle={{
+                backgroundColor: '#EFF6FF',
+                borderRadius: 14,
+                paddingHorizontal: 14,
+                paddingTop: 10,
+                paddingBottom: 10,
+                fontSize: 14.5,
+                color: '#1E293B',
+                marginVertical: 0,
+                lineHeight: 20,
+            }}
+            placeholderTextColor="#94A3B8"
+        />
+    );
+
+    const renderSend = (props: any) => (
+        <Send {...props} containerStyle={{ justifyContent: 'center', alignItems: 'center', marginRight: 2 }}>
+            <View className="w-10 h-10 rounded-full bg-blue-500 items-center justify-center">
+                <Text className="text-white text-lg font-bold leading-5">↑</Text>
+            </View>
+        </Send>
+    );
+
+    return (
+        <View className="flex-1 bg-blue-50">
+            <StatusBar barStyle="light-content" backgroundColor="#1E3A5F" />
+
+            {/* ── Header — Animated.View needs inline style for transform ── */}
+            <Animated.View
+                style={{
+                    opacity: headerAnim,
+                    transform: [{
+                        translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-20, 0] }),
+                    }],
+                }}
+                className={`flex-row items-center bg-blue-900 px-5 pb-4 gap-x-3 ${Platform.OS === 'android' ? 'pt-4' : 'pt-14'}`}
+            >
+                <View className="w-11 h-11 rounded-full bg-white/20 items-center justify-center">
+                    <Text className="text-2xl">🏙</Text>
+                </View>
+
+                <View className="flex-1">
+                    <Text className="text-white text-[17px] font-bold tracking-wide">
+                        FixMyCity Assistant
+                    </Text>
+                    <View className="flex-row items-center mt-0.5 gap-x-1.5">
+                        <View className="w-2 h-2 rounded-full bg-green-400" />
+                        <Text className="text-white/60 text-xs font-medium">
+                            Online · Ready to help
+                        </Text>
+                    </View>
+                </View>
+            </Animated.View>
+
+            {/* ── Quick option chips ── */}
+            <View className="flex-row flex-wrap gap-2 px-3.5 py-2.5 bg-blue-50">
+                {QUICK_OPTIONS.map((opt, i) => (
+                    <QuickChip
+                        key={opt.value}
+                        label={opt.label}
+                        onPress={() => handleOptionPress(opt.value)}
+                        delay={i * 80}
+                    />
                 ))}
             </View>
 
-            {/* Chat */}
+            {/* ── GiftedChat ── */}
             <GiftedChat
                 messages={messages}
-                //@ts-ignore
-                onSend={messages => onSend(messages)}
+                // @ts-ignore
+                onSend={msgs => onSend(msgs)}
                 user={{ _id: 1 }}
-                placeholder={loading ? 'Bot is typing...' : 'Type your message...'}
-
+                placeholder={loading ? 'Assistant is typing…' : 'Ask me anything…'}
                 renderMessage={renderMessage}
+                renderBubble={renderBubble}
+                renderInputToolbar={renderInputToolbar}
+                renderComposer={renderComposer}
+                renderSend={renderSend}
                 renderAvatarOnTop
+                showAvatarForEveryMessage={false}
+                messagesContainerStyle={{ backgroundColor: '#EFF6FF', paddingHorizontal: 16, paddingVertical:20 }}
+                isTyping={loading}
+                alwaysShowSend
             />
         </View>
     );
