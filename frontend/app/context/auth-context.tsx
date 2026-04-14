@@ -14,35 +14,41 @@ type AuthContextType = {
     login: (token: string) => void;
     logout: () => void;
     getUser: () => void;
+    isVerifying: boolean
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
-
+    const [isVerifying, setIsVerifying] = useState(true);
     const getUser = async () => {
-        const token = await AsyncStorage.getItem("citytoken");
-        const response = await axios({
-            url: `${API_BASE_URL}/api/user/isValid`,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        })
-        if (response.data.success) {
-            console.log('i hitting isValid')
+        setIsVerifying(true)
+        try {
+            const token = await AsyncStorage.getItem("citytoken");
+            const response = await axios({
+                url: `${API_BASE_URL}/api/user/isValid`,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            })
+
             setUser(response.data.user)
-        } else {
+        } catch {
             setUser(null)
+        } finally {
+            setIsVerifying(false)
         }
+
+
     }
 
     useEffect(() => {
         getUser();
     }, [])
 
-    const login = async(token: string) => {
-       await AsyncStorage.setItem("citytoken", token);
+    const login = async (token: string) => {
+        await AsyncStorage.setItem("citytoken", token);
         getUser();
 
     };
@@ -52,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, getUser }}>
+        <AuthContext.Provider value={{ user, login, logout, getUser, isVerifying }}>
             {children}
         </AuthContext.Provider>
     );

@@ -22,6 +22,7 @@ import { useAuth } from '@/app/context/auth-context';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
 import { useTranslation } from 'react-i18next';
+import CivicPulseSplash from '../components/SplashScreen';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
@@ -35,19 +36,17 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         lat: 0.0,
         long: 0.0
     });
-    const { user } = useAuth();
+    const { user, isVerifying } = useAuth();
     const { t } = useTranslation();
 
-
+    console.log(user, isVerifying)
     useEffect(() => {
         setTimeout(() => {
             setDebouncedDistance(distance)
         }, 1000);
     }, [distance])
 
-    if (!user) {
-        navigation.navigate('WelcomeLoginScreen')
-    }
+
 
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
@@ -99,6 +98,16 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         await refetch();
     };
 
+    if (!isVerifying && !user) {
+        navigation.navigate('WelcomeLoginScreen')
+    }
+
+    if (isVerifying) {
+        return (
+            <CivicPulseSplash />
+        )
+
+    }
 
     if (!isConnected) {
         return (
@@ -133,6 +142,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             }
         }
     };
+
+
+
+
 
     return (
         <View className="flex-1 bg-[#F6F7F8] dark:bg-[#101922]">

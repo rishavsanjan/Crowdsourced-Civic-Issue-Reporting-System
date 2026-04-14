@@ -8,6 +8,7 @@ import MyMapAll from "./pages/alllocationsmap";
 import Dashboard from "./pages/analytics";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AdminHome from "./pages/homepage";
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
   return (
     <>
       <QueryClientProvider client={queryClient}>
+        <ToastContainer/>
         <Router>
           <AppContent />
         </Router>

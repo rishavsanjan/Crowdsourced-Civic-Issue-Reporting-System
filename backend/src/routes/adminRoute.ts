@@ -56,7 +56,7 @@ adminRoute.post('/login', async (req, res) => {
         //const match = await bcrypt.compare(p.data.password, user.password);
         const match = await p.data.password === user.password;
         if (!match) {
-            return res.status(200).json({ error: "Wrong password!", success: false })
+            return res.status(401).json({ error: "Wrong password!", success: false })
         }
 
         const token = jwt.sign({ user_id: user.id, iat: Math.floor(Date.now() / 1000) }, process.env.JWT_SECRET!)

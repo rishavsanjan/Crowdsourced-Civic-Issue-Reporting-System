@@ -1,6 +1,7 @@
-import {  BarChartBig, LayoutDashboard, Map } from 'lucide-react'
+import { BarChartBig, LayoutDashboard, Map } from 'lucide-react'
 import type React from 'react'
 import type { SetStateAction } from 'react'
+import { Link } from 'react-router-dom'
 
 interface Props {
     activeTab: "dashboard" | "map" | "analytics"
@@ -8,6 +9,7 @@ interface Props {
 }
 
 const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab }) => {
+    
     return (
         <aside className="w-64 bg-white light:bg-gray-800 flex-shrink-0 border-r border-gray-200 light:border-gray-700">
             <div className="flex flex-col h-full p-4">
@@ -24,12 +26,12 @@ const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab }) => {
                                 onClick={() => {
                                     setActiveTab("analytics")
                                 }}
-                               className={`${activeTab === "analytics" && "bg-blue-50 text-blue-600 "} flex items-center gap-3 px-3 py-2 rounded  light:bg-blue-900/20 font-medium`} >
+                                className={`${activeTab === "analytics" && "bg-blue-50 text-blue-600 "} flex items-center gap-3 px-3 py-2 rounded  light:bg-blue-900/20 font-medium`} >
 
                                 <BarChartBig />
                                 <span className="font-medium">Analytics</span>
                             </button>
-                          
+
                         </li>
                         <li>
                             <button
@@ -41,7 +43,7 @@ const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab }) => {
                                 <Map />
                                 <span className="font-medium">Map</span>
                             </button>
-                            
+
 
                         </li>
                         <li>
@@ -61,12 +63,17 @@ const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab }) => {
                     </ul>
                 </nav>
                 <div className="mt-auto">
-                    <a className="flex items-center gap-3 px-3 py-2 rounded text-gray-700 light:text-gray-300 hover:bg-blue-50 light:hover:bg-blue-900/20 hover:text-blue-600" href="#">
+                    <Link
+                        onClick={() => {
+                            localStorage.removeItem("admincitytoken")
+                        }}
+                        to={"/admin-login"}
+                        className="flex items-center gap-3 px-3 py-2 rounded text-gray-700 light:text-gray-300 hover:bg-blue-50 light:hover:bg-blue-900/20 hover:text-blue-600" >
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
                         </svg>
                         <span className="font-medium">Logout</span>
-                    </a>
+                    </Link>
                 </div>
             </div>
         </aside>
