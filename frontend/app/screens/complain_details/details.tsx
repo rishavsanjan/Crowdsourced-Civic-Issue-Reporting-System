@@ -4,7 +4,6 @@ import {
     Text,
     Image,
     ScrollView,
-    TouchableOpacity,
     SafeAreaView,
     FlatList,
 } from 'react-native';
@@ -182,9 +181,6 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                 <View className="px-4 py-4">
                     <Text className="text-2xl font-bold text-gray-900 mb-2 dark:text-white">
                         {data?.title}
-                    </Text>
-                    <Text className="text-sm text-gray-500">
-                        Reported by Aadhaar ID: **** **** 1234
                     </Text>
                 </View>
 

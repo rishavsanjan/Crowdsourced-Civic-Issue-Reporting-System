@@ -13,6 +13,7 @@ import type { RootStackParamList } from '../../navigation/navigation';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_IP from '../../../config/api';
+import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Chatbot'>;
 
@@ -53,9 +54,9 @@ const getStatusCfg = (status: string) =>
     STATUS_CONFIG[status] ?? STATUS_CONFIG.default;
 
 const QUICK_OPTIONS = [
-    { label: '📋 Complaint Status', value: 'Complaint Status' },
-    { label: '➕ Raise New Complaint', value: 'Raise New Complaint' },
-    { label: '🌟 Our Vision', value: 'What is our vision ?' },
+    { label: 'complaintStatus', value: 'Complaint Status' },
+    { label: 'raiseComplaint', value: 'Raise New Complaint' },
+    { label: 'vision', value: 'What is our vision ?' },
 ];
 
 // ─── Animated Chip ────────────────────────────────────────────────────────────
@@ -91,11 +92,12 @@ const Chatbot: React.FC<Props> = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const headerAnim = useRef(new Animated.Value(0)).current;
 
+    const {t} = useTranslation();
     useEffect(() => {
         Animated.timing(headerAnim, { toValue: 1, duration: 550, useNativeDriver: true }).start();
         setMessages([{
             _id: 1,
-            text: "Hello! 👋 I'm your FixMyCity Assistant.\n\nHow can I help you today? Tap a quick option or type your query.",
+            text: t('chatbotWelcome'),
             createdAt: new Date(),
             user: { _id: 2, name: 'FixMyCity Bot', avatar: BOT_AVATAR },
         }]);
@@ -125,17 +127,17 @@ const Chatbot: React.FC<Props> = ({ navigation }) => {
             if (text === 'Complaint Status') {
                 const fetched: Complaint[] = response.data.complaint || [];
                 fetched.length > 0
-                    ? appendBot({ text: '📋 Here are your complaints. Tap one to view details:', isComplaintList: true, complaints: fetched })
-                    : appendBot({ text: '📭 You have no complaints registered yet.' });
+                    ? appendBot({ text: t('complaintsList'), isComplaintList: true, complaints: fetched })
+                    : appendBot({ text: t('noComplaints') });
             } else if (text === 'Raise New Complaint') {
-                appendBot({ text: 'Sure! Tap below to file a new complaint:', isRaiseComplaint: true });
+                appendBot({ text: t('raisePrompt'), isRaiseComplaint: true });
             } else if (text === 'What is our vision ?') {
-                appendBot({ text: '🌟 Our mission is to make India a better civic society — one complaint at a time.' });
+                appendBot({ text: t('mission') });
             } else {
-                appendBot({ text: response.data.msg || "I'm sorry, I couldn't understand that." });
+                appendBot({ text: response.data.msg || t('unknown') });
             }
         } catch {
-            appendBot({ text: '⚠️ Something went wrong. Please try again later.' });
+            appendBot({ text: t('error') });
         } finally {
             setLoading(false);
         }
@@ -247,7 +249,7 @@ const Chatbot: React.FC<Props> = ({ navigation }) => {
                         }
                     >
                         <Text className="text-white text-[15px] font-bold tracking-wide">
-                            ➕  File a New Complaint
+                            {t('fileComplaint')}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -325,12 +327,12 @@ const Chatbot: React.FC<Props> = ({ navigation }) => {
 
                 <View className="flex-1">
                     <Text className="text-white text-[17px] font-bold tracking-wide">
-                        FixMyCity Assistant
+                        {t('assistant')}
                     </Text>
                     <View className="flex-row items-center mt-0.5 gap-x-1.5">
                         <View className="w-2 h-2 rounded-full bg-green-400" />
                         <Text className="text-white/60 text-xs font-medium">
-                            Online · Ready to help
+                            {t('online')}
                         </Text>
                     </View>
                 </View>
@@ -341,7 +343,7 @@ const Chatbot: React.FC<Props> = ({ navigation }) => {
                 {QUICK_OPTIONS.map((opt, i) => (
                     <QuickChip
                         key={opt.value}
-                        label={opt.label}
+                        label={t(opt.label)}
                         onPress={() => handleOptionPress(opt.value)}
                         delay={i * 80}
                     />
@@ -354,7 +356,7 @@ const Chatbot: React.FC<Props> = ({ navigation }) => {
                 // @ts-ignore
                 onSend={msgs => onSend(msgs)}
                 user={{ _id: 1 }}
-                placeholder={loading ? 'Assistant is typing…' : 'Ask me anything…'}
+                placeholder={loading ? t('typing') : t('placeholder')}
                 renderMessage={renderMessage}
                 renderBubble={renderBubble}
                 renderInputToolbar={renderInputToolbar}

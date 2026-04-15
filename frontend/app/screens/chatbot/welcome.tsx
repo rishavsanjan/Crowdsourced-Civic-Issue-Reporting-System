@@ -8,22 +8,24 @@ import {
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/navigation';
+import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'WelcomeChatbot'>;
 
 const BUBBLES = [
-  { id: 1, text: '👋 Welcome! I\'m your civic assistant.' },
-  { id: 2, text: 'Report potholes, broken lights, or any local issue — I\'ll help you get it fixed.' },
-  { id: 3, text: 'What\'s on your mind today?' },
+  { id: 1, text: 'welcome1' },
+  { id: 2, text: 'welcome2' },
+  { id: 3, text: 'welcome3' },
 ];
 
 const CHIPS = [
-  { label: '🕳  Report pothole' },
-  { label: '💡 Broken streetlight' },
-  { label: '🗑  Overflowing bin' },
+  { label: 'chipPothole' },
+  { label: 'chipLight' },
+  { label: 'chipGarbage' },
 ];
 
 const WelcomeChatbot: React.FC<Props> = ({ navigation }) => {
+  const {t} = useTranslation();
   const fadeAnims = useRef(BUBBLES.map(() => new Animated.Value(0))).current;
   const slideAnims = useRef(BUBBLES.map(() => new Animated.Value(16))).current;
   const chipsAnim = useRef(new Animated.Value(0)).current;
@@ -86,7 +88,7 @@ const WelcomeChatbot: React.FC<Props> = ({ navigation }) => {
               <Text className="text-base">🤖</Text>
             </View>
             <Text className="text-[#F1F060] text-xs font-semibold tracking-wide">
-              Civic Assistant
+              {t('civicAssistant')}
             </Text>
           </View>
 
@@ -101,7 +103,7 @@ const WelcomeChatbot: React.FC<Props> = ({ navigation }) => {
             >
               <View className="bg-[#1a1a4e] rounded-[18px] rounded-tl-[4px] px-4 py-3 self-start max-w-[85%]">
                 <Text className="text-[#e8e8ff] text-sm leading-relaxed">
-                  {bubble.text}
+                  {t(bubble.text)}
                 </Text>
               </View>
             </Animated.View>
@@ -119,7 +121,7 @@ const WelcomeChatbot: React.FC<Props> = ({ navigation }) => {
                 className="bg-[#F1F060]/10 border border-[#F1F060]/30 rounded-full px-3 py-1.5"
               >
                 <Text className="text-[#F1F060] text-xs font-medium">
-                  {chip.label}
+                  {t(chip.label)}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -134,7 +136,7 @@ const WelcomeChatbot: React.FC<Props> = ({ navigation }) => {
             className="bg-[#F1F060] rounded-2xl py-4 items-center w-full"
           >
             <Text className="text-[#0d0d2b] text-base font-bold tracking-wide">
-              Get Started
+              {t('getStarted')}
             </Text>
           </TouchableOpacity>
           
