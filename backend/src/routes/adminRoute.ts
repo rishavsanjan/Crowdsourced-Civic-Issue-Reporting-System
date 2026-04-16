@@ -69,37 +69,74 @@ adminRoute.post('/login', async (req, res) => {
 
 adminRoute.get('/admin-home', async (req, res) => {
     try {
-        //@ts-ignore
-        const complaints = await prisma.complaint.findMany({
-            include: {
-                media: true,
+        const { search } = req.query;
 
+        let whereClause = {};
+
+        if (search) {
+            const id = Number(search);
+
+            if (!isNaN(id)) {
+                whereClause = {
+                    complaint_id: id
+                };
+            } else {
+                whereClause = {
+                    OR: [
+                        {
+                            title: {
+                                contains: search,
+                                mode: 'insensitive'
+                            }
+                        },
+                        {
+                            description: {
+                                contains: search,
+                                mode: 'insensitive'
+                            }
+                        }
+                    ]
+                };
+            }
+        }
+
+        const complaints = await prisma.complaint.findMany({
+            where: whereClause,
+            include: {
+                media: true
             },
             orderBy: {
                 createdAt: 'asc'
             }
-        })
+        });
 
         const countComplaints = {
-            resloved: 0,
+            resolved: 0,
             pending: 0,
             in_progress: 0
-        }
+        };
 
-        complaints.map((complain) => {
+        complaints.forEach((complain) => {
             if (complain.status === 'in_progress') {
                 countComplaints.in_progress++;
             } else if (complain.status === 'pending') {
                 countComplaints.pending++;
             } else {
-                countComplaints.resloved++;
+                countComplaints.resolved++;
             }
-        })
+        });
 
-        return res.status(200).json({ success: true, complaints, countComplaints });
+        return res.status(200).json({
+            success: true,
+            complaints,
+            countComplaints
+        });
+
     } catch (error) {
-
-        return res.status(403).json({ error: "Server Problem!", success: false })
+        return res.status(403).json({
+            error: "Server Problem!",
+            success: false
+        });
     }
 });
 
@@ -280,7 +317,7 @@ adminRoute.get('/admin-dashboard', async (req, res) => {
             monthlyData[month] = (monthlyData[month] || 0) + item._count.complaint_id;
         });
 
-        return res.status(200).json({ success: true, complaints, countComplaints, monthlyData, complaintsCountByGroup:formattedByGroup  });
+        return res.status(200).json({ success: true, complaints, countComplaints, monthlyData, complaintsCountByGroup: formattedByGroup });
 
     } catch (error) {
         console.log(error)

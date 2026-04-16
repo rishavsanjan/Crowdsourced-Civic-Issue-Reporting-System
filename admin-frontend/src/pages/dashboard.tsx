@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import ReportsStats from '../components/ReportsStats';
 import ReportsTable from '../components/ReportsTable';
-import type { Complaint } from '../types/complaint';
+import { useQuery } from '@tanstack/react-query';
 
 
 
@@ -11,57 +11,72 @@ const Dashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('Status: All');
   const [categoryFilter, setCategoryFilter] = useState('Category: All');
-  const [complaints, setComplaints] = useState<Complaint[]>([]);
-  const [filteredComplaints, setFilteredComplaints] = useState<Complaint[]>([]);
   const [sortFilter, setSortFilter] = useState('new');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
 
-  const [complainCounts, setComplainCounts] = useState({
-    resloved: 0,
-    pending: 0,
-    in_progress: 0
-  });
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery)
+    }, 400);
+
+    return () => clearTimeout(handler);
+  }, [searchQuery])
+
+
+
+
 
   const navigate = useNavigate();
 
-  const getReports = async () => {
-    const token = localStorage.getItem('admincitytoken');
-    if (!token) {
-      navigate("/admin-signup");
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['reports'],
+    queryFn: async () => {
+      const token = localStorage.getItem('admincitytoken');
+      if (!token) {
+        navigate("/admin-signup");
+        return;
+      }
+
+      const res = await axios.get(
+        "http://localhost:3000/api/admin/admin-home"
+      );
+
+      return res.data;
     }
-    const response = await axios({
-      url: `http://localhost:3000/api/admin/admin-home`,
-      method: 'get'
-    });
-    setComplaints(response.data.complaints);
-    setFilteredComplaints(response.data.complaints);
-    setComplainCounts(response.data.countComplaints)
-    console.log(response.data)
+  });
+
+  const { data: searchData } = useQuery({
+    queryKey: ['search', debouncedSearchQuery],
+    queryFn: async () => {
+      const res = await axios.get(
+        `http://localhost:3000/api/admin/admin-home?search=${debouncedSearchQuery}`
+      );
+
+      return res.data;
+    },
+    enabled: debouncedSearchQuery.trim() !== "" // only run when searching
+  });
+
+  const complaints = searchData?.complaints || data?.complaints || [];
+  const complainCounts = data?.countComplaints || {
+    resolved: 0,
+    pending: 0,
+    in_progress: 0
   };
 
-  useEffect(() => {
-    getReports();
-  }, []);
 
-  useEffect(() => {
-    if (statusFilter === 'all') {
-      setFilteredComplaints(complaints)
-    } else {
-      setFilteredComplaints(
-        complaints.filter((complaint) => complaint.status === statusFilter)
-      );
-    }
-  }, [statusFilter]);
 
-  useEffect(() => {
-    const sortedComplaints = [...complaints].sort((a, b) => {
-      if (sortFilter === 'new') {
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-      } else {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      }
+  const filteredComplaints = complaints
+    .filter((c: any) => {
+      if (statusFilter === 'Status: All') return true;
+      return c.status === statusFilter;
+    })
+    .sort((a: any, b: any) => {
+      return sortFilter === 'new'
+        ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     });
-    setFilteredComplaints(sortedComplaints);
-  }, [sortFilter, complaints]);
 
   return (
 
@@ -79,6 +94,7 @@ const Dashboard: React.FC = () => {
 
         {/* Reports Table */}
         <ReportsTable
+          isLoading={isLoading}
           complaints={complaints}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}

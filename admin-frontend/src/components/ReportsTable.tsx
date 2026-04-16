@@ -1,9 +1,10 @@
 import React, { type SetStateAction } from 'react'
 import type { Complaint } from '../types/complaint';
 import { Link } from 'react-router-dom';
+import { ClipLoader } from 'react-spinners';
 
 interface Props {
-    complaints : Complaint[]
+    complaints: Complaint[]
     searchQuery: string,
     setSearchQuery: React.Dispatch<SetStateAction<string>>
     statusFilter: string
@@ -13,11 +14,13 @@ interface Props {
     setSortFilter: React.Dispatch<SetStateAction<string>>
     sortFilter: string
     filteredComplaints: Complaint[]
+    isLoading: boolean
 
 
 }
 
-const ReportsTable: React.FC<Props> = ({ searchQuery, setSearchQuery, statusFilter, setStatusFilter, categoryFilter, setCategoryFilter, sortFilter, setSortFilter, filteredComplaints, complaints }) => {
+const ReportsTable: React.FC<Props> = ({ searchQuery, setSearchQuery, statusFilter, setStatusFilter, categoryFilter, setCategoryFilter, sortFilter, setSortFilter, filteredComplaints, complaints, isLoading }) => {
+
 
     const getStatusColor = (status: Complaint['status']) => {
         switch (status) {
@@ -47,6 +50,7 @@ const ReportsTable: React.FC<Props> = ({ searchQuery, setSearchQuery, statusFilt
                                 <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
                             </svg>
                             <input
+
                                 className="w-full pl-10 pr-4 py-2 rounded border border-gray-300 light:border-gray-600 bg-gray-50 light:bg-gray-900 text-gray-900 light:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="Search by ID..."
                                 type="text"
@@ -120,6 +124,13 @@ const ReportsTable: React.FC<Props> = ({ searchQuery, setSearchQuery, statusFilt
                         </div>
                     </div>
                 </div>
+                {
+                    isLoading &&
+                    <div className='flex flex-row justify-center w-full my-8'>
+                        <ClipLoader />
+                    </div>
+
+                }
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left text-gray-500 light:text-gray-400">
                         <thead className="text-xs text-gray-700 light:text-gray-300 uppercase bg-gray-50 light:bg-gray-700">
@@ -133,6 +144,7 @@ const ReportsTable: React.FC<Props> = ({ searchQuery, setSearchQuery, statusFilt
                                 <th className="px-6 py-3" scope="col">Actions</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             {filteredComplaints.map((report, index) => (
                                 <tr key={report.complaint_id} className={`bg-white light:bg-gray-800 hover:bg-gray-50 light:hover:bg-gray-600 ${index !== complaints.length - 1 ? 'border-b light:border-gray-700' : ''}`}>
