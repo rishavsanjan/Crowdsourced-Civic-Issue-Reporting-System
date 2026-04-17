@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatusPieChart from './charts/statuspiechart';
 import ComplaintsOverTimeChart from './charts/ComplaintsOverTimeChart';
@@ -18,39 +18,38 @@ const Analytics = () => {
 
   const total = complainCounts.resloved + complainCounts.pending + complainCounts.in_progress;
   const resolvedPct = total > 0 ? Math.round((complainCounts.resloved / total) * 100) : 0;
+  useEffect(() => {
+    const getStats = async () => {
+      const token = localStorage.getItem('admincitytoken');
+      if (!token) { navigate('/admin-signup'); return; }
 
-  const getStats = async () => {
-    const token = localStorage.getItem('admincitytoken');
-    if (!token) { navigate('/admin-signup'); return; }
+      const response = await axios({
+        url: `${API_BASE_URL}/api/admin/admin-dashboard`,
+        method: 'get',
+        headers: { Authorization: 'Bearer ' + token },
+      });
 
-    const response = await axios({
-      url: `${API_BASE_URL}/api/admin/admin-dashboard`,
-      method: 'get',
-      headers: { Authorization: 'Bearer ' + token },
-    });
-    console.log(response.data)
+      setComplainCounts(response.data.countComplaints);
+      setComplaintsByDepartment(response.data.complaintsCountByGroup);
 
+      const labels = Object.keys(response.data.monthlyData);
+      const data = Object.values(response.data.monthlyData);
 
-    setComplainCounts(response.data.countComplaints);
-    setComplaintsByDepartment(response.data.complaintsCountByGroup)
-    const labels = Object.keys(response.data.monthlyData);
-    const data = Object.values(response.data.monthlyData);
-    setChartData({
-      labels,
-      datasets: [{
-        label: 'Complaints Filed Over Time',
-        data,
-        borderColor: '#378ADD',
-        backgroundColor: 'rgba(55,138,221,0.08)',
-        tension: 0.35,
-        fill: true,
-      }],
-    });
-  };
+      setChartData({
+        labels,
+        datasets: [{
+          label: 'Complaints Filed Over Time',
+          data,
+          borderColor: '#378ADD',
+          backgroundColor: 'rgba(55,138,221,0.08)',
+          tension: 0.35,
+          fill: true,
+        }],
+      });
+    };
 
-  console.log(complaintsByDepartment)
-
-  useEffect(() => { getStats(); }, []);
+    getStats();
+  }, [navigate]);
 
   return (
     <div className="p-6 space-y-6 w-full">
