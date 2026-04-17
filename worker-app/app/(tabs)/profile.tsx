@@ -5,6 +5,7 @@ import {
     TouchableOpacity,
     ScrollView,
     StatusBar,
+    ActivityIndicator,
 } from 'react-native';
 import { RootStackParamList } from '../navigation/navigation';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -16,6 +17,7 @@ import ProfileIdenity from '../components/ProfileIdenity';
 import ProfileStats from '../components/ProfileStats';
 import InformationList from '../components/InformationList';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from 'expo-router';
 
 
 interface WorkerProfile {
@@ -36,8 +38,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "ProfileScreen">;
 
 
 const Profile: React.FC<Props> = () => {
-
-    const { data } = useQuery({
+    const router = useRouter();
+    const { data, isLoading } = useQuery({
         queryKey: ['profile'],
         queryFn: async () => {
             const token = await AsyncStorage.getItem("workercitytoken");
@@ -53,17 +55,26 @@ const Profile: React.FC<Props> = () => {
         }
     })
 
-    const handleLogout = () => {
-        console.log('Logout pressed');
+    const handleLogout = async () => {
+        AsyncStorage.removeItem("workercitytoken");
+        router.push("/(auth)/auth")
     };
 
+    if (isLoading) {
+        return (
+            <View className='h-screen items-center flex flex-row justify-center'>
+                <ActivityIndicator color={'blue'} size={50} />
+            </View>
+        )
+    }
+
     if (!data) {
-        return;
+        return
     }
 
     return (
         <SafeAreaView
-         className="flex-1 bg-background-light light:bg-background-light">
+            className="flex-1 bg-background-light light:bg-background-light">
             <StatusBar barStyle="light-content" />
 
             {/* Header Navigation */}

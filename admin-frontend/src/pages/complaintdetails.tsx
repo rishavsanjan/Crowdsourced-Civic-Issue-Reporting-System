@@ -12,6 +12,7 @@ import CitizenCard from '../components/CitizenCard';
 import type { Complaint } from '../types/complaint';
 import AssignWorker from '../components/AssignWorker';
 import AssignedWorker from '../components/AssignedWorker';
+import API_BASE_URL from '../config/api';
 
 
 
@@ -24,7 +25,7 @@ const ReportDetail: React.FC = () => {
         queryKey: ['complaint', complaint_id],
         queryFn: async () => {
             const response = await axios({
-                url: `http://localhost:3000/api/admin/details/${complaint_id}`,
+                url: `${API_BASE_URL}/api/admin/details/${complaint_id}`,
                 method: 'get'
             });
             setStatus(response.data.complaint.status)

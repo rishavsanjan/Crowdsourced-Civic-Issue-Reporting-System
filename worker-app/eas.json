@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 16.20.4",
+    "version": ">= 18.7.0",
     "appVersionSource": "remote"
   },
   "build": {
@@ -15,17 +15,7 @@
       }
     },
     "production": {
-      "autoIncrement": true,
-      "android": {
-        "buildType": "apk"
-      },
-      "cache": {
-        "key": "production-cache",
-        "paths": [
-          "node_modules",
-          "android/.gradle"
-        ]
-      }
+      "autoIncrement": true
     }
   },
   "submit": {

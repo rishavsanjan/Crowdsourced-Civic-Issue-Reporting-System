@@ -74,14 +74,7 @@ const WorkerHomeScreen: React.FC<Props> = () => {
                                 resizeMode="cover"
                             />
                         </View>
-                        <View className="flex-row gap-2">
-                            <TouchableOpacity className="w-10 h-10 rounded-full bg-slate-100 light:bg-slate-800 flex items-center justify-center">
-                                <Icon name="search-outline" size={20} color="#64748b" />
-                            </TouchableOpacity>
-                            <TouchableOpacity className="w-10 h-10 rounded-full bg-slate-100 light:bg-slate-800 flex items-center justify-center">
-                                <Icon name="options-outline" size={20} color="#64748b" />
-                            </TouchableOpacity>
-                        </View>
+                        
                     </View>
                     <Text className="text-3xl font-bold tracking-tight text-slate-900 light:text-white">
                         Dashboard

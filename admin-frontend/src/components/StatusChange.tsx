@@ -3,6 +3,7 @@ import type { Complaint } from '../types/complaint'
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
+import API_BASE_URL from '../config/api';
 interface Props {
     data: Complaint
     complaint_id: string
@@ -22,7 +23,7 @@ const StatusChange: React.FC<Props> = ({ data, complaint_id, status, setStatus }
         mutationKey: ['update-status'],
         mutationFn: async (variables: UpdateComplaintPayload) => {
             const token = localStorage.getItem('admincitytoken');
-            const response = await axios(`http://localhost:3000/api/admin/update-status`, {
+            const response = await axios(`${API_BASE_URL}/api/admin/update-status`, {
                 method: 'post',
                 headers: {
                     'Authorization': 'Bearer ' + token

@@ -25,7 +25,7 @@ export default function TabLayout() {
         options={{
           title: "History",
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="history" size={24} color="black" />
+            <MaterialIcons name="history" size={24} color={color} />
           )
         }}
       />

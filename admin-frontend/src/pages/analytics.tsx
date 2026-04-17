@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import StatusPieChart from './charts/statuspiechart';
 import ComplaintsOverTimeChart from './charts/ComplaintsOverTimeChart';
 import ComplaintsByDepartment from './charts/ComplaintsByDepartment';
+import API_BASE_URL from '../config/api';
 
 const Analytics = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const Analytics = () => {
     if (!token) { navigate('/admin-signup'); return; }
 
     const response = await axios({
-      url: 'http://localhost:3000/api/admin/admin-dashboard',
+      url: `${API_BASE_URL}/api/admin/admin-dashboard`,
       method: 'get',
       headers: { Authorization: 'Bearer ' + token },
     });

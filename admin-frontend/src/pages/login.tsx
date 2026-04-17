@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
+import API_BASE_URL from '../config/api';
 
 export default function AdminLogin() {
     const navigate = useNavigate();
@@ -19,12 +20,11 @@ export default function AdminLogin() {
             [name]: type === 'checkbox' ? checked : value
         }));
     };
-
     const handleSubmit = async () => {
         setLoading(true)
         try {
             const response = await axios({
-                url: 'http://localhost:3000/api/admin/login',
+                url: `${API_BASE_URL}/api/admin/login`,
                 method: 'POST',
                 data: {
                     email: formData.email,

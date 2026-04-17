@@ -4,6 +4,7 @@ import type { Complaint, Worker } from "../types/complaint";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { Trash2, Check } from 'lucide-react';
+import API_BASE_URL from "../config/api";
 
 
 
@@ -29,7 +30,7 @@ const AssignWorker: React.FC<Props> = ({ worker, complaint_id }) => {
             const token = localStorage.getItem('admincitytoken');
             const finalInstructions = instructions.map(i => i.text)
 
-            const response = await axios(`http://localhost:3000/api/admin/assign-worker`, {
+            const response = await axios(`${API_BASE_URL}/api/admin/assign-worker`, {
                 method: 'post',
                 headers: {
                     'Authorization': 'Bearer ' + token

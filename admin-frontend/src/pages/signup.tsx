@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import API_BASE_URL from '../config/api';
 
 export default function AdminSignup() {
     const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ export default function AdminSignup() {
 
     const handleSubmit = async () => {
         const response = await axios({
-            url: 'http://localhost:3000/api/user/signup',
+            url: `${API_BASE_URL}/api/user/signup`,
             method: 'POST',
             data: {
                 email: formData.email,

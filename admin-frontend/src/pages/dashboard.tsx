@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ReportsStats from '../components/ReportsStats';
 import ReportsTable from '../components/ReportsTable';
 import { useQuery } from '@tanstack/react-query';
+import API_BASE_URL from '../config/api';
 
 
 
@@ -39,18 +40,20 @@ const Dashboard: React.FC = () => {
       }
 
       const res = await axios.get(
-        "http://localhost:3000/api/admin/admin-home"
+        `${API_BASE_URL}/api/admin/admin-home`
       );
 
       return res.data;
     }
   });
 
+  console.log(API_BASE_URL)
+
   const { data: searchData } = useQuery({
     queryKey: ['search', debouncedSearchQuery],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:3000/api/admin/admin-home?search=${debouncedSearchQuery}`
+        `${API_BASE_URL}/api/admin/admin-home?search=${debouncedSearchQuery}`
       );
 
       return res.data;

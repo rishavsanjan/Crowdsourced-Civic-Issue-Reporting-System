@@ -36,7 +36,7 @@ interface HistoryTask {
 
 const History = () => {
     const router = useRouter();
-    const { data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
+    const { data, hasNextPage, isFetchingNextPage, fetchNextPage , isLoading} = useInfiniteQuery({
         queryKey: ['jobs-history'],
         queryFn: async ({ pageParam = 1 }) => {
             const token = await AsyncStorage.getItem("workercitytoken");
@@ -57,6 +57,14 @@ const History = () => {
         }
 
     })
+
+    if (isLoading) {
+        return (
+            <View className='h-screen items-center flex flex-row justify-center'>
+                <ActivityIndicator color={'blue'} size={50} />
+            </View>
+        )
+    }
 
 
 

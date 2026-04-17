@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { GoogleMap, Marker, InfoWindow, useLoadScript } from '@react-google-maps/api';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import API_BASE_URL from '../config/api';
 
 const containerStyle = {
     width: '100%',
@@ -41,7 +42,7 @@ const MyMapAll: React.FC<MyMapProps> = () => {
             const token = localStorage.getItem('admincitytoken');
 
             const response = await axios({
-                url: `http://localhost:3000/api/admin/admin-home`,
+                url: `${API_BASE_URL}/api/admin/admin-home`,
                 method: 'get',
                 headers: token ? { Authorization: `Bearer ${token}` } : {}
             });

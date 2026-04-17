@@ -332,7 +332,7 @@ userRoute.post('/addcomplain', authMid, async (req, res) => {
         //@ts-ignore
         const userId = req.user.user_id;
         const response = await axios({
-            url: `http://127.0.0.1:8000/predict?text=${translate.translatedText}`,
+            url: `https://rishavsanjan-department-classifier.hf.space/predict?text=${translate.translatedText}`,
             method: 'get',
         })
 

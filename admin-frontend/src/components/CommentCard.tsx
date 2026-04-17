@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import type { AdminstrativeComments, Complaint } from '../types/complaint'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
+import API_BASE_URL from '../config/api'
 
 interface Props {
     data: Complaint
@@ -19,7 +20,7 @@ const CommentCard: React.FC<Props> = ({ data, complaint_id }) => {
 
             const token = localStorage.getItem('admincitytoken');
             console.log(token)
-            const response = await axios(`http://localhost:3000/api/admin/add-comment`, {
+            const response = await axios(`${API_BASE_URL}/api/admin/add-comment`, {
                 method: 'post',
                 headers: {
                     'Authorization': 'Bearer ' + token

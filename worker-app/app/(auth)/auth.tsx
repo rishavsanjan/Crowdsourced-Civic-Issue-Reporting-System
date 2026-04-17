@@ -159,24 +159,7 @@ const WorkerLoginScreen: React.FC<Props> = ({ navigation }) => {
                         </View>
                     </View>
 
-                    {/* Remember Me & Forgot */}
-                    <View className="flex-row items-center justify-between pt-1 mb-5">
-                        <View className="flex-row items-center space-x-2">
-                            <Switch
-                                value={rememberMe}
-                                onValueChange={setRememberMe}
-                                trackColor={{ false: '#e2e8f0', true: '#136dec' }}
-                                thumbColor="#ffffff"
-                                ios_backgroundColor="#e2e8f0"
-                            />
-                            <Text className="text-sm text-slate-600 dark:text-slate-400 ml-2">
-                                Remember Me
-                            </Text>
-                        </View>
-                        <TouchableOpacity>
-                            <Text className="text-sm font-medium text-primary">Forgot?</Text>
-                        </TouchableOpacity>
-                    </View>
+                    
 
                     {/* Submit Button */}
                     <TouchableOpacity
@@ -204,7 +187,7 @@ const WorkerLoginScreen: React.FC<Props> = ({ navigation }) => {
                 </View>
 
                 {/* Bottom Actions */}
-                <View className="mt-auto pb-10 flex flex-col items-center space-y-6">
+                {/* <View className="mt-auto pb-10 flex flex-col items-center space-y-6">
                     <View className="flex-row items-center space-x-2 mt-6">
                         <Text className="text-slate-500 dark:text-slate-400 text-sm">
                             New worker?
@@ -213,7 +196,7 @@ const WorkerLoginScreen: React.FC<Props> = ({ navigation }) => {
                             <Text className="text-primary font-bold text-sm ml-2">Request Access</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </View> */}
             </ScrollView>
 
             {/* Decorative Background Elements */}
