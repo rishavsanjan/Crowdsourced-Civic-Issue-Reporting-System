@@ -39,11 +39,15 @@ const Dashboard: React.FC = () => {
         return;
       }
 
-      const res = await axios.get(
-        `${API_BASE_URL}/api/admin/admin-home`
-      );
+      const result = await axios({
+        url: `${API_BASE_URL}/api/admin/admin-home`,
+        method: 'get',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      })
 
-      return res.data;
+      return result.data;
     }
   });
 
@@ -52,13 +56,21 @@ const Dashboard: React.FC = () => {
   const { data: searchData } = useQuery({
     queryKey: ['search', debouncedSearchQuery],
     queryFn: async () => {
-      const res = await axios.get(
-        `${API_BASE_URL}/api/admin/admin-home?search=${debouncedSearchQuery}`
-      );
+      
+      const token =  localStorage.getItem('admincitytoken');
 
-      return res.data;
+      const result = await axios({
+        url: `${API_BASE_URL}/api/admin/admin-home?search=${debouncedSearchQuery}`,
+        method: 'get',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      })
+      console.log(result.data)
+
+      return result.data;
     },
-    enabled: debouncedSearchQuery.trim() !== "" // only run when searching
+    enabled: debouncedSearchQuery.trim() !== ""
   });
 
   const complaints = searchData?.complaints || data?.complaints || [];
@@ -72,7 +84,7 @@ const Dashboard: React.FC = () => {
 
   const filteredComplaints = complaints
     .filter((c: any) => {
-      if (statusFilter === 'Status: All') return true;
+      if (statusFilter === 'all') return true;
       return c.status === statusFilter;
     })
     .sort((a: any, b: any) => {

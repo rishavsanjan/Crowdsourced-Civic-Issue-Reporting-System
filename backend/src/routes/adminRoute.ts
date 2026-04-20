@@ -45,12 +45,12 @@ adminRoute.post('/login', async (req, res) => {
     }
 
     try {
-        const user = await prisma.user.findUnique({
+        const user = await prisma.admin.findUnique({
             where: { email: p.data.email }
         })
 
         if (!user) {
-            return res.status(200).json({ error: "Wrong phone number!", success: false })
+            return res.status(401).json({ error: "Wrong email!", success: false })
         }
 
         //const match = await bcrypt.compare(p.data.password, user.password);
@@ -66,22 +66,38 @@ adminRoute.post('/login', async (req, res) => {
         return res.status(403).json({ error: "Server Problem!", success: false })
     }
 });
-
-adminRoute.get('/admin-home', async (req, res) => {
+adminRoute.get('/admin-home', authMid, async (req, res) => {
     try {
-        const { search } = req.query;
+        //@ts-ignore
+        const userId = req.user.user_id;
+        const admin = await prisma.admin.findUnique({
+            where: {
+                id: userId
+            }
+        })
+        
+        if (!admin) {
+            return res.status(404).json({ error: "Admin not found!", success: false });
+        }
 
-        let whereClause = {};
+        const { search } = req.query;
+        console.log(search)
+
+        let whereClause: any = admin.role === "departmental"
+            ? { category: admin.department }
+            : {};
 
         if (search) {
             const id = Number(search);
 
             if (!isNaN(id)) {
                 whereClause = {
+                    category: admin.department,
                     complaint_id: id
                 };
             } else {
                 whereClause = {
+                    category: admin.department,
                     OR: [
                         {
                             title: {
@@ -103,7 +119,7 @@ adminRoute.get('/admin-home', async (req, res) => {
         const complaints = await prisma.complaint.findMany({
             where: whereClause,
             include: {
-                media: true
+                media: true,
             },
             orderBy: {
                 createdAt: 'asc'
@@ -154,7 +170,11 @@ adminRoute.get('/details/:complaint_id', async (req, res) => {
                 user: true,
                 AdminstrativeComments: true,
                 worker: true,
-                workAssigneds: true
+                workAssigneds: {
+                    include:{
+                        media:true
+                    }
+                }
             }
         })
 

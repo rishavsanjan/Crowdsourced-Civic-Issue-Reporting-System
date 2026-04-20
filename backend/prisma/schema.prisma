@@ -13,7 +13,6 @@ model User {
   email         String?     @unique
   password      String
   createdAt     DateTime    @default(now())
-  role          UserRole    @default(user)
   phonenumber   String?     @unique
   verified      Boolean     @default(false)
   expoPushToken String?
@@ -32,6 +31,22 @@ model Worker {
   complaints    Complaint[]
 }
 
+model Admin {
+  id         Int       @id @default(autoincrement())
+  name       String
+  password   String
+  email      String    @unique
+  createdAt  DateTime  @default(now())
+  role       AdminRole @default(departmental)
+  department Category?
+
+}
+
+enum AdminRole {
+  central
+  departmental
+}
+
 model WorkAssigned {
   id            Int        @id @default(autoincrement())
   status        WorkStatus
@@ -44,7 +59,7 @@ model WorkAssigned {
   workerComment String?
   updatedAt     DateTime   @updatedAt
 
-  media JobEvidence[]
+  media   JobEvidence[]
 }
 
 model JobEvidence {

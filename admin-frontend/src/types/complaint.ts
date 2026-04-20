@@ -24,11 +24,18 @@ export interface Complaint {
     availableWorker: Worker[]
     workerId: number | null
     workAssigneds: {
-        id: number,
-        status: string,
-        worker_id: number,
-        complaint_id: number,
-        createdAt: Date
+        id: number;
+        complaint_id: number;
+        worker_id: number;
+        status: 'pending' | 'completed';
+        workerComment?: string;
+        createdAt: string;
+        updatedAt: string;
+        media: {
+            file_type: 'image' | 'video';
+            file_url: string;
+            uploaded_at: Date;
+        }[];
     }
 };
 

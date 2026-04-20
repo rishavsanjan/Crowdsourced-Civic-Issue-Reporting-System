@@ -13,6 +13,7 @@ import type { Complaint } from '../types/complaint';
 import AssignWorker from '../components/AssignWorker';
 import AssignedWorker from '../components/AssignedWorker';
 import API_BASE_URL from '../config/api';
+import WorkAssignedCard from '../components/WorkEvidence';
 
 
 
@@ -78,15 +79,21 @@ const ReportDetail: React.FC = () => {
                             <CommentCard data={data} complaint_id={complaint_id} />
                         </div>
 
+
+
                         {/* Right Column - Sidebar Actions */}
                         <div className="lg:col-span-1 space-y-8">
                             {/* Admin Actions Card */}
                             <StatusChange data={data} complaint_id={complaint_id} status={status} setStatus={setStatus} />
+                            {
 
+                                data.worker && data.workAssigneds !== null &&
+                                <WorkAssignedCard workAssigneds={data.workAssigneds} />
+                            }
                             {
                                 data.workerId ?
                                     <>
-                                        <AssignedWorker complaint={data}/>
+                                        <AssignedWorker complaint={data} />
                                     </>
                                     :
                                     <>
