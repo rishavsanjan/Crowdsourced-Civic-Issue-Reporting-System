@@ -146,7 +146,19 @@ complainRoute.get('/complainDetail/:complaintId', authMid, async (req, res) => {
                         comment: true,
                         createdAt: true
                     }
+                },
+                workAssigneds: {
+                    select: {
+                        media: {
+                            select: {
+                                file_type: true,
+                                file_url: true,
+                                uploaded_at: true
+                            }
+                        }
+                    }
                 }
+                
             }
         })
 

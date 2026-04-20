@@ -8,6 +8,7 @@ import i18n from '../../i18n/i18n';
 import { saveLanguage, getSavedLanguage } from '@/app/i18n/language_storage';
 import { useTheme } from '@/app/context/theme-context';
 import Header from '../components/Header';
+import { useAuth } from '@/app/context/auth-context';
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
 type LanguageProps = {
@@ -17,11 +18,10 @@ type LanguageProps = {
 }
 
 const Settings: React.FC<Props> = ({ navigation }) => {
-    const [pushNotifications, setPushNotifications] = useState(true);
     const [selectedLanguage, setSelectedLanguage] = useState('english');
     const { t } = useTranslation();
     const { setTheme, mode } = useTheme();
-
+    const { logout } = useAuth();
     const getLang = async () => {
         const lang = await getSavedLanguage();
         if (lang === "hi") {
@@ -74,32 +74,8 @@ const Settings: React.FC<Props> = ({ navigation }) => {
 
 
             {/* Main Content */}
-            <ScrollView className="flex-1 p-4">
-                <View className="space-y-8">
-                    {/* Notifications Section */}
-                    <View>
-                        <Text className="mb-2 text-sm font-bold uppercase text-slate-500 dark:text-slate-400">
-                            Notifications
-                        </Text>
-                        <View className="rounded-lg bg-white dark:bg-slate-900/70 shadow-sm">
-                            <View className="flex-row items-center justify-between p-4">
-                                <View className="flex-1">
-                                    <Text className="font-medium text-slate-800 dark:text-slate-200">
-                                        Push Notifications
-                                    </Text>
-                                    <Text className="text-sm text-slate-500 dark:text-slate-400">
-                                        Receive updates on your reports.
-                                    </Text>
-                                </View>
-                                <Switch
-                                    value={pushNotifications}
-                                    onValueChange={setPushNotifications}
-                                    trackColor={{ false: '#cbd5e1', true: '#1173d4' }}
-                                    thumbColor="#ffffff"
-                                />
-                            </View>
-                        </View>
-                    </View>
+            <ScrollView className="flex-1 p-4 ">
+                <View className=" gap-4">
 
                     {/* Language Section */}
                     <View>
@@ -182,7 +158,12 @@ const Settings: React.FC<Props> = ({ navigation }) => {
 
             {/* Footer */}
             <View className="p-4">
-                <TouchableOpacity className="w-full rounded-lg bg-[#1173d4]/20 dark:bg-[#1173d4]/30 py-3 items-center">
+                <TouchableOpacity
+                    onPress={() => {
+                        logout()
+                        navigation.navigate('WelcomeLoginScreen')
+                    }}
+                    className="w-full rounded-lg bg-[#1173d4]/20 dark:bg-[#1173d4]/30 py-3 items-center">
                     <Text className="text-[#1173d4] font-bold">{t('logout')}</Text>
                 </TouchableOpacity>
             </View>

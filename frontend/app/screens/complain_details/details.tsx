@@ -22,6 +22,7 @@ import { useQuery } from '@tanstack/react-query';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
 import { useTranslation } from 'react-i18next';
+import WorkEvidenceProof from './components/WorkEvidenceProof';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ComplainDetails'>;
 
@@ -48,18 +49,25 @@ interface Response {
         dislike: number;
         userReaction: 'like' | 'dislike' | null;
     };
-    AdminstrativeComments: AdminstrativeComments[]
+    AdminstrativeComments: AdminstrativeComments[],
+    workAssigneds: {
+        media: {
+            file_type: "video" | "image",
+            file_url: string,
+            uploaded_at: Date
+        }[]
+    }
 }
 
 
 const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
     const { googleApiKey } = Constants.expoConfig?.extra || {};
     const { complaintId } = route.params;
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const flatListRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(0);
 
-    
+
     const { data, isLoading } = useQuery({
         queryKey: ['post-detail'],
         queryFn: async () => {
@@ -76,7 +84,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
         }
     })
 
-
+    console.log(data)
     const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
         if (viewableItems.length > 0) {
             setActiveIndex(viewableItems[0].index);
@@ -117,7 +125,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
 
     if (isLoading) {
         return (
-            <Loading/>
+            <Loading />
         )
     }
 
@@ -233,6 +241,15 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                         </View>
                     }
                 </View>
+
+                {
+                    data.status === "resolved" && data.workAssigneds.media.length > 0 &&
+                    <View>
+                        <Text className="text-lg font-bold text-gray-900 mb-4">{'Proof'}</Text>
+                        <WorkEvidenceProof media={data.workAssigneds.media} />
+                    </View>
+                }
+
             </ScrollView>
         </SafeAreaView>
     );

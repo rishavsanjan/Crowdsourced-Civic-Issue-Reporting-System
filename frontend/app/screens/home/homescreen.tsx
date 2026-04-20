@@ -104,7 +104,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
     if (isVerifying) {
         return (
-            <CivicPulseSplash />
+            <Loading />
         )
 
     }

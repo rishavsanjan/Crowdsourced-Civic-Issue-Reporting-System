@@ -2,7 +2,7 @@ import { RootStackParamList } from '@/app/navigation/navigation';
 import { ProfileData } from '@/app/types/profileData';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Image, Text, TouchableOpacity, View } from 'react-native'
 
 type P = NativeStackScreenProps<RootStackParamList, 'ProfileScreen'>;
 
@@ -13,6 +13,7 @@ interface Props {
 
 const UserBadges: React.FC<Props> = ({ data, navigation }) => {
     const { t } = useTranslation();
+
     return (
         <View className="dark:border-blue-300 border bg-white mx-4 rounded-lg p-4 mb-4 shadow-sm dark:bg-slate-900/70">
             <View className='flex flex-row justify-between'>
@@ -23,16 +24,22 @@ const UserBadges: React.FC<Props> = ({ data, navigation }) => {
             </View>
 
 
-            <View className="flex-row flex-wrap justify-around">
+            <View className="flex justify-around">
                 {
-                    data?.user.UserBage?.length !== undefined ?
+                    data!.user.UserBadge.length > 0 ?
                         <>
-                            {data?.user.UserBage.map((badge) => (
-                                <View key={badge.id} className="items-center mb-4 w-1/3">
-                                    <View className="w-16 h-16 bg-teal-100 rounded-lg items-center justify-center mb-2">
-                                        <Text className="text-2xl dark:text-slate-200">{badge.icon_url}</Text>
+                            {data?.user.UserBadge.map((b, i) => (
+                                <View key={i} className="flex-row items-center gap-4">
+                                    <Image style={{ width: 40, height: 40 }} source={{ uri: b.badge.icon_url }} />
+                                    <View className="flex-1">
+                                        <Text className={`font-bold text-base dark:text-white text-gray-500 `}>
+                                            {b.badge.name}
+                                        </Text>
+                                        <Text className="text-sm text-gray-500 mt-1">
+                                            {b.badge.description}
+                                        </Text>
+
                                     </View>
-                                    <Text className="text-sm text-center font-medium dark:text-slate-200">{badge.name}</Text>
                                 </View>
                             ))}
                         </>

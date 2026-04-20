@@ -8,5 +8,5 @@ export type User = {
   profileImage?: string;
   createdAt: string;
   Complaint: Complaint[]
-  UserBage?: Badge[]
+  UserBadge: Badge[]
 };

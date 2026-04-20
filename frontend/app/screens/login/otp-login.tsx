@@ -307,14 +307,14 @@ const OTPLogin: React.FC<Props> = ({ navigation }) => {
                                         />
                                     </View>
 
-                                    <TouchableOpacity
+                                    {/* <TouchableOpacity
                                         className="self-end mb-6"
                                         activeOpacity={0.7}
                                     >
                                         <Text className="text-sm text-gray-600 dark:text-white">
                                             {t('Forgot Password?')}
                                         </Text>
-                                    </TouchableOpacity>
+                                    </TouchableOpacity> */}
 
                                     {error ? (
                                         <Text className="text-red-500 text-sm mb-4">{error}</Text>

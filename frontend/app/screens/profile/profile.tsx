@@ -42,6 +42,8 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     }
   })
 
+  console.log(data)
+
   if (isLoading) {
     return (
       <Loading />

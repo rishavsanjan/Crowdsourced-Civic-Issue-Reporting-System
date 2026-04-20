@@ -73,7 +73,7 @@ export default function AdminLogin() {
                 <div className="w-full max-w-xl space-y-8">
                     <div className="bg-white light:bg-gray-800 p-8 rounded-xl shadow-2xl space-y-6">
                         <div className="text-center">
-                            <h2 className="text-3xl font-extrabold text-gray-900 light:text-white">Welcome to CivicConnect!</h2>
+                            <h2 className="text-3xl font-extrabold text-gray-900 light:text-white">Welcome to Fix My City Admin Portal!</h2>
                             <p className="mt-2 text-sm text-gray-600 light:text-gray-400">Let's set up your account.</p>
                         </div>
 

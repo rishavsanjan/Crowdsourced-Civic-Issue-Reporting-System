@@ -243,7 +243,17 @@ userRoute.get('/profile', authMid, async (req, res) => {
                 createdAt: true,
                 email: true,
                 Complaint: true,
-                UserBadge: true
+                UserBadge: {
+                    select:{
+                        badge:{
+                            select:{
+                                name:true,
+                                description:true,
+                                icon_url:true
+                            }
+                        }
+                    }
+                }
             }
         });
 

@@ -4,12 +4,12 @@ export default ({ config }) => ({
   ...config,
   expo: {
     ...config.expo,
-    name: "frontend",
-    slug: "frontend",
+    name: "Fix My City",
+    slug: "fix-my-city",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    scheme: "frontend",
+    scheme: "fixmycity",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
 
@@ -34,7 +34,7 @@ export default ({ config }) => ({
       predictiveBackGestureEnabled: false,
       useNextNotificationsApi: true,
       permissions: ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "NOTIFICATIONS"],
-      package: "com.rishavsanjan.frontend",
+      package: "com.rishavsanjan.fixmycity",
       config: {
         ...config.expo?.android?.config,
         googleMaps: {

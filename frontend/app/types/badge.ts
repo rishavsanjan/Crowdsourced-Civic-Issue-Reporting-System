@@ -8,4 +8,13 @@ export interface Badge {
   current: number,
   goal: number,
   id: number
+
+  awarded_at: Date
+  badge_id: number
+  user_id: number,
+  badge: {
+    description: string
+    name: string
+    icon_url: string
+  }
 }
