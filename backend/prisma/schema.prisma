@@ -29,6 +29,7 @@ model Worker {
   createdAt     DateTime       @default(now())
   workAssigneds WorkAssigned[]
   complaints    Complaint[]
+  department    Category?
 }
 
 model Admin {
@@ -39,7 +40,6 @@ model Admin {
   createdAt  DateTime  @default(now())
   role       AdminRole @default(departmental)
   department Category?
-
 }
 
 enum AdminRole {
@@ -59,7 +59,7 @@ model WorkAssigned {
   workerComment String?
   updatedAt     DateTime   @updatedAt
 
-  media   JobEvidence[]
+  media JobEvidence[]
 }
 
 model JobEvidence {

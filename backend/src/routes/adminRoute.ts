@@ -75,39 +75,40 @@ adminRoute.get('/admin-home', authMid, async (req, res) => {
                 id: userId
             }
         })
-        
+
         if (!admin) {
             return res.status(404).json({ error: "Admin not found!", success: false });
         }
 
         const { search } = req.query;
-        console.log(search)
 
-        let whereClause: any = admin.role === "departmental"
+        const departmentFilter = admin.role === "departmental"
             ? { category: admin.department }
             : {};
+
+        let whereClause: any = { ...departmentFilter };
 
         if (search) {
             const id = Number(search);
 
             if (!isNaN(id)) {
                 whereClause = {
-                    category: admin.department,
+                    ...departmentFilter,
                     complaint_id: id
                 };
             } else {
                 whereClause = {
-                    category: admin.department,
+                    ...departmentFilter,
                     OR: [
                         {
                             title: {
-                                contains: search,
+                                contains: search as string,
                                 mode: 'insensitive'
                             }
                         },
                         {
                             description: {
-                                contains: search,
+                                contains: search as string,
                                 mode: 'insensitive'
                             }
                         }
@@ -171,8 +172,8 @@ adminRoute.get('/details/:complaint_id', async (req, res) => {
                 AdminstrativeComments: true,
                 worker: true,
                 workAssigneds: {
-                    include:{
-                        media:true
+                    include: {
+                        media: true
                     }
                 }
             }
@@ -181,6 +182,9 @@ adminRoute.get('/details/:complaint_id', async (req, res) => {
         let availableWorker;
         if (!complaint?.workerId) {
             availableWorker = await prisma.worker.findMany({
+                where: {
+                    department: complaint?.category
+                },
                 select: {
                     id: true,
                     name: true

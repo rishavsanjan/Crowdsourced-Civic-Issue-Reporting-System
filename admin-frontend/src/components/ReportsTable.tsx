@@ -19,7 +19,7 @@ interface Props {
 
 }
 
-const ReportsTable: React.FC<Props> = ({ searchQuery, setSearchQuery, statusFilter, setStatusFilter, categoryFilter, setCategoryFilter, sortFilter, setSortFilter, filteredComplaints, complaints, isLoading }) => {
+const ReportsTable: React.FC<Props> = ({ searchQuery, setSearchQuery, statusFilter, setStatusFilter,  sortFilter, setSortFilter, filteredComplaints, complaints, isLoading }) => {
 
 
     const getStatusColor = (status: Complaint['status']) => {
@@ -76,23 +76,7 @@ const ReportsTable: React.FC<Props> = ({ searchQuery, setSearchQuery, statusFilt
                                     </svg>
                                 </div>
                             </div>
-                            <div className="relative">
-                                <select
-                                    className="appearance-none w-full md:w-auto bg-gray-50 light:bg-gray-900 border border-gray-300 light:border-gray-600 text-gray-700 light:text-gray-300 py-2 pl-3 pr-8 rounded leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    value={categoryFilter}
-                                    onChange={(e) => setCategoryFilter(e.target.value)}
-                                >
-                                    <option>Category: All</option>
-                                    <option>Roads</option>
-                                    <option>Water</option>
-                                    <option>Waste</option>
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 light:text-gray-300">
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M7 10l5 5 5-5z" />
-                                    </svg>
-                                </div>
-                            </div>
+                            
                             <div className="relative">
                                 <select
                                     className="appearance-none w-full md:w-auto bg-gray-50 light:bg-gray-900 border border-gray-300 light:border-gray-600 text-gray-700 light:text-gray-300 py-2 pl-3 pr-8 rounded leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"

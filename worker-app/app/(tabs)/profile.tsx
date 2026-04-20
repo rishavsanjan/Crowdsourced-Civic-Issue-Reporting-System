@@ -28,7 +28,7 @@ interface WorkerProfile {
     totalTasks: number;
     successRate: string;
     email: string;
-    phonenumber: string;
+    phoneNumber: string;
     department: string;
     createdAt: string;
     isVerified: boolean;
@@ -59,6 +59,8 @@ const Profile: React.FC<Props> = () => {
         AsyncStorage.removeItem("workercitytoken");
         router.push("/(auth)/auth")
     };
+
+    console.log(data)
 
     if (isLoading) {
         return (
@@ -96,7 +98,7 @@ const Profile: React.FC<Props> = () => {
                 <ProfileStats totalTasks={data.totalTasks} successRate={data.successRate} />
 
                 {/* Information List */}
-                <InformationList phonenumber={data.phonenumber} createdAt={data.createdAt} />
+                <InformationList department={data.department} phonenumber={data.phoneNumber} createdAt={data.createdAt} />
 
 
 

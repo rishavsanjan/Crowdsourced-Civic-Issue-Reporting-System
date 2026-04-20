@@ -37,6 +37,7 @@ export interface Complaint {
             uploaded_at: Date;
         }[];
     }
+    category:string
 };
 
 

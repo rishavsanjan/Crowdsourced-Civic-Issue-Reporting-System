@@ -10,7 +10,7 @@ import API_BASE_URL from '../config/api';
 
 const Dashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('Status: All');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('Category: All');
   const [sortFilter, setSortFilter] = useState('new');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")

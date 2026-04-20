@@ -129,7 +129,7 @@ workerRoute.get('/profile', authMid, async (req, res) => {
         //@ts-ignore
         const userId = req.user.user_id;
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.worker.findUnique({
             where: {
                 id: userId
             }

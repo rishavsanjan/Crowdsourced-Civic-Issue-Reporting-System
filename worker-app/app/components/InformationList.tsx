@@ -6,9 +6,10 @@ import Icon from '@react-native-vector-icons/ionicons';
 interface Props {
     phonenumber:string
     createdAt:string
+    department:string
 }
 
-const InformationList:React.FC<Props> = ({phonenumber, createdAt}) => {
+const InformationList:React.FC<Props> = ({phonenumber, createdAt, department}) => {
     return (
         <View className="mb-4">
             <View className="bg-white light:bg-slate-800 rounded-xl shadow-sm border border-slate-100 light:border-slate-700 overflow-hidden">
@@ -57,7 +58,7 @@ const InformationList:React.FC<Props> = ({phonenumber, createdAt}) => {
                                 Department
                             </Text>
                             <Text className="text-sm font-medium light:text-white">
-                                To be Decided
+                                {department}
                             </Text>
                         </View>
                     </View>

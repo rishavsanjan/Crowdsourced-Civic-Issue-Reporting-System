@@ -98,7 +98,7 @@ const ReportDetail: React.FC = () => {
                                     :
                                     <>
                                         {/* Assign Worker Card */}
-                                        <AssignWorker worker={data.availableWorker} complaint_id={complaint_id} />
+                                        <AssignWorker worker={data.availableWorker} complaint_id={complaint_id} department={data.category} />
                                     </>
                             }
 

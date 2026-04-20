@@ -11,6 +11,7 @@ import API_BASE_URL from "../config/api";
 interface Props {
     worker: Worker[]
     complaint_id: string
+    department:string
 }
 
 
@@ -18,7 +19,7 @@ interface Props {
 
 
 
-const AssignWorker: React.FC<Props> = ({ worker, complaint_id }) => {
+const AssignWorker: React.FC<Props> = ({ worker, complaint_id, department }) => {
     const [selectedWorker, setSelectedWorker] = useState<Worker>();
     const [instructions, setInstructions] = useState<{ id: number, text: string }[]>([]);
     const [currentInstruction, setCurrentInstruction] = useState("");
@@ -95,7 +96,7 @@ const AssignWorker: React.FC<Props> = ({ worker, complaint_id }) => {
                                 </option>
                                 {worker.map((w) => (
                                     <option key={w.id} value={w.id}>
-                                        {w.name}
+                                        {w.name} - {department}
                                     </option>
                                 ))}
                             </select>
