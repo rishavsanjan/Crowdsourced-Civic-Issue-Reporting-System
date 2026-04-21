@@ -46,12 +46,10 @@ const Dashboard: React.FC = () => {
           'Authorization': 'Bearer ' + token
         }
       })
-
       return result.data;
     }
   });
 
-  console.log(API_BASE_URL)
 
   const { data: searchData } = useQuery({
     queryKey: ['search', debouncedSearchQuery],
@@ -66,7 +64,6 @@ const Dashboard: React.FC = () => {
           'Authorization': 'Bearer ' + token
         }
       })
-      console.log(result.data)
 
       return result.data;
     },
@@ -79,7 +76,6 @@ const Dashboard: React.FC = () => {
     pending: 0,
     in_progress: 0
   };
-
 
 
   const filteredComplaints = complaints

@@ -22,7 +22,6 @@ import { useAuth } from '@/app/context/auth-context';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
 import { useTranslation } from 'react-i18next';
-import CivicPulseSplash from '../components/SplashScreen';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>;
 
@@ -157,13 +156,13 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
             <View className="flex-row items-end justify-between mb-2 px-2">
                 <View>
-                    <Text className="text-xs text-gray-400 mb-0.5">Filter by distance</Text>
+                    <Text className="text-xs text-gray-400 mb-0.5">{t('Filter by distance')}</Text>
                     <View className="flex-row items-baseline gap-1.5">
                         <Text className="text-4xl font-medium text-gray-900 dark:text-white">{distance}</Text>
                         <Text className="text-sm text-gray-400">km</Text>
                     </View>
                 </View>
-                <Text className="text-xs text-gray-400">0 – 100 km</Text>
+                <Text className="text-xs text-gray-400">0 – 100 {t('km')}</Text>
             </View>
 
             <Slider

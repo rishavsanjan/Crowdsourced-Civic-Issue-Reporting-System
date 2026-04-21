@@ -245,7 +245,7 @@ const ComplaintDetails: React.FC<Props> = ({ navigation, route }) => {
                 {
                     data.status === "resolved" && data.workAssigneds.media.length > 0 &&
                     <View>
-                        <Text className="text-lg font-bold text-gray-900 mb-4">{'Proof'}</Text>
+                        <Text className="text-lg font-bold text-gray-900 mb-4">{t('Proof')}</Text>
                         <WorkEvidenceProof media={data.workAssigneds.media} />
                     </View>
                 }

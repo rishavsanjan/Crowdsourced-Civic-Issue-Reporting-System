@@ -5,7 +5,7 @@ export default ({ config }) => ({
   expo: {
     ...config.expo,
     name: "Fix My City",
-    slug: "fix-my-city",
+    slug: "frontend",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",

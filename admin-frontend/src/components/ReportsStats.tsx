@@ -4,7 +4,7 @@ interface Props {
     complainCounts: {
         pending: number
         in_progress: number
-        resloved: number
+        resolved: number
     }
 }
 
@@ -21,7 +21,7 @@ const ReportsStats: React.FC<Props> = ({ complainCounts }) => {
             </div>
             <div className="bg-white light:bg-gray-800 p-6 rounded-lg shadow-sm">
                 <p className="text-sm font-medium text-gray-500 light:text-gray-400">Resolved</p>
-                <p className="text-3xl font-bold text-gray-900 light:text-white mt-1">{complainCounts?.resloved || 0}</p>
+                <p className="text-3xl font-bold text-gray-900 light:text-white mt-1">{complainCounts?.resolved}</p>
             </div>
         </section>
     )

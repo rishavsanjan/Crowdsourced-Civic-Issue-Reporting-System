@@ -157,13 +157,14 @@ const ComplainCard: React.FC<Props> = ({ complaint, navigation, selectedStatus, 
             <View className="">
                 {/* Priority and Status */}
                 <View className="flex-row justify-between items-center  px-4 py-2">
-                    <View className="flex-row items-center">
+                    {/* <View className="flex-row items-center">
                         <View
                             className="w-2 h-2 rounded-full mr-2"
                             style={{ backgroundColor: getPriorityColor(complaint.status) }}
                         />
                         <Text className="text-red-500 text-xs font-medium">High Priority</Text>
-                    </View>
+                    </View> */}
+                    <View></View>
                     <View
                         className="px-2 py-1 rounded-full flex flex-row items-center gap-1"
                         style={{ backgroundColor: getStatusColor(complaint.status) + '20' }}

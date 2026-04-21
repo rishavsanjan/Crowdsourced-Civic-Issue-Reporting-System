@@ -33,10 +33,10 @@ const UserBadges: React.FC<Props> = ({ data, navigation }) => {
                                     <Image style={{ width: 40, height: 40 }} source={{ uri: b.badge.icon_url }} />
                                     <View className="flex-1">
                                         <Text className={`font-bold text-base dark:text-white text-gray-500 `}>
-                                            {b.badge.name}
+                                            {t(b.badge.name)}
                                         </Text>
                                         <Text className="text-sm text-gray-500 mt-1">
-                                            {b.badge.description}
+                                            {t(b.badge.description)}
                                         </Text>
 
                                     </View>

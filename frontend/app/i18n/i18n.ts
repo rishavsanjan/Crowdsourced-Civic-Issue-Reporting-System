@@ -100,7 +100,16 @@ const resources = {
             assistant: "FixMyCity Assistant",
             online: "Online · Ready to help",
             typing: "Assistant is typing…",
-            placeholder: "Ask me anything…"
+            placeholder: "Ask me anything…",
+
+            "Reported 5 or more valid issues": "Reported 5 or more valid issues",
+            "Vote 100 or more decisions": "Vote 100 or more decisions",
+            "Active Reporter": "Active Reporter",
+            "Community Hero": "Community Hero",
+            "Proof": "Proof",
+
+            "Filter by distance": "Filter by distance",
+            "km": "km"
 
         },
     },
@@ -200,7 +209,16 @@ const resources = {
             assistant: "FixMyCity सहायक",
             online: "ऑनलाइन · मदद के लिए तैयार",
             typing: "सहायक टाइप कर रहा है…",
-            placeholder: "कुछ भी पूछें…"
+            placeholder: "कुछ भी पूछें…",
+
+            "Reported 5 or more valid issues": "5 या अधिक मान्य समस्याएँ रिपोर्ट कीं",
+            "Vote 100 or more decisions": "100 या अधिक निर्णयों पर वोट किया",
+            "Active Reporter": "सक्रिय रिपोर्टर",
+            "Community Hero": "समुदाय का नायक",
+            "Proof": "प्रमाण",
+
+            "Filter by distance": "दूरी के अनुसार फ़िल्टर करें",
+            "km": "किमी"
 
         },
     },
@@ -301,7 +319,16 @@ const resources = {
             assistant: "FixMyCity सहाय्यक",
             online: "ऑनलाइन · मदतीसाठी तयार",
             typing: "सहाय्यक टाइप करत आहे…",
-            placeholder: "काहीही विचारा…"
+            placeholder: "काहीही विचारा…",
+
+            "Reported 5 or more valid issues": "५ किंवा अधिक वैध समस्या नोंदवल्या",
+            "Vote 100 or more decisions": "१०० किंवा अधिक निर्णयांवर मतदान केले",
+            "Active Reporter": "सक्रिय रिपोर्टर",
+            "Community Hero": "समुदायाचा नायक",
+            "Proof": "पुरावा",
+
+            "Filter by distance": "अंतरानुसार फिल्टर करा",
+            "km": "कि.मी."
 
 
         },
@@ -403,7 +430,16 @@ const resources = {
             assistant: "FixMyCity உதவியாளர்",
             online: "ஆன்லைன் · தயாராக உள்ளது",
             typing: "உதவியாளர் টাইப் செய்கிறார்…",
-            placeholder: "எதையும் கேளுங்கள்…"
+            placeholder: "எதையும் கேளுங்கள்…",
+
+            "Reported 5 or more valid issues": "5 அல்லது அதற்கு மேற்பட்ட பிரச்சினைகள் தெரிவிக்கப்பட்டது",
+            "Vote 100 or more decisions": "100 அல்லது அதற்கு மேற்பட்ட முடிவுகளில் வாக்களித்தது",
+            "Active Reporter": "செயலில் உள்ள புகார் அளிப்பவர்",
+            "Community Hero": "சமூக வீரர்",
+            "Proof": "ஆதாரம்",
+
+            "Filter by distance": "தூரம் அடிப்படையில் வடிகட்டி",
+            "km": "கிமீ"
         },
     },
     pa: {
@@ -503,7 +539,16 @@ const resources = {
             assistant: "FixMyCity ਸਹਾਇਕ",
             online: "ਆਨਲਾਈਨ · ਤਿਆਰ",
             typing: "ਟਾਈਪ ਕਰ ਰਿਹਾ ਹੈ…",
-            placeholder: "ਕੁਝ ਵੀ ਪੁੱਛੋ…"
+            placeholder: "ਕੁਝ ਵੀ ਪੁੱਛੋ…",
+
+            "Reported 5 or more valid issues": "5 ਜਾਂ ਵੱਧ ਸਮੱਸਿਆਵਾਂ ਰਿਪੋਰਟ ਕੀਤੀਆਂ",
+            "Vote 100 or more decisions": "100 ਜਾਂ ਵੱਧ ਫ਼ੈਸਲਿਆਂ 'ਤੇ ਵੋਟ ਕੀਤਾ",
+            "Active Reporter": "ਸਰਗਰਮ ਰਿਪੋਰਟਰ",
+            "Community Hero": "ਕਮਿਊਨਿਟੀ ਹੀਰੋ",
+            "Proof": "ਸਬੂਤ",
+
+            "Filter by distance": "ਦੂਰੀ ਅਨੁਸਾਰ ਫਿਲਟਰ ਕਰੋ",
+            "km": "ਕਿਲੋਮੀਟਰ"
         },
 
     },
@@ -604,7 +649,16 @@ const resources = {
             assistant: "FixMyCity معاون",
             online: "آن لائن · تیار",
             typing: "ٹائپ ہو رہا ہے…",
-            placeholder: "کچھ بھی پوچھیں…"
+            placeholder: "کچھ بھی پوچھیں…",
+
+            "Reported 5 or more valid issues": "5 یا اس سے زیادہ مسائل رپورٹ کیے",
+            "Vote 100 or more decisions": "100 یا اس سے زیادہ فیصلوں پر ووٹ دیا",
+            "Active Reporter": "فعال رپورٹر",
+            "Community Hero": "کمیونٹی ہیرو",
+            "Proof": "ثبوت",
+
+            "Filter by distance": "فاصلہ کے مطابق فلٹر کریں",
+            "km": "کلومیٹر"
         },
     },
     sa: {
@@ -704,7 +758,16 @@ const resources = {
             assistant: "FixMyCity सहायकः",
             online: "ऑनलाइन · सज्जः",
             typing: "सहायकः लेखनं करोति…",
-            placeholder: "किमपि पृच्छतु…"
+            placeholder: "किमपि पृच्छतु…",
+
+            "Reported 5 or more valid issues": "५ अथवा अधिकाः समस्याः सूचिताः",
+            "Vote 100 or more decisions": "१०० अथवा अधिकेषु निर्णयेषु मतदानं कृतम्",
+            "Active Reporter": "सक्रियः वार्ताहरः",
+            "Community Hero": "समुदायस्य नायकः",
+            "Proof": "प्रमाणम्",
+
+            "Filter by distance": "दूरी-अनुसारं छननं कुरु",
+            "km": "किलोमीटर"
 
 
         },
@@ -806,7 +869,16 @@ const resources = {
             assistant: "FixMyCity સહાયક",
             online: "ઓનલાઇન · તૈયાર",
             typing: "ટાઇપ થઈ રહ્યું છે…",
-            placeholder: "કંઈપણ પૂછો…"
+            placeholder: "કંઈપણ પૂછો…",
+
+            "Reported 5 or more valid issues": "5 અથવા વધુ સમસ્યાઓ રિપોર્ટ કરી",
+            "Vote 100 or more decisions": "100 અથવા વધુ નિર્ણયોમાં મત આપ્યો",
+            "Active Reporter": "સક્રિય રિપોર્ટર",
+            "Community Hero": "સમુદાયનો હીરો",
+            "Proof": "પુરાવો",
+
+            "Filter by distance": "અંતર મુજબ ફિલ્ટર કરો",
+            "km": "કિમી"
         },
     }
 };

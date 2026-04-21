@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/app/types/badge';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
+import { useTranslation } from 'react-i18next';
 
 type P = NativeStackScreenProps<RootStackParamList, 'Badges'>;
 
@@ -23,16 +24,18 @@ const BadgeCard: React.FC<Props> = ({ badge, isLocked = false }) => {
     if(progress > 100){
         progress = 100
     }
+
+    const {t} = useTranslation();
     return (
         <View className={`rounded-xl bg-white/50 p-4 mb-4 dark:border-white dark:border dark:bg-[#101922] ${isLocked ? 'opacity-60' : ''}`}>
             <View className="flex-row items-center gap-4">
                 <Image style={{ width: 40, height: 40 }} source={{ uri: badge.icon_url }} />
                 <View className="flex-1">
                     <Text className={`font-bold text-base dark:text-white ${isLocked ? 'text-gray-500' : 'text-black'}`}>
-                        {badge.name}
+                        {t(badge.name)}
                     </Text>
                     <Text className="text-sm text-gray-500 mt-1">
-                        {badge.description}
+                        {t(badge.description)}
                     </Text>
                     <View className="mt-3">
                         <View className="h-2 w-full rounded-full bg-gray-200">
